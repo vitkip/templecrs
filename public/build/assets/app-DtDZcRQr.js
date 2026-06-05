@@ -1,0 +1,1 @@
+document.addEventListener(`DOMContentLoaded`,()=>{let e=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&e.target.classList.add(`animate-fade-in`)})},{threshold:.1});document.querySelectorAll(`.glass-card, .bg-white`).forEach(t=>{e.observe(t)})});
