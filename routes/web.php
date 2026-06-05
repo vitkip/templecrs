@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Middleware\SetLocale;
+use App\Livewire\Auth\LoginPage;
 use App\Livewire\Personnel\PersonnelForm;
 use App\Livewire\Personnel\PersonnelShow;
 use App\Livewire\Personnel\PersonnelTable;
 use App\Livewire\Settings\SettingsPage;
+use App\Livewire\Users\UserForm;
+use App\Livewire\Users\UserTable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -14,10 +18,22 @@ use Illuminate\Support\Facades\Session;
 |--------------------------------------------------------------------------
 */
 
-// Apply locale middleware to all routes
-Route::middleware([SetLocale::class])->group(function () {
+// ─── Auth Routes (no auth required) ───
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', LoginPage::class)->name('login');
+});
 
-    // Dashboard — redirects to personnel for now
+Route::post('/logout', function () {
+    Auth::logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect()->route('login');
+})->name('logout')->middleware('auth');
+
+// ─── Protected Application Routes ───
+Route::middleware(['auth', SetLocale::class])->group(function () {
+
+    // Dashboard
     Route::get('/', function () {
         return redirect()->route('personnel.index');
     })->name('dashboard');
@@ -41,4 +57,11 @@ Route::middleware([SetLocale::class])->group(function () {
 
     // ─── Settings ───
     Route::get('/settings', SettingsPage::class)->name('settings');
+
+    // ─── User Management ───
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', UserTable::class)->name('index');
+        Route::get('/create', UserForm::class)->name('create');
+        Route::get('/{id}/edit', UserForm::class)->name('edit');
+    });
 });

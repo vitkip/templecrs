@@ -119,6 +119,19 @@
                 @endif
             </a>
 
+            {{-- Users --}}
+            @php $isUsers = request()->routeIs('users.*'); @endphp
+            <a href="{{ route('users.index') }}"
+               @click="sidebarOpen = false"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      {{ $isUsers ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                <span class="material-symbols-outlined text-xl shrink-0 {{ $isUsers ? 'filled' : '' }}">manage_accounts</span>
+                <span class="text-label-md">ຜູ້ໃຊ້ / Users</span>
+                @if ($isUsers)
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                @endif
+            </a>
+
             {{-- Documents (coming soon) --}}
             <div class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-secondary-fixed-dim/40 cursor-not-allowed select-none">
                 <span class="material-symbols-outlined text-xl shrink-0">description</span>
@@ -225,16 +238,29 @@
 
                 <div class="h-8 w-px bg-outline-variant mx-1 hidden sm:block"></div>
 
-                {{-- User --}}
+                {{-- User + Logout --}}
+                @auth
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="text-right hidden sm:block">
-                        <p class="text-label-md font-bold text-primary leading-tight">Admin</p>
-                        <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Administrator</p>
+                        <p class="text-label-md font-bold text-primary leading-tight">{{ auth()->user()->name }}</p>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">{{ auth()->user()->role_label ?? auth()->user()->role }}</p>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-primary text-base">person</span>
+                    <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
+                        @if (auth()->user()->avatar_url)
+                            <img src="{{ Storage::url(auth()->user()->avatar_url) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" />
+                        @else
+                            <span class="material-symbols-outlined text-primary text-base">person</span>
+                        @endif
                     </div>
+                    <form method="POST" action="{{ route('logout') }}" class="hidden sm:block">
+                        @csrf
+                        <button type="submit" title="ອອກຈາກລະບົບ / Logout"
+                                class="p-2 text-on-surface-variant hover:text-error hover:bg-error/5 rounded-full transition-colors">
+                            <span class="material-symbols-outlined text-base">logout</span>
+                        </button>
+                    </form>
                 </div>
+                @endauth
             </div>
         </header>
 

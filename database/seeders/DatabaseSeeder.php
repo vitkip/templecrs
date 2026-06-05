@@ -15,14 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user
-        User::factory()->create([
-            'name' => 'Admin',
-            'email' => 'admin@temple.org',
-        ]);
-
-        // Seed departments first, then personnel
         $this->call([
+            UserSeeder::class,
             DepartmentSeeder::class,
             PersonnelSeeder::class,
             SettingsSeeder::class,
