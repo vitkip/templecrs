@@ -1,0 +1,348 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../../vendor/livewire/livewire/src/**/*.php';
+
+/* ═══════════════════════════════════════════════════════
+   Buddhist EMS — Design System (Dharma Governance)
+   Based on DESIGN.md specifications
+   ═══════════════════════════════════════════════════════ */
+
+@theme {
+    /* ── Fonts ── */
+    --font-sans: 'Phetsarath', 'Noto Sans Lao', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-lao: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    --font-headline: 'Phetsarath', 'Noto Sans Lao', 'Inter', ui-sans-serif, sans-serif;
+
+    /* ── Primary (Deep Saffron) ── */
+    --color-primary: #8d4b00;
+    --color-primary-container: #b15f00;
+    --color-primary-fixed: #ffdcc3;
+    --color-primary-fixed-dim: #ffb77d;
+    --color-on-primary: #ffffff;
+    --color-on-primary-container: #fffbff;
+    --color-on-primary-fixed: #2f1500;
+    --color-on-primary-fixed-variant: #6e3900;
+    --color-inverse-primary: #ffb77d;
+
+    /* ── Secondary (Royal Navy) ── */
+    --color-secondary: #545f73;
+    --color-on-secondary: #ffffff;
+    --color-secondary-container: #d5e0f8;
+    --color-on-secondary-container: #586377;
+    --color-secondary-fixed: #d8e3fb;
+    --color-secondary-fixed-dim: #bcc7de;
+    --color-on-secondary-fixed: #111c2d;
+    --color-on-secondary-fixed-variant: #3c475a;
+
+    /* ── Tertiary (Gold) ── */
+    --color-tertiary: #765700;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #956e00;
+    --color-on-tertiary-container: #fffbff;
+    --color-tertiary-fixed: #ffdf9f;
+    --color-tertiary-fixed-dim: #f9bd22;
+    --color-on-tertiary-fixed: #261a00;
+    --color-on-tertiary-fixed-variant: #5c4300;
+
+    /* ── Error ── */
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+
+    /* ── Surface / Background ── */
+    --color-surface: #f8f9ff;
+    --color-surface-dim: #cbdbf5;
+    --color-surface-bright: #f8f9ff;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #eff4ff;
+    --color-surface-container: #e5eeff;
+    --color-surface-container-high: #dce9ff;
+    --color-surface-container-highest: #d3e4fe;
+    --color-surface-tint: #904d00;
+    --color-surface-variant: #d3e4fe;
+    --color-on-surface: #0b1c30;
+    --color-on-surface-variant: #554336;
+    --color-inverse-surface: #213145;
+    --color-inverse-on-surface: #eaf1ff;
+    --color-background: #f8f9ff;
+    --color-on-background: #0b1c30;
+    --color-outline: #887364;
+    --color-outline-variant: #dbc2b0;
+
+    /* ── Badge Colors ── */
+    --color-badge-monk: #D97706;
+    --color-badge-male: #1E293B;
+    --color-badge-female: #6D28D9;
+
+    /* ── Spacing ── */
+    --spacing-sidebar: 280px;
+    --spacing-gutter: 1.5rem;
+    --spacing-page: 2rem;
+    --spacing-stack: 1rem;
+    --spacing-cell: 0.75rem;
+}
+
+/* Fonts loaded via HTML <link> in layout */
+
+/* ═══════════════════════════════════════════════════════
+   Base Styles
+   ═══════════════════════════════════════════════════════ */
+
+body {
+    background-color: #FFFBEB;
+    font-family: 'Phetsarath', 'Noto Sans Lao', 'Inter', sans-serif;
+    color: var(--color-on-surface);
+}
+
+/* Material Symbols defaults */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-outlined.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Component Utilities
+   ═══════════════════════════════════════════════════════ */
+
+/* Monk-specific left accent bar */
+.monk-accent {
+    border-left: 3px solid var(--color-badge-monk);
+}
+
+/* Glass card effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Sidebar active item glow */
+.sidebar-active-glow {
+    box-shadow: 0 0 15px rgba(249, 189, 34, 0.2);
+}
+
+/* Monk section background */
+.monk-section {
+    background-color: #FFF7ED;
+    border-left: 4px solid var(--color-badge-monk);
+}
+
+/* Bilingual required field indicator — saffron left border */
+.bilingual-required {
+    border-left: 3px solid var(--color-primary);
+    padding-left: 0.75rem;
+}
+
+/* Custom toggle switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 2.5rem;
+    height: 1.25rem;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: var(--color-outline-variant);
+    border-radius: 9999px;
+    transition: 0.3s;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: '';
+    height: 1rem;
+    width: 1rem;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #22c55e;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(1.15rem);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Typography Utilities
+   ═══════════════════════════════════════════════════════ */
+
+.text-headline-lg {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 44px;
+}
+
+.text-headline-md {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+.text-headline-sm {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 30px;
+}
+
+.text-body-lg {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 26px;
+}
+
+.text-body-md {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+}
+
+.text-label-md {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0.02em;
+}
+
+.text-table-data {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.text-lao {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Animations & Transitions
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Button press effect */
+.btn-press:active {
+    transform: scale(0.98);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Row hover highlight */
+.table-row-hover {
+    transition: background-color 0.15s ease;
+}
+
+.table-row-hover:hover {
+    background-color: var(--color-surface-container-lowest);
+}
+
+/* ═══════════════════════════════════════════════════════
+   Form Styles
+   ═══════════════════════════════════════════════════════ */
+
+.form-input {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-outline-variant);
+    border-radius: 0.5rem;
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 14px;
+    line-height: 22px;
+    color: var(--color-on-surface);
+    background: white;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(141, 75, 0, 0.1);
+}
+
+.form-input::placeholder {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    color: var(--color-on-surface-variant);
+    opacity: 0.5;
+}
+
+.form-label {
+    display: block;
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-on-surface);
+    margin-bottom: 0.25rem;
+}
+
+.form-error {
+    font-family: 'Phetsarath', 'Noto Sans Lao', sans-serif;
+    font-size: 12px;
+    color: var(--color-error);
+    margin-top: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   Scrollbar
+   ═══════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-outline-variant);
+    border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-outline);
+}

@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'app_name' => 'Buddhist Organization Management System',
+    'dashboard' => 'Dashboard',
+    'documents' => 'Documents (DMS)',
+    'personnel' => 'Personnel',
+    'departments' => 'Departments',
+    'reports' => 'Reports',
+    'settings' => 'Settings',
+    'new_entry' => 'New Entry',
+    'search_placeholder' => 'Search name or department...',
+    'add_personnel' => 'Add New Personnel',
+    'all_departments' => 'All Departments',
+    'back_to_list' => 'Back to List',
+    'edit' => 'Edit',
+    'save' => 'Save',
+    'update' => 'Update',
+    'cancel' => 'Cancel',
+    'saving' => 'Saving...',
+    'active' => 'Active',
+    'inactive' => 'Inactive',
+    'confirm_delete' => 'Are you sure you want to delete this record?',
+    'no_personnel' => 'No personnel found',
+    'add_first_personnel' => 'Add the first personnel record',
+    'language_lao' => 'ລາວ',
+    'language_english' => 'English',
+];

@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'app_name' => 'ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ',
+    'dashboard' => 'ໜ້າຫຼັກ',
+    'documents' => 'ເອກະສານ (DMS)',
+    'personnel' => 'ບຸກຄະລາກອນ',
+    'departments' => 'ພະແນກ',
+    'reports' => 'ລາຍງານ',
+    'settings' => 'ການຕັ້ງຄ່າ',
+    'new_entry' => 'ເພີ່ມໃໝ່',
+    'search_placeholder' => 'ຄົ້ນຫາຊື່ ຫຼື ພາກສ່ວນ...',
+    'add_personnel' => 'ເພີ່ມບຸກຄະລາກອນໃໝ່',
+    'all_departments' => 'ທຸກພະແນກ',
+    'back_to_list' => 'ກັບຄືນ',
+    'edit' => 'ແກ້ໄຂ',
+    'save' => 'ບັນທຶກ',
+    'update' => 'ອັບເດດ',
+    'cancel' => 'ຍົກເລີກ',
+    'saving' => 'ກຳລັງບັນທຶກ...',
+    'active' => 'ໃຊ້ງານ',
+    'inactive' => 'ບໍ່ໃຊ້ງານ',
+    'confirm_delete' => 'ທ່ານແນ່ໃຈບໍ່ທີ່ຕ້ອງການລຶບ?',
+    'no_personnel' => 'ບໍ່ພົບບຸກຄະລາກອນ',
+    'add_first_personnel' => 'ເພີ່ມບຸກຄະລາກອນຄົນທຳອິດ',
+    'language_lao' => 'ລາວ',
+    'language_english' => 'English',
+];
