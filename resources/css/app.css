@@ -1,7 +1,6 @@
 @import 'tailwindcss';
 
-/* Self-hosted fonts — avoids Google Fonts dependency on server */
-@import 'material-symbols/outlined';
+/* Self-hosted fonts — Phetsarath + Noto from npm, Material Symbols via jsDelivr CDN */
 @import '@fontsource/phetsarath/400.css';
 @import '@fontsource/phetsarath/700.css';
 @import '@fontsource/noto-sans-lao/400.css';

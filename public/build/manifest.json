@@ -115,12 +115,8 @@
     "file": "assets/phetsarath-lao-700-normal-2Q7FeVEH.woff2",
     "src": "node_modules/@fontsource/phetsarath/files/phetsarath-lao-700-normal.woff2"
   },
-  "node_modules/material-symbols/material-symbols-outlined.woff2": {
-    "file": "assets/material-symbols-outlined-DachT0Wf.woff2",
-    "src": "node_modules/material-symbols/material-symbols-outlined.woff2"
-  },
   "resources/css/app.css": {
-    "file": "assets/app-BGOcUYHR.css",
+    "file": "assets/app--3qmTe9A.css",
     "name": "app",
     "names": [
       "app.css"
@@ -128,7 +124,6 @@
     "src": "resources/css/app.css",
     "isEntry": true,
     "assets": [
-      "assets/material-symbols-outlined-DachT0Wf.woff2",
       "assets/phetsarath-lao-400-normal-cx_UrP9X.woff2",
       "assets/phetsarath-lao-400-normal-BBynC8_n.woff",
       "assets/phetsarath-lao-700-normal-2Q7FeVEH.woff2",

@@ -8,7 +8,8 @@
     <title>{{ $title ?? __('messages.app_name') }} — Buddhist EMS</title>
     <meta name="description" content="Buddhist Organization Enterprise Management System — ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ" />
 
-    <!-- Fonts served from build (self-hosted, no Google Fonts dependency) -->
+    <!-- Phetsarath + Noto: self-hosted via build | Material Symbols: jsDelivr CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles

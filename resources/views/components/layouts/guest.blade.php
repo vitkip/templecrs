@@ -7,7 +7,8 @@
 
     <title>{{ $title ?? 'ເຂົ້າສູ່ລະບົບ' }} — Buddhist EMS</title>
 
-    <!-- Fonts served from build (self-hosted, no Google Fonts dependency) -->
+    <!-- Phetsarath + Noto: self-hosted via build | Material Symbols: jsDelivr CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
