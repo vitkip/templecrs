@@ -51,14 +51,101 @@
     "file": "assets/instrument-sans-600-normal-DMks36a2.woff",
     "src": "_instrument-sans-600-normal-DMks36a2.woff"
   },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-400-normal.woff": {
+    "file": "assets/noto-sans-lao-lao-400-normal-DjxqBYpY.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-400-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-400-normal.woff2": {
+    "file": "assets/noto-sans-lao-lao-400-normal-CNKshTz3.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-400-normal.woff2"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-700-normal.woff": {
+    "file": "assets/noto-sans-lao-lao-700-normal-Vt5iUzXy.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-700-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-700-normal.woff2": {
+    "file": "assets/noto-sans-lao-lao-700-normal-nTQCf4Ae.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-lao-700-normal.woff2"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-400-normal.woff": {
+    "file": "assets/noto-sans-lao-latin-400-normal-CljpFdXI.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-400-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-400-normal.woff2": {
+    "file": "assets/noto-sans-lao-latin-400-normal-Dumpcsbb.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-400-normal.woff2"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-700-normal.woff": {
+    "file": "assets/noto-sans-lao-latin-700-normal-Czr7sIaL.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-700-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-700-normal.woff2": {
+    "file": "assets/noto-sans-lao-latin-700-normal-MiFNiZ43.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-700-normal.woff2"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-400-normal.woff": {
+    "file": "assets/noto-sans-lao-latin-ext-400-normal-DAlyoKux.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-400-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-400-normal.woff2": {
+    "file": "assets/noto-sans-lao-latin-ext-400-normal-D5FhfCQj.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-400-normal.woff2"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-700-normal.woff": {
+    "file": "assets/noto-sans-lao-latin-ext-700-normal-DCi3WdRr.woff",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-700-normal.woff"
+  },
+  "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-700-normal.woff2": {
+    "file": "assets/noto-sans-lao-latin-ext-700-normal-X548cXkI.woff2",
+    "src": "node_modules/@fontsource/noto-sans-lao/files/noto-sans-lao-latin-ext-700-normal.woff2"
+  },
+  "node_modules/@fontsource/phetsarath/files/phetsarath-lao-400-normal.woff": {
+    "file": "assets/phetsarath-lao-400-normal-BBynC8_n.woff",
+    "src": "node_modules/@fontsource/phetsarath/files/phetsarath-lao-400-normal.woff"
+  },
+  "node_modules/@fontsource/phetsarath/files/phetsarath-lao-400-normal.woff2": {
+    "file": "assets/phetsarath-lao-400-normal-cx_UrP9X.woff2",
+    "src": "node_modules/@fontsource/phetsarath/files/phetsarath-lao-400-normal.woff2"
+  },
+  "node_modules/@fontsource/phetsarath/files/phetsarath-lao-700-normal.woff": {
+    "file": "assets/phetsarath-lao-700-normal-B5y8o6rH.woff",
+    "src": "node_modules/@fontsource/phetsarath/files/phetsarath-lao-700-normal.woff"
+  },
+  "node_modules/@fontsource/phetsarath/files/phetsarath-lao-700-normal.woff2": {
+    "file": "assets/phetsarath-lao-700-normal-2Q7FeVEH.woff2",
+    "src": "node_modules/@fontsource/phetsarath/files/phetsarath-lao-700-normal.woff2"
+  },
+  "node_modules/material-symbols/material-symbols-outlined.woff2": {
+    "file": "assets/material-symbols-outlined-DachT0Wf.woff2",
+    "src": "node_modules/material-symbols/material-symbols-outlined.woff2"
+  },
   "resources/css/app.css": {
-    "file": "assets/app-Dggr09Ba.css",
+    "file": "assets/app-BGOcUYHR.css",
     "name": "app",
     "names": [
       "app.css"
     ],
     "src": "resources/css/app.css",
-    "isEntry": true
+    "isEntry": true,
+    "assets": [
+      "assets/material-symbols-outlined-DachT0Wf.woff2",
+      "assets/phetsarath-lao-400-normal-cx_UrP9X.woff2",
+      "assets/phetsarath-lao-400-normal-BBynC8_n.woff",
+      "assets/phetsarath-lao-700-normal-2Q7FeVEH.woff2",
+      "assets/phetsarath-lao-700-normal-B5y8o6rH.woff",
+      "assets/noto-sans-lao-lao-400-normal-CNKshTz3.woff2",
+      "assets/noto-sans-lao-lao-400-normal-DjxqBYpY.woff",
+      "assets/noto-sans-lao-latin-ext-400-normal-D5FhfCQj.woff2",
+      "assets/noto-sans-lao-latin-ext-400-normal-DAlyoKux.woff",
+      "assets/noto-sans-lao-latin-400-normal-Dumpcsbb.woff2",
+      "assets/noto-sans-lao-latin-400-normal-CljpFdXI.woff",
+      "assets/noto-sans-lao-lao-700-normal-nTQCf4Ae.woff2",
+      "assets/noto-sans-lao-lao-700-normal-Vt5iUzXy.woff",
+      "assets/noto-sans-lao-latin-ext-700-normal-X548cXkI.woff2",
+      "assets/noto-sans-lao-latin-ext-700-normal-DCi3WdRr.woff",
+      "assets/noto-sans-lao-latin-700-normal-MiFNiZ43.woff2",
+      "assets/noto-sans-lao-latin-700-normal-Czr7sIaL.woff"
+    ]
   },
   "resources/js/app.js": {
     "file": "assets/app-DtDZcRQr.js",

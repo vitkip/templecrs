@@ -12,5 +12,10 @@
         "laravel-vite-plugin": "^3.1",
         "tailwindcss": "^4.0.0",
         "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "@fontsource/noto-sans-lao": "^5.2.8",
+        "@fontsource/phetsarath": "^5.2.8",
+        "material-symbols": "^0.44.12"
     }
 }
