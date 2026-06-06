@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ showDeleteModal: false, deleteId: null, deleteName: '' }">
     {{-- Header --}}
     <div class="flex justify-between items-end mb-8 animate-fade-in">
         <div>
@@ -181,8 +181,8 @@
                                 <span class="material-symbols-outlined text-lg">edit</span>
                             </a>
                             @if ($user->id !== auth()->id())
-                                <button wire:click="deleteUser({{ $user->id }})"
-                                        wire:confirm="ທ່ານແນ່ໃຈບໍ່ທີ່ຕ້ອງການລຶບຜູ້ໃຊ້ {{ $user->name }}?"
+                                <button @click="deleteId = {{ $user->id }}; deleteName = {{ json_encode($user->name) }}; showDeleteModal = true"
+                                        type="button"
                                         class="p-1 hover:text-error transition-colors" title="ລຶບ">
                                     <span class="material-symbols-outlined text-lg">delete</span>
                                 </button>
@@ -213,5 +213,52 @@
                 {{ $users->links() }}
             </div>
         @endif
+    </div>
+
+    <!-- Custom Deletion Confirmation Modal -->
+    <div x-show="showDeleteModal"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         style="display: none;"
+         x-cloak>
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-outline-variant transform transition-all"
+             @click.away="showDeleteModal = false">
+            <div class="flex items-center gap-3 text-error mb-4">
+                <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error">
+                    <span class="material-symbols-outlined text-2xl">warning</span>
+                </div>
+                <h3 class="text-headline-sm font-bold text-on-surface">ຢືນຢັນການລຶບ / Confirm Delete</h3>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <p class="text-body-md text-on-surface-variant leading-relaxed">
+                    ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບຜູ້ໃຊ້ນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດກັບຄືນໄດ້.
+                    <br>
+                    <span class="text-xs opacity-75">Are you sure you want to delete this user? This action cannot be undone.</span>
+                </p>
+                <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">
+                    <p class="text-label-md text-on-surface-variant">ຊື່ຜູ້ໃຊ້ / User Name:</p>
+                    <p class="text-body-md font-bold text-primary text-left" x-text="deleteName"></p>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                        @click="showDeleteModal = false"
+                        class="px-4 py-2.5 rounded-lg border border-outline-variant text-label-md font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+                    ຍົກເລີກ / Cancel
+                </button>
+                <button type="button"
+                        @click="$wire.deleteUser(deleteId); showDeleteModal = false"
+                        class="px-4 py-2.5 rounded-lg bg-error hover:bg-error/90 text-white font-bold text-label-md transition-all shadow-md btn-press">
+                    ລຶບຂໍ້ມູນ / Confirm Delete
+                </button>
+            </div>
+        </div>
     </div>
 </div>
