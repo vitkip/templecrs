@@ -149,15 +149,31 @@ Route::get('/diagnose-upload', function () {
         $results['public_disk_write'] = 'Failed (' . $e->getMessage() . ')';
     }
 
-    // 6. Get last few lines of laravel.log
+    // 6. Get last few parsed errors from laravel.log
     $logFile = storage_path('logs/laravel.log');
     if (file_exists($logFile)) {
-        $logs = file($logFile);
-        $lastLogs = array_slice($logs, -15);
-        $results['last_laravel_logs'] = array_map('trim', $lastLogs);
+        $content = file_get_contents($logFile);
+        // Match log lines starting with timestamp [YYYY-MM-DD HH:MM:SS]
+        preg_match_all('/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\].*/', $content, $matches, PREG_OFFSET_CAPTURE);
+        if (!empty($matches[0])) {
+            $lastThreeEntries = array_slice($matches[0], -3);
+            $parsedLogs = [];
+            foreach ($lastThreeEntries as $idx => $match) {
+                $startPos = $match[1];
+                $endPos = isset($lastThreeEntries[$idx + 1]) ? $lastThreeEntries[$idx + 1][1] : strlen($content);
+                $entryText = substr($content, $startPos, $endPos - $startPos);
+                $lines = explode("\n", $entryText);
+                // Get the timestamp line and the next 8 lines (usually includes message & main trace frame)
+                $parsedLogs[] = array_map('trim', array_slice($lines, 0, 8));
+            }
+            $results['last_errors_parsed'] = $parsedLogs;
+        } else {
+            $results['last_errors_parsed'] = 'No timestamped logs found';
+        }
     } else {
-        $results['last_laravel_logs'] = 'No log file found';
+        $results['last_errors_parsed'] = 'No log file found';
     }
+
 
     return response()->json($results, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
