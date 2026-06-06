@@ -55,13 +55,17 @@ class DocumentService
 
     private function storeFile(UploadedFile $file): array
     {
+        $originalName = $file->getClientOriginalName();
+        $mimeType = $file->getMimeType();
+        $size = $file->getSize();
+
         $path = $file->store('documents', 'public');
 
         return [
             'file_path' => $path,
-            'file_name' => $file->getClientOriginalName(),
-            'file_type' => $file->getMimeType(),
-            'file_size' => $file->getSize(),
+            'file_name' => $originalName,
+            'file_type' => $mimeType,
+            'file_size' => $size,
         ];
     }
 
