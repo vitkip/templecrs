@@ -102,3 +102,63 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
         Route::get('/{id}/edit', HeroSlideForm::class)->name('edit');
     });
 });
+
+// ─── Diagnostic Route for File Upload issues ───
+Route::get('/diagnose-upload', function () {
+    $results = [];
+
+    // 1. PHP Version & fileinfo
+    $results['php_version'] = PHP_VERSION;
+    $results['fileinfo_extension_loaded'] = extension_loaded('fileinfo') ? 'Yes' : 'No';
+
+    // 2. PHP Upload configurations
+    $results['upload_max_filesize'] = ini_get('upload_max_filesize');
+    $results['post_max_size'] = ini_get('post_max_size');
+    $results['memory_limit'] = ini_get('memory_limit');
+
+    // 3. Storage and livewire-tmp paths writability
+    $storageApp = storage_path('app');
+    $results['storage_app_writable'] = is_writable($storageApp) ? 'Yes' : 'No';
+
+    $livewireTmp = storage_path('app/livewire-tmp');
+    if (!file_exists($livewireTmp)) {
+        $created = @mkdir($livewireTmp, 0755, true);
+        $results['livewire_tmp_exists'] = 'No (Tried creating: ' . ($created ? 'Success' : 'Failed') . ')';
+    } else {
+        $results['livewire_tmp_exists'] = 'Yes';
+    }
+    
+    $results['livewire_tmp_writable'] = is_writable($livewireTmp) ? 'Yes' : 'No';
+
+    // 4. Test writing to livewire-tmp
+    $testFile = $livewireTmp . '/test_write.txt';
+    $writeTest = @file_put_contents($testFile, 'test');
+    if ($writeTest !== false) {
+        $results['file_write_test'] = 'Success';
+        @unlink($testFile);
+    } else {
+        $results['file_write_test'] = 'Failed (' . (error_get_last()['message'] ?? 'Unknown error') . ')';
+    }
+
+    // 5. Test writing to public disk
+    try {
+        \Illuminate\Support\Facades\Storage::disk('public')->put('test.txt', 'test');
+        $results['public_disk_write'] = 'Success';
+        \Illuminate\Support\Facades\Storage::disk('public')->delete('test.txt');
+    } catch (\Exception $e) {
+        $results['public_disk_write'] = 'Failed (' . $e->getMessage() . ')';
+    }
+
+    // 6. Get last few lines of laravel.log
+    $logFile = storage_path('logs/laravel.log');
+    if (file_exists($logFile)) {
+        $logs = file($logFile);
+        $lastLogs = array_slice($logs, -15);
+        $results['last_laravel_logs'] = array_map('trim', $lastLogs);
+    } else {
+        $results['last_laravel_logs'] = 'No log file found';
+    }
+
+    return response()->json($results, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+});
+
