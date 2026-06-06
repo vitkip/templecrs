@@ -25,4 +25,42 @@ return [
     'add_first_personnel' => 'ເພີ່ມບຸກຄະລາກອນຄົນທຳອິດ',
     'language_lao' => 'ລາວ',
     'language_english' => 'English',
+
+    // DMS
+    'upload_document'      => 'ອັບໂຫລດເອກະສານ',
+    'document_title'       => 'ຊື່ເອກະສານ',
+    'document_number'      => 'ເລກທີ',
+    'document_category'    => 'ໝວດເອກະສານ',
+    'document_description' => 'ລາຍລະອຽດ',
+    'issued_date'          => 'ວັນທີ່ອອກ',
+    'no_documents'         => 'ບໍ່ພົບເອກະສານ',
+    'doc_cat_order'        => 'ຄຳສັ່ງ',
+    'doc_cat_announcement' => 'ແຈ້ງການ',
+    'doc_cat_certificate'  => 'ໃບຢັ້ງຢືນ',
+    'doc_cat_report'       => 'ລາຍງານ',
+    'doc_cat_project'      => 'ໂຄງການ',
+    'doc_cat_other'        => 'ອື່ນໆ',
+
+    // News
+    'news'                 => 'ຂ່າວ',
+    'news_management'      => 'ຈັດການຂ່າວ',
+    'add_news'             => 'ເພີ່ມຂ່າວໃໝ່',
+    'edit_news'            => 'ແກ້ໄຂຂ່າວ',
+    'news_title'           => 'ຫົວຂໍ້ຂ່າວ',
+    'news_excerpt'         => 'ສະຫຼຸບຫຍໍ້',
+    'news_content'         => 'ເນື້ອໃນ',
+    'cover_image'          => 'ຮູບປົກ',
+    'publish_date'         => 'ວັນທີ່ເຜີຍແຜ່',
+    'featured'             => 'ແນະນຳ',
+    'no_news'              => 'ບໍ່ພົບຂ່າວ',
+
+    // Frontend
+    'homepage'             => 'ໜ້າຫຼັກ',
+    'latest_news'          => 'ຂ່າວລ່າສຸດ',
+    'our_personnel'        => 'ບຸກຄະລາກອນ',
+    'document_library'     => 'ຄັງເອກະສານ',
+    'contact'              => 'ຕິດຕໍ່',
+    'login'                => 'ເຂົ້າສູ່ລະບົບ',
+    'admin_panel'          => 'ແຜງຄວບຄຸມ',
+    'hero_slides'          => 'ຈັດການສະໄລ້',
 ];

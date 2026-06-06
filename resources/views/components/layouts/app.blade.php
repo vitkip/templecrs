@@ -129,12 +129,44 @@
                 @endif
             </a>
 
-            {{-- Documents (coming soon) --}}
-            <div class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-secondary-fixed-dim/40 cursor-not-allowed select-none">
-                <span class="material-symbols-outlined text-xl shrink-0">description</span>
+            {{-- Documents --}}
+            @php $isDocs = request()->routeIs('documents.*'); @endphp
+            <a href="{{ route('documents.index') }}"
+               @click="sidebarOpen = false"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      {{ $isDocs ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                <span class="material-symbols-outlined text-xl shrink-0 {{ $isDocs ? 'filled' : '' }}">description</span>
                 <span class="text-label-md">{{ __('messages.documents') }}</span>
-                <span class="ml-auto text-[9px] font-bold bg-white/10 text-white/40 px-1.5 py-0.5 rounded-full uppercase">Soon</span>
-            </div>
+                @if ($isDocs)
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                @endif
+            </a>
+
+            {{-- News --}}
+            @php $isNews = request()->routeIs('news.*'); @endphp
+            <a href="{{ route('news.index') }}"
+               @click="sidebarOpen = false"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      {{ $isNews ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                <span class="material-symbols-outlined text-xl shrink-0 {{ $isNews ? 'filled' : '' }}">newspaper</span>
+                <span class="text-label-md">{{ __('messages.news') }}</span>
+                @if ($isNews)
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                @endif
+            </a>
+
+            {{-- Hero Slides --}}
+            @php $isHeroSlides = request()->routeIs('hero-slides.*'); @endphp
+            <a href="{{ route('hero-slides.index') }}"
+               @click="sidebarOpen = false"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      {{ $isHeroSlides ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                <span class="material-symbols-outlined text-xl shrink-0 {{ $isHeroSlides ? 'filled' : '' }}">photo_library</span>
+                <span class="text-label-md">{{ __('messages.hero_slides') }}</span>
+                @if ($isHeroSlides)
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                @endif
+            </a>
 
             {{-- Reports (coming soon) --}}
             <div class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-secondary-fixed-dim/40 cursor-not-allowed select-none">
@@ -293,11 +325,11 @@
         <div class="flex">
             @php
                 $bottomNav = [
-                    ['href' => route('dashboard'),       'icon' => 'dashboard',  'label' => 'ຫຼັກ',     'active' => request()->routeIs('dashboard')],
-                    ['href' => route('personnel.index'), 'icon' => 'group',      'label' => 'ບຸກຄະລາ',  'active' => request()->routeIs('personnel.*')],
-                    ['href' => route('personnel.create'),'icon' => 'person_add', 'label' => 'ເພີ່ມ',    'active' => false, 'primary' => true],
-                    ['href' => route('settings') . '?tab=departments', 'icon' => 'category', 'label' => 'ພາກສ່ວນ', 'active' => request()->routeIs('settings')],
-                    ['href' => route('settings'),        'icon' => 'settings',   'label' => 'ຕັ້ງຄ່າ',  'active' => request()->routeIs('settings') && !request()->input('tab')],
+                    ['href' => route('dashboard'),        'icon' => 'dashboard',   'label' => 'ຫຼັກ',    'active' => request()->routeIs('dashboard')],
+                    ['href' => route('personnel.index'),  'icon' => 'group',       'label' => 'ບຸກຄະລາ', 'active' => request()->routeIs('personnel.*')],
+                    ['href' => route('personnel.create'), 'icon' => 'person_add',  'label' => 'ເພີ່ມ',   'active' => false, 'primary' => true],
+                    ['href' => route('news.index'),       'icon' => 'newspaper',   'label' => 'ຂ່າວ',    'active' => request()->routeIs('news.*')],
+                    ['href' => route('documents.index'),  'icon' => 'description', 'label' => 'ເອກະສານ', 'active' => request()->routeIs('documents.*')],
                 ];
             @endphp
 

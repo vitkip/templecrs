@@ -352,3 +352,8 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--color-outline);
 }
+
+/* Alpine.js x-cloak helper */
+[x-cloak] {
+    display: none !important;
+}

@@ -25,4 +25,42 @@ return [
     'add_first_personnel' => 'Add the first personnel record',
     'language_lao' => 'ລາວ',
     'language_english' => 'English',
+
+    // DMS
+    'upload_document'      => 'Upload Document',
+    'document_title'       => 'Document Title',
+    'document_number'      => 'Reference Number',
+    'document_category'    => 'Category',
+    'document_description' => 'Description',
+    'issued_date'          => 'Issued Date',
+    'no_documents'         => 'No documents found',
+    'doc_cat_order'        => 'Order / Directive',
+    'doc_cat_announcement' => 'Announcement',
+    'doc_cat_certificate'  => 'Certificate',
+    'doc_cat_report'       => 'Report',
+    'doc_cat_project'      => 'Project Document',
+    'doc_cat_other'        => 'Other',
+
+    // News
+    'news'                 => 'News',
+    'news_management'      => 'News Management',
+    'add_news'             => 'Add News',
+    'edit_news'            => 'Edit News',
+    'news_title'           => 'Article Title',
+    'news_excerpt'         => 'Excerpt',
+    'news_content'         => 'Content',
+    'cover_image'          => 'Cover Image',
+    'publish_date'         => 'Publish Date',
+    'featured'             => 'Featured',
+    'no_news'              => 'No news found',
+
+    // Frontend
+    'homepage'             => 'Homepage',
+    'latest_news'          => 'Latest News',
+    'our_personnel'        => 'Our Personnel',
+    'document_library'     => 'Document Library',
+    'contact'              => 'Contact',
+    'login'                => 'Login',
+    'admin_panel'          => 'Admin Panel',
+    'hero_slides'          => 'Hero Slides',
 ];

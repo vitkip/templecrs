@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             PersonnelSeeder::class,
             SettingsSeeder::class,
+            NewsSeeder::class,
+            DocumentSeeder::class,
+            HeroSlideSeeder::class,
         ]);
     }
 }
