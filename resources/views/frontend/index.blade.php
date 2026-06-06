@@ -79,7 +79,7 @@
                             <div>
                                 <a href="{{ $slide->button_link }}"
                                    class="px-8 py-3.5 bg-primary text-white rounded-xl font-bold text-label-md inline-flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-lg btn-press">
-                                    {{ $slide->button_text ?: 'ອ່ານເພີ່ມເຕີມ' }}
+                                    {{ $slide->button_text ?: __('messages.read_more') }}
                                     <span class="material-symbols-outlined text-lg">arrow_forward</span>
                                 </a>
                             </div>
@@ -149,11 +149,11 @@
                 <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.3s;">
                     <a href="#news" class="px-8 py-3.5 bg-white text-primary rounded-xl font-bold text-label-md flex items-center justify-center gap-2 hover:bg-primary-fixed transition-all shadow-lg btn-press">
                         <span class="material-symbols-outlined text-lg">newspaper</span>
-                        ຂ່າວລ່າສຸດ
+                        {{ __('messages.latest_news') }}
                     </a>
                     <a href="#documents" class="px-8 py-3.5 bg-white/10 text-white border border-white/30 rounded-xl font-bold text-label-md flex items-center justify-center gap-2 hover:bg-white/20 transition-all backdrop-blur-sm btn-press">
                         <span class="material-symbols-outlined text-lg">description</span>
-                        ເອກະສານ
+                        {{ __('messages.documents_nav') }}
                     </a>
                 </div>
             </div>
@@ -176,22 +176,22 @@
         <div class="glass-card p-5 rounded-xl border border-outline-variant text-center shadow-md hover:shadow-lg transition-shadow">
             <span class="material-symbols-outlined text-3xl text-primary mb-2 block">newspaper</span>
             <p class="text-headline-md text-on-surface">{{ $news->count() }}</p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">ຂ່າວ / News</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ __('messages.news') }}</p>
         </div>
         <div class="glass-card p-5 rounded-xl border border-outline-variant text-center shadow-md hover:shadow-lg transition-shadow">
             <span class="material-symbols-outlined text-3xl text-tertiary mb-2 block">group</span>
             <p class="text-headline-md text-on-surface">{{ $personnel->count() }}</p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">ບຸກຄະລາກອນ</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ __('messages.personnel') }}</p>
         </div>
         <div class="glass-card p-5 rounded-xl border border-outline-variant text-center shadow-md hover:shadow-lg transition-shadow">
             <span class="material-symbols-outlined text-3xl text-secondary mb-2 block">description</span>
             <p class="text-headline-md text-on-surface">{{ $documents->count() }}</p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">ເອກະສານ</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ __('messages.documents_nav') }}</p>
         </div>
         <div class="glass-card p-5 rounded-xl border border-outline-variant text-center shadow-md hover:shadow-lg transition-shadow">
             <span class="material-symbols-outlined text-3xl text-green-600 mb-2 block">verified</span>
             <p class="text-headline-md text-on-surface">{{ $personnel->where('gender', 'monk')->count() }}</p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">ພຣະສົງ / Monks</p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ __('messages.stat_monks') }}</p>
         </div>
     </div>
 </section>
@@ -205,9 +205,9 @@
         <div>
             <div class="flex items-center gap-2 mb-2">
                 <span class="w-8 h-1 bg-primary rounded-full"></span>
-                <span class="text-[10px] font-bold text-primary uppercase tracking-widest">News & Activities</span>
+                <span class="text-[10px] font-bold text-primary uppercase tracking-widest">{{ __('messages.news_activities') }}</span>
             </div>
-            <h2 class="text-headline-lg text-on-surface">ຂ່າວ ແລະ ກິດຈະກຳ</h2>
+            <h2 class="text-headline-lg text-on-surface">{{ __('messages.news_activities') }}</h2>
         </div>
     </div>
 
@@ -235,7 +235,7 @@
                             <div class="absolute top-4 left-4">
                                 <span class="inline-flex items-center gap-1 px-3 py-1 bg-tertiary text-white text-[10px] font-bold rounded-full shadow-lg">
                                     <span class="material-symbols-outlined text-xs filled">star</span>
-                                    ແນະນຳ
+                                    {{ __('messages.featured') }}
                                 </span>
                             </div>
                         @endif
@@ -246,18 +246,18 @@
                                 <span class="material-symbols-outlined text-xs align-middle">calendar_today</span>
                                 {{ $featured->published_date_formatted }}
                             </p>
-                            <h3 class="text-headline-sm text-white leading-tight">{{ $featured->title_lo }}</h3>
-                            @if ($featured->title_en)
+                            <h3 class="text-headline-sm text-white leading-tight">{{ $featured->title }}</h3>
+                            @if (app()->getLocale() === 'lo' && $featured->title_en)
                                 <p class="text-sm text-white/70 mt-1">{{ $featured->title_en }}</p>
                             @endif
                         </div>
                     </div>
 
                     {{-- Excerpt --}}
-                    @if ($featured->excerpt_lo || $featured->excerpt_en)
+                    @if ($featured->excerpt)
                         <div class="p-5">
                             <p class="text-body-md text-on-surface-variant line-clamp-2">
-                                {{ $featured->excerpt_lo ?? $featured->excerpt_en }}
+                                {{ $featured->excerpt }}
                             </p>
                         </div>
                     @endif
@@ -285,7 +285,7 @@
                                     {{ $item->published_date_formatted }}
                                 </p>
                                 <h4 class="text-body-md font-bold text-on-surface line-clamp-2 group-hover:text-primary transition-colors">
-                                    {{ $item->title_lo }}
+                                    {{ $item->title }}
                                 </h4>
                             </div>
                         </div>
@@ -296,7 +296,7 @@
     @else
         <div class="text-center py-16 bg-white rounded-2xl border border-outline-variant">
             <span class="material-symbols-outlined text-6xl text-on-surface-variant/20 mb-4 block">newspaper</span>
-            <p class="text-body-lg text-on-surface-variant">ຍັງບໍ່ມີຂ່າວ / No news yet</p>
+            <p class="text-body-lg text-on-surface-variant">{{ __('messages.no_news_yet') }}</p>
         </div>
     @endif
 </section>
@@ -310,11 +310,11 @@
         <div class="text-center mb-12">
             <div class="flex items-center gap-2 justify-center mb-2">
                 <span class="w-8 h-1 bg-tertiary rounded-full"></span>
-                <span class="text-[10px] font-bold text-tertiary uppercase tracking-widest">Our People</span>
+                <span class="text-[10px] font-bold text-tertiary uppercase tracking-widest">{{ __('messages.our_people') }}</span>
                 <span class="w-8 h-1 bg-tertiary rounded-full"></span>
             </div>
-            <h2 class="text-headline-lg text-on-surface mb-2">ບຸກຄະລາກອນ</h2>
-            <p class="text-body-md text-on-surface-variant">Personnel & Leadership</p>
+            <h2 class="text-headline-lg text-on-surface mb-2">{{ __('messages.personnel') }}</h2>
+            <p class="text-body-md text-on-surface-variant">{{ __('messages.personnel_subtitle') }}</p>
         </div>
 
         @if ($personnel->count() > 0)
@@ -373,7 +373,7 @@
         @else
             <div class="text-center py-16">
                 <span class="material-symbols-outlined text-6xl text-on-surface-variant/20 mb-4 block">group</span>
-                <p class="text-body-lg text-on-surface-variant">ຍັງບໍ່ມີບຸກຄະລາກອນ / No personnel yet</p>
+                <p class="text-body-lg text-on-surface-variant">{{ __('messages.no_personnel_yet') }}</p>
             </div>
         @endif
     </div>
@@ -387,11 +387,11 @@
     <div class="text-center mb-12">
         <div class="flex items-center gap-2 justify-center mb-2">
             <span class="w-8 h-1 bg-secondary rounded-full"></span>
-            <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">Document Library</span>
+            <span class="text-[10px] font-bold text-secondary uppercase tracking-widest">{{ __('messages.document_library') }}</span>
             <span class="w-8 h-1 bg-secondary rounded-full"></span>
         </div>
-        <h2 class="text-headline-lg text-on-surface mb-2">ເອກະສານ</h2>
-        <p class="text-body-md text-on-surface-variant">Document Management System (DMS)</p>
+        <h2 class="text-headline-lg text-on-surface mb-2">{{ __('messages.documents_nav') }}</h2>
+        <p class="text-body-md text-on-surface-variant">{{ __('messages.documents_subtitle') }}</p>
     </div>
 
     @if ($documents->count() > 0)
@@ -408,9 +408,9 @@
                         <div class="flex items-start justify-between gap-3 mb-1">
                             <div class="min-w-0">
                                 <h4 class="text-body-md font-bold text-on-surface group-hover:text-primary transition-colors truncate">
-                                    {{ $doc->title_lo }}
+                                    {{ $doc->title }}
                                 </h4>
-                                @if ($doc->title_en)
+                                @if (app()->getLocale() === 'lo' && $doc->title_en)
                                     <p class="text-xs text-on-surface-variant truncate">{{ $doc->title_en }}</p>
                                 @endif
                             </div>
@@ -442,7 +442,7 @@
                     @if ($doc->file_url)
                         <a href="{{ $doc->file_url }}" target="_blank"
                            class="shrink-0 w-10 h-10 rounded-xl bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm btn-press"
-                           title="ດາວໂຫລດ">
+                           title="{{ __('messages.download') }}">
                             <span class="material-symbols-outlined text-lg">download</span>
                         </a>
                     @endif
@@ -452,7 +452,7 @@
     @else
         <div class="text-center py-16 bg-white rounded-2xl border border-outline-variant">
             <span class="material-symbols-outlined text-6xl text-on-surface-variant/20 mb-4 block">folder_off</span>
-            <p class="text-body-lg text-on-surface-variant">ຍັງບໍ່ມີເອກະສານ / No documents yet</p>
+            <p class="text-body-lg text-on-surface-variant">{{ __('messages.no_documents_yet') }}</p>
         </div>
     @endif
 </section>

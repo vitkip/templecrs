@@ -253,6 +253,14 @@
                     <span class="material-symbols-outlined text-base">search</span>
                 </button>
 
+                {{-- View Frontend --}}
+                <a href="{{ route('frontend.index') }}" target="_blank"
+                   title="ເບີ່ງໜ້າ Frontend"
+                   class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-label-sm text-on-surface-variant hover:bg-surface-container hover:text-primary border border-outline-variant transition-all">
+                    <span class="material-symbols-outlined text-base">open_in_new</span>
+                    <span class="hidden md:inline">{{ __('messages.view_frontend') }}</span>
+                </a>
+
                 {{-- Notifications --}}
                 <button class="relative p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors">
                     <span class="material-symbols-outlined text-base">notifications</span>
@@ -261,6 +269,7 @@
 
                 {{-- Language toggle --}}
                 <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"
+                   title="{{ app()->getLocale() === 'lo' ? 'Switch to English' : 'ປ່ຽນເປັນລາວ' }}"
                    class="hidden sm:flex p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors items-center">
                     <span class="material-symbols-outlined text-base">translate</span>
                 </a>

@@ -54,13 +54,41 @@ return [
     'featured'             => 'Featured',
     'no_news'              => 'No news found',
 
-    // Frontend
+    // Frontend — Nav
     'homepage'             => 'Homepage',
-    'latest_news'          => 'Latest News',
-    'our_personnel'        => 'Our Personnel',
-    'document_library'     => 'Document Library',
-    'contact'              => 'Contact',
+    'documents_nav'        => 'Documents',
+    'view_frontend'        => 'View Website',
+    'switch_to_en'         => 'Switch to English',
+    'switch_to_lo'         => 'Switch to Lao',
     'login'                => 'Login',
     'admin_panel'          => 'Admin Panel',
+
+    // Frontend — Sections
+    'latest_news'          => 'Latest News',
+    'news_activities'      => 'News & Activities',
+    'our_people'           => 'Our People',
+    'our_personnel'        => 'Our Personnel',
+    'personnel_subtitle'   => 'Personnel & Leadership',
+    'document_library'     => 'Document Library',
+    'documents_subtitle'   => 'Document Management System (DMS)',
+    'contact'              => 'Contact',
+    'quick_links'          => 'Quick Links',
+    'powered_by'           => 'Powered by Buddhist EMS',
+
+    // Frontend — Hero CTA
+    'read_more'            => 'Read More',
+
+    // Frontend — Stats
+    'stat_monks'           => 'Monks',
+
+    // Frontend — Actions
+    'download'             => 'Download',
+
+    // Frontend — Empty States
+    'no_news_yet'          => 'No news yet',
+    'no_personnel_yet'     => 'No personnel yet',
+    'no_documents_yet'     => 'No documents yet',
+
+    // Settings & Misc
     'hero_slides'          => 'Hero Slides',
 ];

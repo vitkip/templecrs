@@ -54,13 +54,41 @@ return [
     'featured'             => 'ແນະນຳ',
     'no_news'              => 'ບໍ່ພົບຂ່າວ',
 
-    // Frontend
+    // Frontend — Nav
     'homepage'             => 'ໜ້າຫຼັກ',
-    'latest_news'          => 'ຂ່າວລ່າສຸດ',
-    'our_personnel'        => 'ບຸກຄະລາກອນ',
-    'document_library'     => 'ຄັງເອກະສານ',
-    'contact'              => 'ຕິດຕໍ່',
+    'documents_nav'        => 'ເອກະສານ',
+    'view_frontend'        => 'ເບີ່ງໜ້າຫຼັກ',
+    'switch_to_en'         => 'Switch to English',
+    'switch_to_lo'         => 'ປ່ຽນເປັນ ລາວ',
     'login'                => 'ເຂົ້າສູ່ລະບົບ',
     'admin_panel'          => 'ແຜງຄວບຄຸມ',
+
+    // Frontend — Sections
+    'latest_news'          => 'ຂ່າວລ່າສຸດ',
+    'news_activities'      => 'ຂ່າວ ແລະ ກິດຈະກຳ',
+    'our_people'           => 'ບຸກຄະລາກອນຂອງພວກເຮົາ',
+    'our_personnel'        => 'ບຸກຄະລາກອນ',
+    'personnel_subtitle'   => 'ບຸກຄະລາກອນ ແລະ ຜູ້ນຳ',
+    'document_library'     => 'ຄັງເອກະສານ',
+    'documents_subtitle'   => 'ລະບົບຈັດການເອກະສານ (DMS)',
+    'contact'              => 'ຕິດຕໍ່',
+    'quick_links'          => 'ລິ້ງດ່ວນ',
+    'powered_by'           => 'Powered by Buddhist EMS',
+
+    // Frontend — Hero CTA
+    'read_more'            => 'ອ່ານເພີ່ມເຕີມ',
+
+    // Frontend — Stats
+    'stat_monks'           => 'ພຣະສົງ',
+
+    // Frontend — Actions
+    'download'             => 'ດາວໂຫລດ',
+
+    // Frontend — Empty States
+    'no_news_yet'          => 'ຍັງບໍ່ມີຂ່າວ',
+    'no_personnel_yet'     => 'ຍັງບໍ່ມີບຸກຄະລາກອນ',
+    'no_documents_yet'     => 'ຍັງບໍ່ມີເອກະສານ',
+
+    // Settings & Misc
     'hero_slides'          => 'ຈັດການສະໄລ້',
 ];

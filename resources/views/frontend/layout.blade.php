@@ -21,7 +21,29 @@
          NAVIGATION BAR
     ══════════════════════════════════════════ --}}
     <header class="sticky top-0 z-50 transition-all duration-300"
-            x-data="{ scrolled: false, mobileMenu: false }"
+            x-data="{
+                scrolled: false,
+                mobileMenu: false,
+                activeSection: 'home',
+                initObserver() {
+                    const sections = ['news', 'personnel', 'documents'];
+                    const observer = new IntersectionObserver(entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) this.activeSection = entry.target.id;
+                        });
+                    }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+                    sections.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) observer.observe(el);
+                    });
+
+                    window.addEventListener('scroll', () => {
+                        if (window.scrollY < 200) this.activeSection = 'home';
+                    }, { passive: true });
+                }
+            }"
+            x-init="initObserver()"
             @scroll.window="scrolled = window.scrollY > 40"
             :class="scrolled ? 'bg-white/95 backdrop-blur-lg shadow-md' : 'bg-transparent'">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,28 +65,47 @@
 
                 {{-- Desktop Nav --}}
                 <nav class="hidden lg:flex items-center gap-1">
-                    <a href="{{ route('frontend.index') }}" class="px-4 py-2 rounded-lg text-label-md text-primary font-bold bg-primary/5 transition-all">
-                        ໜ້າຫຼັກ
+                    @php
+                        $navActive   = 'px-4 py-2 rounded-lg text-label-md text-primary font-bold bg-primary/5 transition-all';
+                        $navInactive = 'px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all';
+                    @endphp
+
+                    <a href="{{ route('frontend.index') }}"
+                       :class="activeSection === 'home' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                        {{ __('messages.homepage') }}
                     </a>
-                    <a href="#news" class="px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all">
-                        ຂ່າວ
+                    <a href="#news"
+                       :class="activeSection === 'news' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                        {{ __('messages.news') }}
                     </a>
-                    <a href="#personnel" class="px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all">
-                        ບຸກຄະລາກອນ
+                    <a href="#personnel"
+                       :class="activeSection === 'personnel' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                        {{ __('messages.personnel') }}
                     </a>
-                    <a href="#documents" class="px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all">
-                        ເອກະສານ
+                    <a href="#documents"
+                       :class="activeSection === 'documents' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                        {{ __('messages.documents_nav') }}
                     </a>
+                    <div class="h-6 w-px bg-outline-variant mx-2"></div>
+
+                    {{-- Language Toggle --}}
+                    <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"
+                       title="{{ app()->getLocale() === 'lo' ? __('messages.switch_to_en') : __('messages.switch_to_lo') }}"
+                       class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all">
+                        <span class="material-symbols-outlined text-base">language</span>
+                        <span class="text-xs font-bold uppercase tracking-wide">{{ app()->getLocale() === 'lo' ? 'EN' : 'ລາວ' }}</span>
+                    </a>
+
                     <div class="h-6 w-px bg-outline-variant mx-2"></div>
                     @auth
                         <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-primary text-white rounded-lg text-label-md font-bold hover:bg-primary-container transition-all btn-press">
                             <span class="material-symbols-outlined text-sm align-middle mr-1">dashboard</span>
-                            Admin
+                            {{ __('messages.admin_panel') }}
                         </a>
                     @else
                         <a href="{{ route('login') }}" class="px-4 py-2 border border-primary text-primary rounded-lg text-label-md font-bold hover:bg-primary hover:text-white transition-all">
                             <span class="material-symbols-outlined text-sm align-middle mr-1">login</span>
-                            ເຂົ້າສູ່ລະບົບ
+                            {{ __('messages.login') }}
                         </a>
                     @endauth
                 </nav>
@@ -77,15 +118,29 @@
 
             {{-- Mobile Menu --}}
             <div x-show="mobileMenu" x-transition.opacity class="lg:hidden py-4 border-t border-outline-variant space-y-1" style="display:none;">
-                <a href="{{ route('frontend.index') }}" class="block px-4 py-2.5 rounded-lg text-label-md text-primary font-bold bg-primary/5">ໜ້າຫຼັກ</a>
-                <a href="#news" @click="mobileMenu = false" class="block px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5">ຂ່າວ</a>
-                <a href="#personnel" @click="mobileMenu = false" class="block px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5">ບຸກຄະລາກອນ</a>
-                <a href="#documents" @click="mobileMenu = false" class="block px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5">ເອກະສານ</a>
-                <div class="pt-2 border-t border-outline-variant">
+                @php
+                    $mobileActive   = 'block px-4 py-2.5 rounded-lg text-label-md text-primary font-bold bg-primary/5';
+                    $mobileInactive = 'block px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5';
+                @endphp
+                <a href="{{ route('frontend.index') }}"
+                   :class="activeSection === 'home' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.homepage') }}</a>
+                <a href="#news" @click="mobileMenu = false"
+                   :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.news') }}</a>
+                <a href="#personnel" @click="mobileMenu = false"
+                   :class="activeSection === 'personnel' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.personnel') }}</a>
+                <a href="#documents" @click="mobileMenu = false"
+                   :class="activeSection === 'documents' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.documents_nav') }}</a>
+                <div class="pt-2 border-t border-outline-variant space-y-1">
+                    {{-- Language Toggle --}}
+                    <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"
+                       class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5">
+                        <span class="material-symbols-outlined text-base">language</span>
+                        <span>{{ app()->getLocale() === 'lo' ? __('messages.switch_to_en') : __('messages.switch_to_lo') }}</span>
+                    </a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2.5 rounded-lg bg-primary text-white text-label-md font-bold text-center">Admin Panel</a>
+                        <a href="{{ route('dashboard') }}" class="block px-4 py-2.5 rounded-lg bg-primary text-white text-label-md font-bold text-center">{{ __('messages.admin_panel') }}</a>
                     @else
-                        <a href="{{ route('login') }}" class="block px-4 py-2.5 rounded-lg border border-primary text-primary text-label-md font-bold text-center">ເຂົ້າສູ່ລະບົບ</a>
+                        <a href="{{ route('login') }}" class="block px-4 py-2.5 rounded-lg border border-primary text-primary text-label-md font-bold text-center">{{ __('messages.login') }}</a>
                     @endauth
                 </div>
             </div>
@@ -128,24 +183,23 @@
                         </div>
                     </div>
                     <p class="text-sm text-secondary-fixed-dim/70 leading-relaxed">
-                        ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ<br>
-                        Buddhist Organization Management System
+                        {{ __('messages.app_name') }}
                     </p>
                 </div>
 
                 {{-- Quick Links --}}
                 <div>
-                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">ລິ້ງດ່ວນ</h4>
+                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">{{ __('messages.quick_links') }}</h4>
                     <ul class="space-y-2">
-                        <li><a href="#news" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">newspaper</span> ຂ່າວ ແລະ ກິດຈະກຳ</a></li>
-                        <li><a href="#personnel" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">group</span> ບຸກຄະລາກອນ</a></li>
-                        <li><a href="#documents" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">description</span> ເອກະສານ</a></li>
+                        <li><a href="#news" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">newspaper</span> {{ __('messages.news_activities') }}</a></li>
+                        <li><a href="#personnel" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">group</span> {{ __('messages.personnel') }}</a></li>
+                        <li><a href="#documents" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">description</span> {{ __('messages.documents_nav') }}</a></li>
                     </ul>
                 </div>
 
                 {{-- Contact --}}
                 <div>
-                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">ຕິດຕໍ່</h4>
+                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">{{ __('messages.contact') }}</h4>
                     <ul class="space-y-2 text-sm text-secondary-fixed-dim">
                         <li class="flex items-center gap-2">
                             <span class="material-symbols-outlined text-sm">location_on</span>
@@ -165,7 +219,7 @@
 
             <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-secondary-fixed-dim/50">
                 <p>© {{ date('Y') }} {{ $orgNameEn ?? 'Buddhist Organization' }}. ສະຫງວນລິຂະສິດ</p>
-                <p>Powered by Buddhist EMS</p>
+                <p>{{ __('messages.powered_by') }}</p>
             </div>
         </div>
     </footer>

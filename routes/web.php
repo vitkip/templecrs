@@ -32,6 +32,15 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
 });
 
+// ─── Language Switcher (public — works for both frontend and admin) ───
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['lo', 'en'])) {
+        Session::put('locale', $locale);
+        app()->setLocale($locale);
+    }
+    return redirect()->back();
+})->name('locale.switch');
+
 // ─── Auth Routes (no auth required) ───
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', LoginPage::class)->name('login');
@@ -51,15 +60,6 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     Route::get('/dashboard', function () {
         return redirect()->route('personnel.index');
     })->name('dashboard');
-
-    // ─── Language Switcher ───
-    Route::get('/locale/{locale}', function (string $locale) {
-        if (in_array($locale, ['lo', 'en'])) {
-            Session::put('locale', $locale);
-            app()->setLocale($locale);
-        }
-        return redirect()->back();
-    })->name('locale.switch');
 
     // ─── Personnel Routes ───
     Route::prefix('personnel')->name('personnel.')->group(function () {
