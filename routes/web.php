@@ -30,6 +30,19 @@ use Illuminate\Support\Facades\Session;
 // ─── Public Frontend ───
 Route::middleware([SetLocale::class])->group(function () {
     Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
+    Route::get('/articles', [FrontendController::class, 'newsIndex'])->name('frontend.news');
+    Route::get('/article/{id}', [FrontendController::class, 'show'])->name('frontend.news.show');
+    Route::get('/committee', [FrontendController::class, 'personnelIndex'])->name('frontend.personnel');
+    Route::get('/library', [FrontendController::class, 'documentsIndex'])->name('frontend.documents');
+    Route::get('/library/{id}/download', function (int $id) {
+        $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
+        abort_if(!$document->file_path, 404);
+        abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+        return \Illuminate\Support\Facades\Storage::disk('local')->download(
+            $document->file_path,
+            $document->file_name
+        );
+    })->name('frontend.document.download');
 });
 
 // ─── Language Switcher (public — works for both frontend and admin) ───

@@ -83,11 +83,46 @@ return [
 
     // Frontend — Actions
     'download' => 'ດາວໂຫລດ',
+    'view_all_personnel' => 'ເບິ່ງທັງໝົດ',
 
     // Frontend — Empty States
     'no_news_yet' => 'ຍັງບໍ່ມີຂ່າວ',
     'no_personnel_yet' => 'ຍັງບໍ່ມີບຸກຄະລາກອນ',
     'no_documents_yet' => 'ຍັງບໍ່ມີເອກະສານ',
+
+    // Personnel Directory Page
+    'personnel_directory'   => 'ລາຍຊື່ຄະນະກັມມາທິການ',
+    'personnel_dir_subtitle'=> 'ຂໍ້ມູນຄະນະກັມມາທິການ ແລະ ຜູ້ນຳທາງສາສະໜາທັງໝົດ',
+    'no_results_found'      => 'ບໍ່ພົບຜົນການຄົ້ນຫາ',
+    'clear_filters'         => 'ລ້າງການຄັດເລືອກ',
+    'date_of_ordination'    => 'ວັນທີ່ບວດ',
+    'pansa_label'           => 'ພັນສາ',
+    'education'             => 'ການສຶກສາ',
+    'current_temple'        => 'ວັດປັດຈຸບັນ',
+    'results_count'         => 'ທ່ານ',
+
+    // Document Library Page
+    'document_library_title'    => 'ຄັງເອກະສານທັງໝົດ',
+    'document_library_subtitle' => 'ລາຍການເອກະສານ ແລະ ໄຟລ໌ທາງການທັງໝົດ',
+    'search_documents'          => 'ຄົ້ນຫາຊື່ ຫຼື ເລກທີ...',
+    'all_categories'            => 'ທຸກໝວດ',
+    'doc_results_count'         => 'ສະບັບ',
+    'view_all_documents'        => 'ເບິ່ງທັງໝົດ',
+    'doc_number_label'          => 'ເລກທີ',
+    'issued_date_label'         => 'ວັນທີ່ອອກ',
+    'file_size_label'           => 'ຂະໜາດ',
+    'no_doc_results_found'      => 'ບໍ່ພົບເອກະສານ',
+    'no_doc_results_hint'       => 'ລອງປ່ຽນຄຳຄົ້ນຫາ ຫຼື ລ້າງການຄັດເລືອກ',
+
+    // News Listing Page
+    'news_listing_title'    => 'ຂ່າວ ແລະ ກິດຈະກຳທັງໝົດ',
+    'news_listing_subtitle' => 'ຂໍ້ມູນຂ່າວສານ ແລະ ກິດຈະກຳຂອງອົງການທັງໝົດ',
+    'search_news'           => 'ຄົ້ນຫາຫົວຂໍ້ຂ່າວ...',
+    'featured_only'         => 'ຂ່າວແນະນຳ',
+    'all_news'              => 'ຂ່າວທັງໝົດ',
+    'news_results_count'    => 'ລາຍການ',
+    'no_news_results_found' => 'ບໍ່ພົບຂ່າວ',
+    'no_news_results_hint'  => 'ລອງປ່ຽນຄຳຄົ້ນຫາ ຫຼື ລ້າງການຄັດເລືອກ',
 
     // Settings & Misc
     'hero_slides' => 'ຈັດການສະໄລ້',

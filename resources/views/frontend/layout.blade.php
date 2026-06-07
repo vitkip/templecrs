@@ -66,24 +66,50 @@
                 {{-- Desktop Nav --}}
                 <nav class="hidden lg:flex items-center gap-1">
                     @php
-                        $navActive   = 'px-4 py-2 rounded-lg text-label-md text-primary font-bold bg-primary/5 transition-all';
-                        $navInactive = 'px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all';
+                        $navActive       = 'px-4 py-2 rounded-lg text-label-md text-primary font-bold bg-primary/5 transition-all';
+                        $navInactive     = 'px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all';
+                        $isHomePage      = request()->routeIs('frontend.index');
+                        $isNewsPage      = request()->routeIs('frontend.news', 'frontend.news.show');
+                        $isPersonnelPage = request()->routeIs('frontend.personnel');
+                        $isDocumentsPage = request()->routeIs('frontend.documents');
                     @endphp
 
                     <a href="{{ route('frontend.index') }}"
-                       :class="activeSection === 'home' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                       @if($isHomePage)
+                           :class="activeSection === 'home' ? '{{ $navActive }}' : '{{ $navInactive }}'"
+                       @else
+                           class="{{ $navInactive }}"
+                       @endif>
                         {{ __('messages.homepage') }}
                     </a>
-                    <a href="#news"
-                       :class="activeSection === 'news' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                    <a href="{{ route('frontend.news') }}"
+                       @if($isNewsPage)
+                           class="{{ $navActive }}"
+                       @elseif($isHomePage)
+                           :class="activeSection === 'news' ? '{{ $navActive }}' : '{{ $navInactive }}'"
+                       @else
+                           class="{{ $navInactive }}"
+                       @endif>
                         {{ __('messages.news') }}
                     </a>
-                    <a href="#personnel"
-                       :class="activeSection === 'personnel' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                    <a href="{{ route('frontend.personnel') }}"
+                       @if($isPersonnelPage)
+                           class="{{ $navActive }}"
+                       @elseif($isHomePage)
+                           :class="activeSection === 'personnel' ? '{{ $navActive }}' : '{{ $navInactive }}'"
+                       @else
+                           class="{{ $navInactive }}"
+                       @endif>
                         {{ __('messages.personnel') }}
                     </a>
-                    <a href="#documents"
-                       :class="activeSection === 'documents' ? '{{ $navActive }}' : '{{ $navInactive }}'">
+                    <a href="{{ route('frontend.documents') }}"
+                       @if($isDocumentsPage)
+                           class="{{ $navActive }}"
+                       @elseif($isHomePage)
+                           :class="activeSection === 'documents' ? '{{ $navActive }}' : '{{ $navInactive }}'"
+                       @else
+                           class="{{ $navInactive }}"
+                       @endif>
                         {{ __('messages.documents_nav') }}
                     </a>
                     <div class="h-6 w-px bg-outline-variant mx-2"></div>
@@ -123,13 +149,23 @@
                     $mobileInactive = 'block px-4 py-2.5 rounded-lg text-label-md text-on-surface-variant hover:bg-primary/5';
                 @endphp
                 <a href="{{ route('frontend.index') }}"
-                   :class="activeSection === 'home' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.homepage') }}</a>
-                <a href="#news" @click="mobileMenu = false"
-                   :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.news') }}</a>
-                <a href="#personnel" @click="mobileMenu = false"
-                   :class="activeSection === 'personnel' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.personnel') }}</a>
-                <a href="#documents" @click="mobileMenu = false"
-                   :class="activeSection === 'documents' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'">{{ __('messages.documents_nav') }}</a>
+                   @if($isHomePage)
+                       :class="activeSection === 'home' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
+                   @else
+                       class="{{ $mobileInactive }}"
+                   @endif>{{ __('messages.homepage') }}</a>
+                <a href="{{ route('frontend.news') }}" @click="mobileMenu = false"
+                   @if($isNewsPage) class="{{ $mobileActive }}"
+                   @elseif($isHomePage) :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
+                   @else class="{{ $mobileInactive }}" @endif>{{ __('messages.news') }}</a>
+                <a href="{{ route('frontend.personnel') }}" @click="mobileMenu = false"
+                   @if($isPersonnelPage) class="{{ $mobileActive }}"
+                   @elseif($isHomePage) :class="activeSection === 'personnel' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
+                   @else class="{{ $mobileInactive }}" @endif>{{ __('messages.personnel') }}</a>
+                <a href="{{ route('frontend.documents') }}" @click="mobileMenu = false"
+                   @if($isDocumentsPage) class="{{ $mobileActive }}"
+                   @elseif($isHomePage) :class="activeSection === 'documents' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
+                   @else class="{{ $mobileInactive }}" @endif>{{ __('messages.documents_nav') }}</a>
                 <div class="pt-2 border-t border-outline-variant space-y-1">
                     {{-- Language Toggle --}}
                     <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"
@@ -157,69 +193,144 @@
     {{-- ══════════════════════════════════════════
          FOOTER
     ══════════════════════════════════════════ --}}
-    <footer class="bg-secondary text-white mt-16">
+    <footer class="relative text-white mt-16 overflow-hidden" style="background: linear-gradient(to bottom, #1e2d3d 0%, #141c27 55%, #0e1520 100%);">
+
+        {{-- Subtle gold dot-matrix texture --}}
+        <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(circle, rgba(212,175,55,0.055) 1px, transparent 1px); background-size: 30px 30px;"></div>
+
         {{-- Top Wave --}}
         <div class="relative -mt-16">
-            <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" class="w-full">
-                <path fill="#545f73" d="M0,40L48,36.7C96,33,192,27,288,26.7C384,27,480,33,576,43.3C672,53,768,67,864,66.7C960,67,1056,53,1152,43.3C1248,33,1344,27,1392,23.3L1440,20L1440,80L1392,80C1344,80,1248,80,1152,80C1056,80,960,80,864,80C768,80,672,80,576,80C480,80,384,80,288,80C192,80,96,80,48,80L0,80Z"/>
+            <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" class="w-full block" preserveAspectRatio="none" style="height:80px;">
+                <path fill="#1e2d3d" d="M0,44L60,40C120,36,240,28,360,29.3C480,31,600,41,720,46.7C840,52,960,50,1080,44C1200,38,1320,29,1380,25.3L1440,22L1440,80L1380,80C1320,80,1200,80,1080,80C960,80,840,80,720,80C600,80,480,80,360,80C240,80,120,80,60,80L0,80Z"/>
             </svg>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- Sacred gold divider --}}
+            <div class="flex justify-center -mt-1 mb-10">
+                <div class="flex items-center gap-4">
+                    <div class="h-px w-24 bg-gradient-to-r from-transparent to-[#D4AF37]"></div>
+                    <span class="material-symbols-outlined text-[#D4AF37]" style="font-size:20px; filter:drop-shadow(0 0 6px rgba(212,175,55,0.6));">spa</span>
+                    <div class="h-px w-24 bg-gradient-to-l from-transparent to-[#D4AF37]"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14 pb-12">
+
                 {{-- Org Info --}}
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
-                            @if ($orgLogo ?? false)
-                                <img src="{{ Storage::url($orgLogo) }}" alt="Logo" loading="lazy" class="w-full h-full object-cover rounded-full" />
-                            @else
-                                <span class="material-symbols-outlined text-white text-2xl">account_balance</span>
-                            @endif
+                <div class="space-y-4">
+                    <div class="flex items-center gap-4">
+                        <div class="relative w-14 h-14 flex-shrink-0">
+                            <div class="absolute inset-0 rounded-full border border-[#D4AF37]/25 scale-110"></div>
+                            <div class="relative w-full h-full rounded-full border-2 border-[#D4AF37]/50 bg-white/5 flex items-center justify-center overflow-hidden" style="box-shadow: 0 0 20px rgba(212,175,55,0.15);">
+                                @if ($orgLogo ?? false)
+                                    <img src="{{ Storage::url($orgLogo) }}" alt="Logo" loading="lazy" class="w-full h-full object-cover rounded-full" />
+                                @else
+                                    <span class="material-symbols-outlined text-[#D4AF37]" style="font-size:26px;">account_balance</span>
+                                @endif
+                            </div>
                         </div>
                         <div>
-                            <h3 class="text-headline-sm text-white">{{ $orgName ?? 'ອົງການພຸດທະສາສະໜາ' }}</h3>
-                            <p class="text-xs text-secondary-fixed-dim opacity-70">{{ $orgNameEn ?? '' }}</p>
+                            <h3 class="font-semibold text-white leading-tight" style="font-size:15px;">{{ $orgName ?? 'ອົງການພຸດທະສາສະໜາ' }}</h3>
+                            <p class="text-[#D4AF37]/60 mt-1 tracking-wide" style="font-size:11px;">{{ $orgNameEn ?? '' }}</p>
                         </div>
                     </div>
-                    <p class="text-sm text-secondary-fixed-dim/70 leading-relaxed">
+                    <p class="text-white/45 leading-relaxed" style="font-size:13px;">
                         {{ __('messages.app_name') }}
                     </p>
+                    <div class="w-10 h-0.5 rounded-full" style="background: linear-gradient(to right, #D4AF37, transparent);"></div>
                 </div>
 
                 {{-- Quick Links --}}
                 <div>
-                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">{{ __('messages.quick_links') }}</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#news" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">newspaper</span> {{ __('messages.news_activities') }}</a></li>
-                        <li><a href="#personnel" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">group</span> {{ __('messages.personnel') }}</a></li>
-                        <li><a href="#documents" class="text-sm text-secondary-fixed-dim hover:text-white transition-colors flex items-center gap-2"><span class="material-symbols-outlined text-sm">description</span> {{ __('messages.documents_nav') }}</a></li>
+                    <h4 class="font-bold text-[#D4AF37] uppercase mb-5 flex items-center gap-2.5" style="font-size:11px; letter-spacing:0.18em;">
+                        <span class="h-px w-5 rounded-full bg-[#D4AF37] inline-block"></span>
+                        {{ __('messages.quick_links') }}
+                    </h4>
+                    <ul class="space-y-2.5">
+                        <li>
+                            <a href="{{ route('frontend.news') }}"
+                               class="group flex items-center gap-3 text-white/50 hover:text-[#D4AF37] transition-colors duration-200"
+                               style="font-size:13px;">
+                                <span class="w-6 h-6 rounded border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 transition-all duration-200">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">newspaper</span>
+                                </span>
+                                <span class="relative">
+                                    {{ __('messages.news_activities') }}
+                                    <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('frontend.personnel') }}"
+                               class="group flex items-center gap-3 text-white/50 hover:text-[#D4AF37] transition-colors duration-200"
+                               style="font-size:13px;">
+                                <span class="w-6 h-6 rounded border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 transition-all duration-200">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">group</span>
+                                </span>
+                                <span class="relative">
+                                    {{ __('messages.personnel') }}
+                                    <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('frontend.documents') }}"
+                               class="group flex items-center gap-3 text-white/50 hover:text-[#D4AF37] transition-colors duration-200"
+                               style="font-size:13px;">
+                                <span class="w-6 h-6 rounded border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 transition-all duration-200">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">description</span>
+                                </span>
+                                <span class="relative">
+                                    {{ __('messages.documents_nav') }}
+                                    <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
                 {{-- Contact --}}
                 <div>
-                    <h4 class="text-label-md text-tertiary-fixed-dim uppercase tracking-widest mb-4">{{ __('messages.contact') }}</h4>
-                    <ul class="space-y-2 text-sm text-secondary-fixed-dim">
-                        <li class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">location_on</span>
-                            {{ \App\Models\Setting::get('org_address', 'ນະຄອນຫຼວງວຽງຈັນ, ສ.ປ.ປ ລາວ') }}
+                    <h4 class="font-bold text-[#D4AF37] uppercase mb-5 flex items-center gap-2.5" style="font-size:11px; letter-spacing:0.18em;">
+                        <span class="h-px w-5 rounded-full bg-[#D4AF37] inline-block"></span>
+                        {{ __('messages.contact') }}
+                    </h4>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3 text-white/50" style="font-size:13px;">
+                            <span class="w-7 h-7 rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span class="material-symbols-outlined text-[#D4AF37]" style="font-size:14px;">location_on</span>
+                            </span>
+                            <span class="leading-relaxed pt-0.5">{{ \App\Models\Setting::get('org_address', 'ນະຄອນຫຼວງວຽງຈັນ, ສ.ປ.ປ ລາວ') }}</span>
                         </li>
-                        <li class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">phone</span>
+                        <li class="flex items-center gap-3 text-white/50" style="font-size:13px;">
+                            <span class="w-7 h-7 rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-[#D4AF37]" style="font-size:14px;">phone</span>
+                            </span>
                             {{ \App\Models\Setting::get('org_phone', '021-XXX-XXX') }}
                         </li>
-                        <li class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">mail</span>
+                        <li class="flex items-center gap-3 text-white/50" style="font-size:13px;">
+                            <span class="w-7 h-7 rounded-lg border border-[#D4AF37]/20 bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-[#D4AF37]" style="font-size:14px;">mail</span>
+                            </span>
                             {{ \App\Models\Setting::get('org_email', 'info@example.org') }}
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <div class="border-t border-white/10 mt-8 pt-6 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-secondary-fixed-dim/50">
-                <p>© {{ date('Y') }} {{ $orgNameEn ?? 'Buddhist Organization' }}. ສະຫງວນລິຂະສິດ</p>
-                <p>{{ __('messages.powered_by') }}</p>
+            {{-- Bottom bar --}}
+            <div class="border-t pt-5 pb-7 flex flex-col sm:flex-row justify-between items-center gap-3" style="border-color: rgba(212,175,55,0.15);">
+                <p class="text-white/30" style="font-size:11px;">
+                    &copy; {{ date('Y') }}
+                    <span class="text-[#D4AF37]/50">{{ $orgNameEn ?? 'Buddhist Organization' }}</span>.
+                    ສະຫງວນລິຂະສິດ
+                </p>
+                <p class="text-white/30 flex items-center gap-1.5" style="font-size:11px;">
+                    <span class="material-symbols-outlined text-[#D4AF37]/40" style="font-size:12px;">bolt</span>
+                    {{ __('messages.powered_by') }}
+                </p>
             </div>
         </div>
     </footer>

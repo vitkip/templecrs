@@ -83,11 +83,46 @@ return [
 
     // Frontend — Actions
     'download'             => 'Download',
+    'view_all_personnel'   => 'View All',
 
     // Frontend — Empty States
     'no_news_yet'          => 'No news yet',
     'no_personnel_yet'     => 'No personnel yet',
     'no_documents_yet'     => 'No documents yet',
+
+    // Personnel Directory Page
+    'personnel_directory'   => 'Personnel Directory',
+    'personnel_dir_subtitle'=> 'Full list of personnel and religious leadership',
+    'no_results_found'      => 'No results found',
+    'clear_filters'         => 'Clear Filters',
+    'date_of_ordination'    => 'Ordination Date',
+    'pansa_label'           => 'Pansa',
+    'education'             => 'Education',
+    'current_temple'        => 'Current Temple',
+    'results_count'         => 'people',
+
+    // Document Library Page
+    'document_library_title'    => 'Document Library',
+    'document_library_subtitle' => 'Full list of official documents and files',
+    'search_documents'          => 'Search title or reference number...',
+    'all_categories'            => 'All Categories',
+    'doc_results_count'         => 'documents',
+    'view_all_documents'        => 'View All',
+    'doc_number_label'          => 'Ref. No.',
+    'issued_date_label'         => 'Issued',
+    'file_size_label'           => 'Size',
+    'no_doc_results_found'      => 'No documents found',
+    'no_doc_results_hint'       => 'Try adjusting your search or clearing filters',
+
+    // News Listing Page
+    'news_listing_title'    => 'All News & Activities',
+    'news_listing_subtitle' => 'Full list of news and activities from the organization',
+    'search_news'           => 'Search news title...',
+    'featured_only'         => 'Featured',
+    'all_news'              => 'All News',
+    'news_results_count'    => 'articles',
+    'no_news_results_found' => 'No news found',
+    'no_news_results_hint'  => 'Try adjusting your search or clearing filters',
 
     // Settings & Misc
     'hero_slides'          => 'Hero Slides',
