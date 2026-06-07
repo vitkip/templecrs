@@ -2,7 +2,7 @@
     <!-- Page Header -->
     <div class="flex justify-between items-end mb-8 animate-fade-in">
         <div>
-            <h2 class="text-headline-lg text-on-surface mb-1">ລາຍຊື່ບຸກຄະລາກອນ</h2>
+            <h2 class="text-headline-lg text-on-surface mb-1">ລາຍຊື່ຄະນະກັມມາທິການ</h2>
             <p class="text-body-md text-on-surface-variant">Personnel Management Directory</p>
         </div>
         <a href="{{ route('personnel.create') }}"
@@ -268,12 +268,12 @@
             
             <div class="space-y-3 mb-6">
                 <p class="text-body-md text-on-surface-variant leading-relaxed">
-                    ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບຂໍ້ມູນບຸກຄະລາກອນນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດກັບຄືນໄດ້.
+                    ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບຂໍ້ມູນຄະນະກັມມາທິການນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດກັບຄືນໄດ້.
                     <br>
                     <span class="text-xs opacity-75">Are you sure you want to delete this personnel record? This action cannot be undone.</span>
                 </p>
                 <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">
-                    <p class="text-label-md text-on-surface-variant">ບຸກຄະລາກອນ / Personnel:</p>
+                    <p class="text-label-md text-on-surface-variant">ຄະນະກັມມາທິການ / Personnel:</p>
                     <p class="text-body-md font-bold text-primary text-left" x-text="deleteName"></p>
                 </div>
             </div>

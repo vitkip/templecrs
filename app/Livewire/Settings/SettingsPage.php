@@ -220,7 +220,7 @@ class SettingsPage extends Component
         $dept = Department::withTrashed(false)->findOrFail($id);
 
         if ($dept->personnel()->count() > 0) {
-            session()->flash('settings_error', 'ບໍ່ສາມາດລຶບໄດ້ — ພາກສ່ວນນີ້ຍັງມີບຸກຄະລາກອນຢູ່ / Cannot delete — department still has personnel.');
+            session()->flash('settings_error', 'ບໍ່ສາມາດລຶບໄດ້ — ພາກສ່ວນນີ້ຍັງມີຄະນະກັມມາທິການຢູ່ / Cannot delete — department still has personnel.');
             return;
         }
 

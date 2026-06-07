@@ -13,7 +13,7 @@ class HeroSlideSeeder extends Seeder
             [
                 'title_lo' => 'ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ',
                 'title_en' => 'Welcome to the Buddhist Organization Management System',
-                'subtitle_lo' => 'ລະບົບຂໍ້ມູນຂ່າວສານ, ບຸກຄະລາກອນສົງ ແລະ ຄັງເອກະສານທາງການສຶກສາສົງ ທົ່ວປະເທດ',
+                'subtitle_lo' => 'ລະບົບຂໍ້ມູນຂ່າວສານ, ຄະນະກັມມາທິການສົງ ແລະ ຄັງເອກະສານທາງການສຶກສາສົງ ທົ່ວປະເທດ',
                 'subtitle_en' => 'Information portal, Sangha personnel records, and digital document library nationwide',
                 'image_path' => 'hero-slides/temple1.png',
                 'button_link' => '#news',

@@ -21,7 +21,7 @@
     <div class="flex justify-between items-center mb-8 animate-fade-in">
         <div>
             <h2 class="text-headline-lg text-on-surface mb-1">
-                {{ $editMode ? 'ແກ້ໄຂບຸກຄະລາກອນ' : 'ເພີ່ມບຸກຄະລາກອນໃໝ່' }}
+                {{ $editMode ? 'ແກ້ໄຂຄະນະກັມມາທິການ' : 'ເພີ່ມຄະນະກັມມາທິການໃໝ່' }}
             </h2>
             <p class="text-body-md text-on-surface-variant">
                 {{ $editMode ? 'Edit Personnel Record' : 'Add New Personnel' }}

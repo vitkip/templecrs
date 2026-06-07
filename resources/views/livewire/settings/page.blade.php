@@ -350,7 +350,7 @@
                         <th class="p-3 w-10">#</th>
                         <th class="p-3">ຊື່ / Name</th>
                         <th class="p-3">ຫົວໜ້າ / Head</th>
-                        <th class="p-3 text-center">ບຸກຄະລາກອນ</th>
+                        <th class="p-3 text-center">ຄະນະກັມມາທິການ</th>
                         <th class="p-3 text-center">ໃຊ້ງານ</th>
                         <th class="p-3 text-right">Actions</th>
                     </tr>
