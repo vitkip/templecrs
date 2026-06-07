@@ -28,7 +28,7 @@
             <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm text-center animate-fade-in">
                 <div class="w-32 h-32 rounded-full mx-auto mb-4 overflow-hidden border-4 border-outline-variant/30">
                     @if ($personnel->photo_url)
-                        <img src="{{ Storage::url($personnel->photo_url) }}" alt="{{ $personnel->name_lo }}" class="w-full h-full object-cover" />
+                        <img src="{{ Storage::url($personnel->photo_url) }}" alt="{{ $personnel->name_lo }}" loading="lazy" class="w-full h-full object-cover" />
                     @else
                         <div class="w-full h-full bg-surface-container-low flex items-center justify-center">
                             <span class="material-symbols-outlined text-5xl text-on-surface-variant/30">person</span>

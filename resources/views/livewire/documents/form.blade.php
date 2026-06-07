@@ -135,7 +135,7 @@
                         <p class="text-body-md font-bold text-on-surface">{{ $existing_file_name }}</p>
                         <p class="text-xs text-on-surface-variant">ໄຟລ໌ປັດຈຸບັນ — ເລືອກໄຟລ໌ໃໝ່ເພື່ອປ່ຽນ</p>
                     </div>
-                    <a href="{{ Storage::url($existing_file_path) }}" target="_blank"
+                    <a href="{{ route('documents.download', $documentId) }}" target="_blank"
                        class="text-primary hover:text-primary-container flex items-center gap-1 text-label-md">
                         <span class="material-symbols-outlined text-base">download</span>
                         ດາວໂຫລດ

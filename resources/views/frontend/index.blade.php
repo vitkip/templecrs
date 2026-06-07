@@ -222,6 +222,7 @@
                     <div class="relative h-64 lg:h-80 overflow-hidden">
                         @if ($featured->cover_image_url)
                             <img src="{{ $featured->cover_image_url }}" alt="{{ $featured->title_lo }}"
+                                 loading="lazy"
                                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         @else
                             <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
@@ -272,7 +273,7 @@
                             {{-- Thumbnail --}}
                             <div class="w-20 h-16 rounded-lg overflow-hidden shrink-0">
                                 @if ($item->cover_image_url)
-                                    <img src="{{ $item->cover_image_url }}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    <img src="{{ $item->cover_image_url }}" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                 @else
                                     <div class="w-full h-full bg-surface-container flex items-center justify-center">
                                         <span class="material-symbols-outlined text-on-surface-variant/30">image</span>
@@ -325,6 +326,7 @@
                         <div class="relative h-48 overflow-hidden">
                             @if ($person->photo_url)
                                 <img src="{{ Storage::url($person->photo_url) }}" alt="{{ $person->display_name }}"
+                                     loading="lazy"
                                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             @else
                                 <div class="w-full h-full bg-gradient-to-br from-surface-container to-surface-container-high flex items-center justify-center">

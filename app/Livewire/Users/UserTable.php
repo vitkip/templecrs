@@ -21,6 +21,11 @@ class UserTable extends Component
     public string $sortBy  = 'created_at';
     public string $sortDir = 'desc';
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+    }
+
     public function updatedSearch(): void    { $this->resetPage(); }
     public function updatedRoleFilter(): void  { $this->resetPage(); }
     public function updatedStatusFilter(): void { $this->resetPage(); }
@@ -39,6 +44,8 @@ class UserTable extends Component
 
     public function toggleActive(int $id): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $user = User::findOrFail($id);
 
         // Prevent locking self out
@@ -52,6 +59,8 @@ class UserTable extends Component
 
     public function deleteUser(int $id): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $user = User::findOrFail($id);
 
         if ($user->id === auth()->id()) {
@@ -59,10 +68,16 @@ class UserTable extends Component
             return;
         }
 
-        // Keep at least one super_admin
-        if ($user->isSuperAdmin() && User::where('role', 'super_admin')->where('is_active', true)->count() <= 1) {
-            session()->flash('error', 'ຕ້ອງມີ Super Admin ຢ່າງໜ້ອຍ 1 ຄົນ');
-            return;
+        // Keep at least one active super_admin — only guard when deleting an active one
+        if ($user->isSuperAdmin() && $user->is_active) {
+            $remaining = User::where('role', 'super_admin')
+                             ->where('is_active', true)
+                             ->where('id', '!=', $id)
+                             ->count();
+            if ($remaining === 0) {
+                session()->flash('error', 'ຕ້ອງມີ Super Admin ໃຊ້ງານຢ່າງໜ້ອຍ 1 ຄົນ');
+                return;
+            }
         }
 
         $user->delete();

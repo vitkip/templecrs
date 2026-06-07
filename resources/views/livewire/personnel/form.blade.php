@@ -47,7 +47,7 @@
             <div class="flex gap-4">
                 <!-- Monk -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.live="gender" value="monk" class="hidden peer" />
+                    <input type="radio" wire:model.blur="gender" value="monk" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-monk peer-checked:bg-amber-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-monk/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"
@@ -59,7 +59,7 @@
 
                 <!-- Male -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.live="gender" value="male" class="hidden peer" />
+                    <input type="radio" wire:model.blur="gender" value="male" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-male peer-checked:bg-slate-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-male/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"
@@ -71,7 +71,7 @@
 
                 <!-- Female -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.live="gender" value="female" class="hidden peer" />
+                    <input type="radio" wire:model.blur="gender" value="female" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-female peer-checked:bg-violet-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-female/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"
@@ -99,7 +99,7 @@
                     <label class="form-label">
                         ຄຳນຳໜ້າ <span class="text-xs text-on-surface-variant">(ລາວ)</span>
                     </label>
-                    <input type="text" wire:model.live="title_lo" @focus="showTitleDropdownLo = true"
+                    <input type="text" wire:model.blur="title_lo" @focus="showTitleDropdownLo = true"
                         @click.away="showTitleDropdownLo = false" placeholder="ພຣະ / ທ່ານ / ທ່ານນາງ ..."
                         class="form-input" />
                     <!-- Title suggestions dropdown -->
@@ -116,7 +116,7 @@
                     <label class="form-label">
                         Honorific <span class="text-xs text-on-surface-variant">(English)</span>
                     </label>
-                    <input type="text" wire:model.live="title_en" @focus="showTitleDropdownEn = true"
+                    <input type="text" wire:model.blur="title_en" @focus="showTitleDropdownEn = true"
                         @click.away="showTitleDropdownEn = false" placeholder="Phra / Mr. / Mrs. ..."
                         class="form-input" />
                     <div x-show="showTitleDropdownEn && suggestedTitlesEn.length > 0" x-transition
@@ -134,12 +134,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div class="bilingual-required">
                     <label class="form-label">ຊື່ <span class="text-xs text-on-surface-variant">(ລາວ)</span></label>
-                    <input type="text" wire:model.live="first_name_lo" placeholder="ຊື່..." class="form-input" />
+                    <input type="text" wire:model.blur="first_name_lo" placeholder="ຊື່..." class="form-input" />
                 </div>
                 <div>
                     <label class="form-label">First Name <span
                             class="text-xs text-on-surface-variant">(English)</span></label>
-                    <input type="text" wire:model.live="first_name_en" placeholder="First name..." class="form-input" />
+                    <input type="text" wire:model.blur="first_name_en" placeholder="First name..." class="form-input" />
                 </div>
             </div>
 
@@ -148,12 +148,12 @@
                 <div class="bilingual-required">
                     <label class="form-label">ນາມສະກຸນ <span
                             class="text-xs text-on-surface-variant">(ລາວ)</span></label>
-                    <input type="text" wire:model.live="last_name_lo" placeholder="ນາມສະກຸນ..." class="form-input" />
+                    <input type="text" wire:model.blur="last_name_lo" placeholder="ນາມສະກຸນ..." class="form-input" />
                 </div>
                 <div>
                     <label class="form-label">Last Name <span
                             class="text-xs text-on-surface-variant">(English)</span></label>
-                    <input type="text" wire:model.live="last_name_en" placeholder="Last name..." class="form-input" />
+                    <input type="text" wire:model.blur="last_name_en" placeholder="Last name..." class="form-input" />
                 </div>
             </div>
 
@@ -258,7 +258,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="form-label">ວັນທີ່ອຸປະສົມ (Ordination Date)</label>
-                    <input type="date" wire:model.live="date_of_ordination" class="form-input" />
+                    <input type="date" wire:model.blur="date_of_ordination" class="form-input" />
                     @if ($date_of_ordination)
                         @php
                             $ord = \Carbon\Carbon::parse($date_of_ordination);

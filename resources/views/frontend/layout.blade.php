@@ -172,7 +172,7 @@
                     <div class="flex items-center gap-3 mb-4">
                         <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
                             @if ($orgLogo ?? false)
-                                <img src="{{ Storage::url($orgLogo) }}" alt="Logo" class="w-full h-full object-cover rounded-full" />
+                                <img src="{{ Storage::url($orgLogo) }}" alt="Logo" loading="lazy" class="w-full h-full object-cover rounded-full" />
                             @else
                                 <span class="material-symbols-outlined text-white text-2xl">account_balance</span>
                             @endif

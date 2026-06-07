@@ -49,7 +49,7 @@
             {{-- Cover Image --}}
             @if ($news->cover_image_url)
                 <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm animate-fade-in">
-                    <img src="{{ $news->cover_image_url }}" alt="{{ $news->title_lo }}" class="w-full h-64 object-cover" />
+                    <img src="{{ $news->cover_image_url }}" alt="{{ $news->title_lo }}" loading="lazy" class="w-full h-64 object-cover" />
                 </div>
             @endif
 

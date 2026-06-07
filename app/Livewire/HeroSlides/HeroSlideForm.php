@@ -32,6 +32,8 @@ class HeroSlideForm extends Component
 
     public function mount(?int $id = null): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         if ($id) {
             $this->editMode = true;
             $this->slideId  = $id;
@@ -83,6 +85,8 @@ class HeroSlideForm extends Component
 
     public function save(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->validate();
 
         $service = app(HeroSlideService::class);

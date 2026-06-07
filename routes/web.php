@@ -83,6 +83,15 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', DocumentTable::class)->name('index');
         Route::get('/create', DocumentForm::class)->name('create');
+        Route::get('/{id}/download', function (int $id) {
+            $document = \App\Models\Document::findOrFail($id);
+            abort_if(!$document->file_path, 404);
+            abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+            return \Illuminate\Support\Facades\Storage::disk('local')->download(
+                $document->file_path,
+                $document->file_name
+            );
+        })->name('download');
         Route::get('/{id}', DocumentShow::class)->name('show');
         Route::get('/{id}/edit', DocumentForm::class)->name('edit');
     });
@@ -103,8 +112,9 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     });
 });
 
-// ─── Diagnostic Route for File Upload issues ───
-Route::get('/diagnose-upload', function () {
+// ─── Diagnostic Route for File Upload issues (super_admin only) ───
+Route::middleware(['auth'])->get('/diagnose-upload', function () {
+    abort_unless(auth()->user()->isSuperAdmin(), 403);
     $results = [];
 
     // 1. PHP Version & fileinfo

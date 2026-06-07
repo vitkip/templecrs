@@ -97,7 +97,7 @@ class Document extends Model
 
     public function getFileUrlAttribute(): ?string
     {
-        return $this->file_path ? Storage::url($this->file_path) : null;
+        return $this->file_path ? route('documents.download', $this->id) : null;
     }
 
     /* ───── Relationships ───── */

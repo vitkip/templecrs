@@ -30,6 +30,8 @@ class UserForm extends Component
 
     public function mount(?int $id = null): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         if ($id) {
             $this->editMode = true;
             $this->userId   = $id;
@@ -75,12 +77,14 @@ class UserForm extends Component
 
     public function save(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->validate();
 
         // Guard: keep at least one super_admin active
         if ($this->editMode && $this->userId) {
             $old = User::findOrFail($this->userId);
-            if ($old->isSuperAdmin() && $this->role !== 'super_admin' && !$this->is_active) {
+            if ($old->isSuperAdmin() && ($this->role !== 'super_admin' || !$this->is_active)) {
                 $remaining = User::where('role', 'super_admin')->where('is_active', true)
                                  ->where('id', '!=', $this->userId)->count();
                 if ($remaining === 0) {

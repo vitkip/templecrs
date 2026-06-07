@@ -49,6 +49,8 @@ class SettingsPage extends Component
 
     public function mount(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->loadOrganization();
         $this->loadSystem();
     }
@@ -77,6 +79,8 @@ class SettingsPage extends Component
 
     public function saveOrganization(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->validate([
             'org_name_lo'           => 'required|string|max:200',
             'org_name_en'           => 'nullable|string|max:200',
@@ -118,6 +122,8 @@ class SettingsPage extends Component
 
     public function saveSystem(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->validate([
             'default_locale'     => 'required|in:lo,en',
             'per_page'           => 'required|integer|min:5|max:100',
@@ -159,6 +165,8 @@ class SettingsPage extends Component
 
     public function saveDept(): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $this->validate([
             'dept_name_lo'        => 'required|string|max:200',
             'dept_name_en'        => 'nullable|string|max:200',
@@ -199,12 +207,16 @@ class SettingsPage extends Component
 
     public function toggleDeptActive(int $id): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $dept = Department::withTrashed(false)->findOrFail($id);
         $dept->update(['is_active' => !$dept->is_active]);
     }
 
     public function deleteDept(int $id): void
     {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
         $dept = Department::withTrashed(false)->findOrFail($id);
 
         if ($dept->personnel()->count() > 0) {

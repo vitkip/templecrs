@@ -102,17 +102,22 @@ class PersonnelRepository
      */
     public function getStatistics(): array
     {
-        $total = $this->model->count();
-        $active = $this->model->active()->count();
-        $monks = $this->model->monks()->count();
-        $laypersons = $this->model->laypersons()->count();
+        $stats = $this->model->selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active,
+            SUM(CASE WHEN gender = ? THEN 1 ELSE 0 END) as monks,
+            SUM(CASE WHEN gender IN (?, ?) THEN 1 ELSE 0 END) as laypersons
+        ', ['monk', 'male', 'female'])->first();
+
+        $total  = (int) $stats->total;
+        $active = (int) $stats->active;
 
         return [
-            'total' => $total,
-            'active' => $active,
-            'inactive' => $total - $active,
-            'monks' => $monks,
-            'laypersons' => $laypersons,
+            'total'        => $total,
+            'active'       => $active,
+            'inactive'     => $total - $active,
+            'monks'        => (int) $stats->monks,
+            'laypersons'   => (int) $stats->laypersons,
             'active_ratio' => $total > 0 ? round(($active / $total) * 100, 1) : 0,
         ];
     }

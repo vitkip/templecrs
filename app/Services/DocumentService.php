@@ -26,7 +26,7 @@ class DocumentService
         if ($file) {
             // Remove old file
             if ($document->file_path) {
-                Storage::disk('public')->delete($document->file_path);
+                Storage::disk('local')->delete($document->file_path);
             }
             $data = array_merge($data, $this->storeFile($file));
         }
@@ -41,7 +41,7 @@ class DocumentService
         $document = Document::findOrFail($id);
 
         if ($document->file_path) {
-            Storage::disk('public')->delete($document->file_path);
+            Storage::disk('local')->delete($document->file_path);
         }
 
         $document->delete();
@@ -59,7 +59,7 @@ class DocumentService
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
 
-        $path = $file->store('documents', 'public');
+        $path = $file->store('documents', 'local');
 
         return [
             'file_path' => $path,
@@ -71,11 +71,22 @@ class DocumentService
 
     public function getStatistics(): array
     {
+        $stats = Document::selectRaw('
+            COUNT(*) as total,
+            SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active,
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as this_month
+        ', [now()->month, now()->year])->first();
+
+        $byCategory = Document::selectRaw('category, COUNT(*) as count')
+            ->groupBy('category')
+            ->pluck('count', 'category')
+            ->toArray();
+
         return [
-            'total'        => Document::count(),
-            'active'       => Document::active()->count(),
-            'this_month'   => Document::whereMonth('created_at', now()->month)->whereYear('created_at', now()->year)->count(),
-            'by_category'  => Document::selectRaw('category, count(*) as count')->groupBy('category')->pluck('count', 'category')->toArray(),
+            'total'       => (int) $stats->total,
+            'active'      => (int) $stats->active,
+            'this_month'  => (int) $stats->this_month,
+            'by_category' => $byCategory,
         ];
     }
 }
