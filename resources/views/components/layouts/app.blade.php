@@ -13,6 +13,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @stack('head')
 </head>
 <body class="text-body-md text-on-surface antialiased"
       x-data="{ sidebarOpen: false }"
@@ -164,6 +165,19 @@
                 <span class="material-symbols-outlined text-xl shrink-0 {{ $isHeroSlides ? 'filled' : '' }}">photo_library</span>
                 <span class="text-label-md">{{ __('messages.hero_slides') }}</span>
                 @if ($isHeroSlides)
+                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                @endif
+            </a>
+
+            {{-- Finance --}}
+            @php $isFinance = request()->routeIs('finance.*'); @endphp
+            <a href="{{ route('finance.index') }}"
+               @click="sidebarOpen = false"
+               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      {{ $isFinance ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                <span class="material-symbols-outlined text-xl shrink-0 {{ $isFinance ? 'filled' : '' }}">account_balance_wallet</span>
+                <span class="text-label-md">{{ __('messages.finance') }}</span>
+                @if ($isFinance)
                     <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
                 @endif
             </a>
@@ -361,5 +375,6 @@
     </nav>
 
     @livewireScripts
+    @stack('scripts')
 </body>
 </html>

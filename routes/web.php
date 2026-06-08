@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Middleware\SetLocale;
 use App\Livewire\Auth\LoginPage;
@@ -9,6 +10,11 @@ use App\Livewire\Documents\DocumentTable;
 use App\Livewire\News\NewsForm;
 use App\Livewire\News\NewsShow;
 use App\Livewire\News\NewsTable;
+use App\Livewire\Finance\CategoryManager;
+use App\Livewire\Finance\FinancePage;
+use App\Livewire\Finance\FinanceReport;
+use App\Livewire\Finance\TransactionForm;
+use App\Livewire\Finance\TransactionTable;
 use App\Livewire\HeroSlides\HeroSlideForm;
 use App\Livewire\HeroSlides\HeroSlideTable;
 use App\Livewire\Personnel\PersonnelForm;
@@ -116,6 +122,17 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
         Route::get('/{id}', NewsShow::class)->name('show');
         Route::get('/{id}/edit', NewsForm::class)->name('edit');
     });
+
+    // ─── Finance Management ───
+    Route::get('/finance', FinancePage::class)->name('finance.index');
+    Route::get('/finance/report', FinanceReport::class)->name('finance.report');
+    Route::get('/finance/report/pdf', [FinanceReportController::class, 'pdf'])->name('finance.report.pdf');
+    Route::prefix('finance/transactions')->name('finance.transactions.')->group(function () {
+        Route::get('/',           TransactionTable::class)->name('index');
+        Route::get('/create',     TransactionForm::class)->name('create');
+        Route::get('/{id}/edit',  TransactionForm::class)->name('edit');
+    });
+    Route::get('/finance/categories', CategoryManager::class)->name('finance.categories.index');
 
     // ─── Hero Slides Management ───
     Route::prefix('hero-slides')->name('hero-slides.')->group(function () {
