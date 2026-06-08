@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\FinanceTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FinanceReportController extends Controller
 {
-    public function pdf(Request $request): Response
+    public function pdf(Request $request): StreamedResponse
     {
         $period      = $request->input('period', 'month');
         $reportYear  = (int) $request->input('reportYear', now()->year);
@@ -49,11 +49,23 @@ class FinanceReportController extends Controller
             'byCategory', 'transactions', 'orgName', 'orgAddress',
             'orgPhone', 'orgEmail', 'orgLogoPath', 'period',
             'reportYear', 'reportMonth'
-        ))->setPaper('a4', 'portrait');
+        ))
+        ->setBasePath(base_path())
+        ->setPaper('a4', 'portrait');
 
         $filename = 'finance-report-' . $from . '-to-' . $to . '.pdf';
+        $output   = $pdf->output();
 
-        return $pdf->download($filename);
+        return response()->streamDownload(
+            function () use ($output) { echo $output; },
+            $filename,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Length'      => strlen($output),
+                'Cache-Control'       => 'no-store, no-cache',
+                'X-Content-Type-Options' => 'nosniff',
+            ]
+        );
     }
 
     private function getDateRange(string $period, int $year, int $month, ?string $from, ?string $to): array
