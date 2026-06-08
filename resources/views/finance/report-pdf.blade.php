@@ -16,7 +16,7 @@
         font-style: normal;
     }
 
-    @page { margin: 18mm 15mm 22mm 20mm; }
+    @page { margin: 20mm 20mm 20mm 30mm; }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -274,19 +274,8 @@
     <div class="sig-committee-title">ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ ແລະ ການບັນຊີ</div>
     <table class="sig-table">
         <tr>
-            <td>
-                <div class="sig-role-label">ຜູ້ຈັດທຳ</div>
-                <div class="sig-line"></div>
-                <div class="sig-name-val">ພຣະອາຈານ ອາລຸນ ວົງພັກດີ</div>
-                <div class="sig-rank">ຮອງຫົວໜ້າ ຄະນະກໍາມະການ</div>
-            </td>
-            <td>
-                <div class="sig-role-label">ຜູ້ກວດສອບ</div>
-                <div class="sig-line"></div>
-                <div class="sig-name-val">ພຣະອາຈານ ຂວັນໃຈ ວິໄຊຍະເສີດ</div>
-                <div class="sig-rank">ຫົວໜ້າ ຄະນະກໍາມະການ</div>
-            </td>
-            <td>
+            <td style="width:40%;">&nbsp;</td>
+            <td style="width:60%; text-align:center; padding: 0 10px;">
                 <div class="sig-role-label">ຜູ້ອະນຸມັດ / ປະທານ</div>
                 <div class="sig-line"></div>
                 <div class="sig-name-val">ພຣະອາຈານໃຫຍ່ ບຸນທະວີ ປະສິດທິສັກ</div>
