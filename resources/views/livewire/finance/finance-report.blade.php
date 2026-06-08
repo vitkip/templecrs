@@ -14,7 +14,8 @@
         </div>
         <div class="flex gap-2">
             <a href="{{ route('finance.report.pdf', ['period' => $period, 'reportYear' => $reportYear, 'reportMonth' => $reportMonth, 'dateFrom' => $dateFrom, 'dateTo' => $dateTo]) }}"
-               download="finance-report-{{ $from }}-to-{{ $to }}.pdf"
+               target="_blank"
+               data-navigate-ignore
                class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-error text-white hover:bg-error/90 transition-all font-bold text-label-md shadow-md btn-press">
                 <span class="material-symbols-outlined text-base">picture_as_pdf</span>
                 {{ __('messages.download_pdf') }}

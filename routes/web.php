@@ -126,7 +126,8 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     // ─── Finance Management ───
     Route::get('/finance', FinancePage::class)->name('finance.index');
     Route::get('/finance/report', FinanceReport::class)->name('finance.report');
-    Route::get('/finance/report/pdf', [FinanceReportController::class, 'pdf'])->name('finance.report.pdf');
+    Route::get('/finance/report/pdf/finance-report.pdf', [FinanceReportController::class, 'pdf'])->name('finance.report.pdf');
+
     Route::prefix('finance/transactions')->name('finance.transactions.')->group(function () {
         Route::get('/',           TransactionTable::class)->name('index');
         Route::get('/create',     TransactionForm::class)->name('create');

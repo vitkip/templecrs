@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FinanceReportController extends Controller
 {
-    public function pdf(Request $request): StreamedResponse
+    public function pdf(Request $request): \Illuminate\Http\Response
     {
         $period      = $request->input('period', 'month');
         $reportYear  = (int) $request->input('reportYear', now()->year);
@@ -54,18 +54,12 @@ class FinanceReportController extends Controller
         ->setPaper('a4', 'portrait');
 
         $filename = 'finance-report-' . $from . '-to-' . $to . '.pdf';
-        $output   = $pdf->output();
 
-        return response()->streamDownload(
-            function () use ($output) { echo $output; },
-            $filename,
-            [
-                'Content-Type'        => 'application/pdf',
-                'Content-Length'      => strlen($output),
-                'Cache-Control'       => 'no-store, no-cache',
-                'X-Content-Type-Options' => 'nosniff',
-            ]
-        );
+        if (ob_get_length()) {
+            ob_end_clean();
+        }
+
+        return $pdf->stream($filename);
     }
 
     private function getDateRange(string $period, int $year, int $month, ?string $from, ?string $to): array

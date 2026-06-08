@@ -16,15 +16,12 @@
         font-style: normal;
     }
 
-    /* ══ ມາດຕະຖານຂອບເຈ້ຍເອກະສານທາງການລາວ ══ 
-       ເທິງ: 2.0cm, ລຸ່ມ: 2.0cm, ຊ້າຍ (ໄວ້ຫຍິບແຟ້ມ): 3.0cm, ຂວາ: 1.5cm - 2.0cm 
-    */
+    /* ══ ມາດຕະຖານຂອບເຈ້ຍເອກະສານທາງການລາວ ══ */
     @page {
         margin-top: 2.0cm;
         margin-bottom: 2.0cm;
         margin-left: 3.0cm;
         margin-right: 1.5cm;
-        margin: 2.0cm 1.5cm 2.0cm 3.0cm; /* Standard fallback for different engines */
     }
 
     * { 
@@ -35,9 +32,9 @@
     
     body {
         font-family: 'Phetsarath', sans-serif;
-        font-size: 11pt; /* ຂະໜາດຕົວໜັງສືມາດຕະຖານທາງການ */
-        color: #111827;
-        background: #fff;
+        font-size: 11pt; /* ມາດຕະຖານເອກະສານທາງການ */
+        color: #000000;
+        background: #ffffff;
         line-height: 1.6;
     }
 
@@ -50,12 +47,10 @@
     .state-republic { 
         font-size: 12pt; 
         font-weight: bold; 
-        color: #000000; 
     }
     .state-motto { 
-        font-size: 10.5pt; 
+        font-size: 11pt; 
         font-weight: bold;
-        color: #1f2937; 
         margin-top: 3px;
     }
 
@@ -67,44 +62,39 @@
         margin-bottom: 10px; 
     }
     .org-left { 
-        width: 42%; 
+        width: 45%; 
         vertical-align: top; 
         text-align: left;
+        line-height: 1.4;
     }
     .org-mid { 
-        width: 16%; 
+        width: 10%; 
         vertical-align: middle; 
         text-align: center; 
     }
     .org-right { 
-        width: 42%; 
+        width: 45%; 
         vertical-align: top; 
         text-align: right; 
+        line-height: 1.4;
     }
     .org-parent { 
         font-size: 10.5pt; 
-        line-height: 1.4; 
-        color: #111827; 
     }
     .org-name { 
         font-size: 11pt; 
         font-weight: bold; 
-        line-height: 1.4; 
-        color: #000000; 
-        text-transform: uppercase;
     }
     .ref-line { 
         font-size: 10.5pt; 
-        line-height: 1.5; 
-        color: #111827; 
     }
     .seal-img { 
-        width: 55px; 
-        height: 55px; 
+        width: 60px; 
+        height: 60px; 
         object-fit: contain;
     }
 
-    /* ══ ເסັ້ນຂັ້ນຫົວເອກະສານທາງການ ══ */
+    /* ══ ເເສັ້ນຂັ້ນຫົວເອກະສານທາງການ ══ */
     .rule-thick { 
         border: 0; 
         border-top: 2px solid #000000; 
@@ -119,173 +109,89 @@
     /* ══ ຫົວຂໍ້ເອກະສານ ══ */
     .title-block { 
         text-align: center; 
-        margin: 15px 0 20px; 
+        margin: 20px 0; 
     }
     .title-main { 
-        font-size: 15pt; 
+        font-size: 16pt; 
         font-weight: bold; 
-        text-decoration: none; 
         line-height: 1.6; 
-        color: #000000; 
     }
     .title-sub { 
         font-size: 12pt; 
         font-weight: bold; 
         margin-top: 4px; 
-        color: #111827; 
     }
     .title-about { 
-        font-size: 10.5pt; 
+        font-size: 11pt; 
         margin-top: 6px; 
-        color: #374151; 
-        font-style: italic;
     }
 
-    /* ══ ຕາຕະລາງສະຫຼຸບຕົວເລກ (ຫຼຸດສີສັນໃຫ້ເປັນທາງການຂຶ້ນ) ══ */
+    /* ══ ຕາຕະລາງສະຫຼຸບຕົວເລກທາງການ ══ */
     .sum-table {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 6px 0;
-        margin: 15px 0;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+    .sum-table th, .sum-table td {
+        border: 0.5px solid #000000;
+        padding: 8px 10px;
+        text-align: center;
+        vertical-align: middle;
+    }
+    .sum-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        font-size: 10.5pt;
     }
     .sum-table td {
-        width: 33.33%;
-        padding: 12px;
-        text-align: center;
-        border-radius: 4px;
-    }
-    .sum-label { 
-        font-size: 9pt; 
-        font-weight: bold; 
-        color: #374151;
-    }
-    .sum-value { 
-        font-size: 14pt; 
-        font-weight: bold; 
-        margin: 4px 0 1px; 
-        color: #000000;
-    }
-    .sum-unit { 
-        font-size: 8.5pt; 
-        color: #4b5563;
-    }
-    
-    /* ປັບໂທນສີໃຫ້ອ່ອນລົງຫຼາຍ ເໝາະກັບການພິມ (Printer-friendly) */
-    .c-income { 
-        background: #f3faf6; 
-        color: #166534; 
-        border: 1px solid #d1fae5; 
-    }
-    .c-expense { 
-        background: #fdf2f2; 
-        color: #991b1b; 
-        border: 1px solid #fee2e2; 
-    }
-    .c-bal-pos { 
-        background: #fefbeb; 
-        color: #b45309; 
-        border: 1px solid #fef3c7; 
-    }
-    .c-bal-neg { 
-        background: #fdf2f2; 
-        color: #991b1b; 
-        border: 1px solid #fca5a5; 
+        font-size: 11pt;
+        font-weight: bold;
     }
 
     /* ══ ຫົວຂໍ້ພາກສ່ວນ ══ */
     .sec-title { 
         font-size: 11pt; 
         font-weight: bold; 
-        border-left: 3.5px solid #111827; 
-        padding-left: 8px; 
-        margin: 22px 0 10px; 
-        color: #000000; 
+        margin: 25px 0 10px; 
+        text-decoration: underline;
     }
 
     /* ══ ໝວດໝູ່ລາຍຮັບ-ລາຍຈ່າຍ ══ */
     .cat-table { 
         width: 100%; 
         border-collapse: collapse; 
-        margin-bottom: 15px; 
+        margin-bottom: 20px; 
     }
-    .cat-table td { 
+    .cat-col { 
         width: 50%; 
         vertical-align: top; 
     }
-    .cat-table .cat-left { 
+    .cat-left { 
         padding-right: 8px; 
     }
-    .cat-table .cat-right { 
+    .cat-right { 
         padding-left: 8px; 
     }
-    .cat-box { 
-        border: 1px solid #e5e7eb; 
-        border-radius: 4px; 
-        background: #fafafa; 
-        padding: 12px; 
+    .cat-sub-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9.5pt;
     }
-    .cat-head { 
-        font-size: 9.5pt; 
-        font-weight: bold; 
-        padding: 5px 8px; 
-        margin-bottom: 10px; 
-        border-radius: 3px; 
+    .cat-sub-table th, .cat-sub-table td {
+        border: 0.5px solid #000000;
+        padding: 6px 8px;
     }
-    .cat-head-income { 
-        background: #e6f4ea; 
-        color: #137333; 
-    }
-    .cat-head-expense { 
-        background: #fce8e6; 
-        color: #c5221f; 
-    }
-    
-    .bar-row { 
-        margin-bottom: 8px; 
-    }
-    .bar-lbl { 
-        width: 100%; 
-        border-collapse: collapse; 
-        margin-bottom: 4px; 
-        font-size: 8.5pt; 
-        color: #1f2937; 
-    }
-    .bar-lbl td { 
-        padding: 0; 
-    }
-    .bar-track { 
-        height: 6px; 
-        background: #e5e7eb; 
-        border-radius: 3px; 
-        overflow: hidden; 
-    }
-    .bar-fill { 
-        height: 6px; 
-        display: block; 
-        border-radius: 3px; 
-    }
-    .bar-income { 
-        background: #34a853; 
-    }
-    .bar-expense { 
-        background: #ea4335; 
-    }
-    .cat-total { 
-        font-size: 9pt; 
-        font-weight: bold; 
-        text-align: right; 
-        border-top: 1px solid #e5e7eb; 
-        padding-top: 6px; 
-        margin-top: 8px; 
-        color: #000000; 
+    .cat-sub-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
     }
 
-    /* ══ ຕາຕະລາງລາຍການລະອຽດ (Formal Style) ══ */
+    /* ══ ຕາຕະລາງລາຍການລະອຽດ ══ */
     table.dtbl { 
         width: 100%; 
         border-collapse: collapse; 
-        margin-bottom: 15px; 
-        font-size: 9pt; 
+        margin-bottom: 20px; 
+        font-size: 9.5pt; 
         page-break-inside: auto; 
     }
     table.dtbl thead { 
@@ -294,73 +200,36 @@
     table.dtbl tr { 
         page-break-inside: avoid; 
     }
-    table.dtbl thead tr { 
-        background: #f3f4f6; 
-        color: #000000; 
-        border-top: 1.5px solid #000000;
-        border-bottom: 1.5px solid #000000;
+    table.dtbl th, table.dtbl td {
+        border: 0.5px solid #000000;
+        padding: 6px 8px;
+        vertical-align: middle;
     }
     table.dtbl thead th { 
-        padding: 8px 8px; 
-        text-align: left; 
+        background: #f2f2f2; 
         font-weight: bold; 
+        text-align: left; 
     }
-    table.dtbl thead th.r { 
+    table.dtbl thead th.r, table.dtbl td.r { 
         text-align: right; 
     }
-    table.dtbl tbody tr:nth-child(even) { 
-        background: #f9fafb; 
-    }
-    table.dtbl tbody td { 
-        padding: 7px 8px; 
-        border-bottom: 1px solid #e5e7eb; 
-        vertical-align: top; 
-        color: #1f2937; 
-    }
-    table.dtbl tbody td.r { 
-        text-align: right; 
+    table.dtbl thead th.c, table.dtbl td.c { 
+        text-align: center; 
     }
     table.dtbl tfoot tr { 
-        background: #f9fafb; 
         font-weight: bold; 
+        background: #f9fafb;
     }
     table.dtbl tfoot td { 
-        padding: 8px 8px; 
         border-top: 1.5px solid #000000; 
         border-bottom: 1.5px double #000000; 
-        color: #000000; 
-    }
-    table.dtbl tfoot td.r { 
-        text-align: right; 
-    }
-    
-    /* ປ້າຍສະແດງປະເພດແບບສຸພາບ */
-    .badge-i { 
-        background: #e6f4ea; 
-        color: #137333; 
-        border: 1px solid #ceead6; 
-        padding: 2px 6px; 
-        font-size: 7.5pt; 
-        font-weight: bold; 
-        border-radius: 2px; 
-    }
-    .badge-e { 
-        background: #fce8e6; 
-        color: #c5221f; 
-        border: 1px solid #fad2cf; 
-        padding: 2px 6px; 
-        font-size: 7.5pt; 
-        font-weight: bold; 
-        border-radius: 2px; 
     }
 
-    /* ══ ພາກສ່ວນລາຍເຊັນ ແລະ ກາປະທັບ (Lao Official Format) ══ */
+    /* ══ ພາກສ່ວນລາຍເຊັນ ແລະ ກາປະທັບ ══ */
     .sig-section { 
         margin-top: 30px; 
         page-break-inside: avoid; 
     }
-    
-    /* ຕາຕະລາງລາຍເຊັນ */
     .sig-table { 
         width: 100%; 
         border-collapse: collapse; 
@@ -368,27 +237,21 @@
     .sig-table td { 
         vertical-align: top; 
     }
-    
-    /* ສ່ວນ "ບ່ອນສົ່ງ" ທາງດ້ານຊ້າຍລຸ່ມ ເຊິ່ງເປັນເອກະລັກຂອງເອກະສານທາງການລາວ */
     .distribution-list {
         width: 40%;
         text-align: left;
-        font-size: 8.5pt;
+        font-size: 9pt;
         line-height: 1.5;
-        color: #374151;
         padding-right: 20px;
     }
     .dist-title {
         font-weight: bold;
         text-decoration: underline;
         margin-bottom: 4px;
-        color: #000000;
     }
     .dist-item {
         padding-left: 8px;
     }
-    
-    /* ບລັອກລາຍເຊັນດ້ານຂວາ */
     .signature-block {
         width: 60%;
         text-align: center;
@@ -396,19 +259,16 @@
     .sig-role-label { 
         font-size: 11pt; 
         font-weight: bold; 
-        margin-bottom: 65px; /* ເພີ່ມພື້ນທີ່ຫວ່າງໄວ້ເພື່ອເຊັນ ແລະ ປະທັບກາແທ້ */
+        margin-bottom: 70px; /* ພື້ນທີ່ຫວ່າງສຳລັບເຊັນ ແລະ ປະທັບກາ */
         line-height: 1.4; 
-        color: #000000; 
     }
     .sig-name-val { 
         font-size: 11pt; 
         font-weight: bold; 
         line-height: 1.4; 
-        color: #000000; 
     }
     .sig-rank { 
-        font-size: 9.5pt; 
-        color: #4b5563; 
+        font-size: 10pt; 
         line-height: 1.4; 
         margin-top: 2px;
     }
@@ -419,23 +279,37 @@
         bottom: 0;
         left: 0;
         right: 0;
-        border-top: 0.5px solid #d1d5db;
+        border-top: 0.5px solid #000000;
         padding-top: 4px;
-        font-size: 8pt;
-        color: #4b5563;
+        font-size: 8.5pt;
         text-align: center;
         line-height: 1.5;
     }
     .page-number:before {
         content: "ໜ້າທີ " counter(page) " / " counter(pages);
     }
-
-    .page-break { 
-        page-break-before: always; 
-    }
 </style>
 </head>
 <body>
+
+@php
+    $laoMonths = ['ມັງກອນ', 'ກຸມພາ', 'ມີນາ', 'ເມສາ', 'ພຶດສະພາ', 'ມິຖຸນາ', 'ກໍລະກົດ', 'ສິງຫາ', 'ກັນຍາ', 'ຕຸລາ', 'ພະຈິກ', 'ທັນວາ'];
+    
+    $fromTime = strtotime($from);
+    $toTime = strtotime($to);
+    
+    $fromDay = date('j', $fromTime);
+    $fromMonth = $laoMonths[date('n', $fromTime) - 1];
+    $fromYear = date('Y', $fromTime);
+    
+    $toDay = date('j', $toTime);
+    $toMonth = $laoMonths[date('n', $toTime) - 1];
+    $toYear = date('Y', $toTime);
+    
+    $currentDay = now()->day;
+    $currentMonth = $laoMonths[now()->month - 1];
+    $currentYear = now()->year;
+@endphp
 
 {{-- ══ ຫົວຂໍ້ເອກະສານທາງການ ສປປ ລາວ ══ --}}
 <div class="state-header">
@@ -446,20 +320,19 @@
 <table class="org-row">
     <tr>
         <td class="org-left">
-            <div class="org-parent">ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ</div>
-            <div class="org-parent">ແຫ່ງ ສປປ ລາວ</div>
+            <div class="org-parent">ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ</div>
             <div class="org-name">{{ $orgName }}</div>
         </td>
         <td class="org-mid">
             @if ($orgLogoPath)
                 <img src="file://{{ $orgLogoPath }}" class="seal-img" />
             @else
-                <div style="width:55px;height:55px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:52px;font-size:20pt;color:#000;">☸</div>
+                <div style="width:60px;height:60px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:56px;font-size:22pt;color:#000;">☸</div>
             @endif
         </td>
         <td class="org-right">
             <div class="ref-line">ເລກທີ: .................../ກສປ</div>
-            <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ now()->format('d') }} ເດືອນ {{ now()->format('m') }} ປີ {{ now()->format('Y') }}</div>
+            <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ $currentDay }} ເດືອນ {{ $currentMonth }} ປີ {{ $currentYear }}</div>
         </td>
     </tr>
 </table>
@@ -467,86 +340,105 @@
 <hr class="rule-thick" />
 <hr class="rule-thin" />
 
-
 {{-- ══ ຫົວຂໍ້ບົດລາຍງານ ══ --}}
 <div class="title-block">
-    <div class="title-main">ບົດລາຍງານ ລາຍຮັບ-ລາຍຈ່າຍ</div>
+    <div class="title-main">ບົດລາຍງານສະຫຼຸບ ລາຍຮັບ-ລາຍຈ່າຍ</div>
     <div class="title-sub">{{ $orgName }}</div>
-    <div class="title-about">ວ່າດ້ວຍການສະຫຼຸບລາຍຮັບ-ລາຍຈ່າຍ ໄລຍະ: {{ $from }} ຫາ {{ $to }}</div>
+    <div class="title-about">ວ່າດ້ວຍການສະຫຼຸບລາຍຮັບ-ລາຍຈ່າຍ ໄລຍະ: ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }} ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }}</div>
 </div>
-
 
 {{-- ══ ຕາຕະລາງສະຫຼຸບຕົວເລກຫຼັກ ══ --}}
 <table class="sum-table">
-    <tr>
-        <td class="c-income">
-            <div class="sum-label">ລາຍຮັບທັງໝົດ</div>
-            <div class="sum-value">{{ number_format((float)$totalIncome, 0, '.', ',') }}</div>
-            <div class="sum-unit">ກີບ</div>
-        </td>
-        <td class="c-expense">
-            <div class="sum-label">ລາຍຈ່າຍທັງໝົດ</div>
-            <div class="sum-value">{{ number_format((float)$totalExpense, 0, '.', ',') }}</div>
-            <div class="sum-unit">ກີບ</div>
-        </td>
-        <td class="{{ $netBalance >= 0 ? 'c-bal-pos' : 'c-bal-neg' }}">
-            <div class="sum-label">ຍອດສຸດທິ</div>
-            <div class="sum-value">{{ ($netBalance > 0 ? '+' : '') . number_format((float)$netBalance, 0, '.', ',') }}</div>
-            <div class="sum-unit">ກີບ</div>
-        </td>
-    </tr>
+    <thead>
+        <tr>
+            <th>ລາຍຮັບທັງໝົດ</th>
+            <th>ລາຍຈ່າຍທັງໝົດ</th>
+            <th>ຍອດສຸດທິ (ຍອດເຫຼືອ)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{ number_format((float)$totalIncome, 0, '.', ',') }} ກີບ</td>
+            <td>{{ number_format((float)$totalExpense, 0, '.', ',') }} ກີບ</td>
+            <td>{{ ($netBalance >= 0 ? '+' : '') . number_format((float)$netBalance, 0, '.', ',') }} ກີບ</td>
+        </tr>
+    </tbody>
 </table>
-
 
 {{-- ══ ສະຫຼຸບຕາມໝວດໝູ່ ══ --}}
 <div class="sec-title">I. ສະຫຼຸບຕາມໝວດໝູ່ລາຍຮັບ-ລາຍຈ່າຍ</div>
 <table class="cat-table">
     <tr>
-        <td class="cat-left">
-            <div class="cat-box">
-                <div class="cat-head cat-head-income">ລາຍຮັບ (Income Summary)</div>
-                @if (isset($byCategory['income']) && $byCategory['income']->isNotEmpty())
-                    @php $incTotal = $byCategory['income']->sum('total'); @endphp
-                    @foreach ($byCategory['income']->sortByDesc('total') as $row)
-                        @php $pct = $incTotal > 0 ? round(($row->total / $incTotal) * 100) : 0; @endphp
-                        <div class="bar-row">
-                            <table class="bar-lbl"><tr>
-                                <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }} ({{ $row->count }})</td>
-                                <td style="text-align:right;">{{ number_format((float)$row->total,0,'.',',') }} ({{ $pct }}%)</td>
-                            </tr></table>
-                            <div class="bar-track"><div class="bar-fill bar-income" style="width:{{ $pct }}%;"></div></div>
-                        </div>
-                    @endforeach
-                    <div class="cat-total">ລວມລາຍຮັບ: {{ number_format((float)$incTotal,0,'.',',') }} ກີບ</div>
-                @else
-                    <p style="color:#6b7280;font-size:9pt;padding:4px 0;font-style:italic;">ບໍ່ມີຂໍ້ມູນລາຍຮັບ</p>
-                @endif
-            </div>
+        <td class="cat-col cat-left">
+            <table class="cat-sub-table">
+                <thead>
+                    <tr>
+                        <th colspan="3" style="text-align: center;">ໝວດໝູ່ລາຍຮັບ (Income Summary)</th>
+                    </tr>
+                    <tr>
+                        <th>ຊື່ໝວດໝູ່</th>
+                        <th style="text-align: center; width: 20%;">ຈຳນວນ</th>
+                        <th style="text-align: right; width: 40%;">ມູນຄ່າ (ກີບ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isset($byCategory['income']) && $byCategory['income']->isNotEmpty())
+                        @php $incTotal = $byCategory['income']->sum('total'); @endphp
+                        @foreach ($byCategory['income']->sortByDesc('total') as $row)
+                            <tr>
+                                <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }}</td>
+                                <td style="text-align: center;">{{ $row->count }}</td>
+                                <td style="text-align: right;">{{ number_format((float)$row->total, 0, '.', ',') }}</td>
+                            </tr>
+                        @endforeach
+                        <tr style="font-weight: bold; background-color: #f9fafb;">
+                            <td colspan="2">ລວມລາຍຮັບທັງໝົດ</td>
+                            <td style="text-align: right;">{{ number_format((float)$incTotal, 0, '.', ',') }}</td>
+                        </tr>
+                    @else
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #6b7280; font-style: italic;">ບໍ່ມີຂໍ້ມູນລາຍຮັບ</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </td>
-        <td class="cat-right">
-            <div class="cat-box">
-                <div class="cat-head cat-head-expense">ລາຍຈ່າຍ (Expense Summary)</div>
-                @if (isset($byCategory['expense']) && $byCategory['expense']->isNotEmpty())
-                    @php $expTotal = $byCategory['expense']->sum('total'); @endphp
-                    @foreach ($byCategory['expense']->sortByDesc('total') as $row)
-                        @php $pct = $expTotal > 0 ? round(($row->total / $expTotal) * 100) : 0; @endphp
-                        <div class="bar-row">
-                            <table class="bar-lbl"><tr>
-                                <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }} ({{ $row->count }})</td>
-                                <td style="text-align:right;">{{ number_format((float)$row->total,0,'.',',') }} ({{ $pct }}%)</td>
-                            </tr></table>
-                            <div class="bar-track"><div class="bar-fill bar-expense" style="width:{{ $pct }}%;"></div></div>
-                        </div>
-                    @endforeach
-                    <div class="cat-total">ລວມລາຍຈ່າຍ: {{ number_format((float)$expTotal,0,'.',',') }} ກີບ</div>
-                @else
-                    <p style="color:#6b7280;font-size:9pt;padding:4px 0;font-style:italic;">ບໍ່ມີຂໍ້ມູນລາຍຈ່າຍ</p>
-                @endif
-            </div>
+        <td class="cat-col cat-right">
+            <table class="cat-sub-table">
+                <thead>
+                    <tr>
+                        <th colspan="3" style="text-align: center;">ໝວດໝູ່ລາຍຈ່າຍ (Expense Summary)</th>
+                    </tr>
+                    <tr>
+                        <th>ຊື່ໝວດໝູ່</th>
+                        <th style="text-align: center; width: 20%;">ຈຳນວນ</th>
+                        <th style="text-align: right; width: 40%;">ມູນຄ່າ (ກີບ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isset($byCategory['expense']) && $byCategory['expense']->isNotEmpty())
+                        @php $expTotal = $byCategory['expense']->sum('total'); @endphp
+                        @foreach ($byCategory['expense']->sortByDesc('total') as $row)
+                            <tr>
+                                <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }}</td>
+                                <td style="text-align: center;">{{ $row->count }}</td>
+                                <td style="text-align: right;">{{ number_format((float)$row->total, 0, '.', ',') }}</td>
+                            </tr>
+                        @endforeach
+                        <tr style="font-weight: bold; background-color: #f9fafb;">
+                            <td colspan="2">ລວມລາຍຈ່າຍທັງໝົດ</td>
+                            <td style="text-align: right;">{{ number_format((float)$expTotal, 0, '.', ',') }}</td>
+                        </tr>
+                    @else
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #6b7280; font-style: italic;">ບໍ່ມີຂໍ້ມູນລາຍຈ່າຍ</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
         </td>
     </tr>
 </table>
-
 
 {{-- ══ ຕາຕະລາງທຸລະກໍາ ══ --}}
 <div class="sec-title">II. ຕາຕະລາງລາຍການທຸລະກໍາຢ່າງລະອຽດ</div>
@@ -557,7 +449,7 @@
         <thead>
             <tr>
                 <th style="width:12%">ວັນທີ</th>
-                <th style="width:10%">ປະເພດ</th>
+                <th style="width:12%; text-align: center;">ປະເພດ</th>
                 <th style="width:18%">ໝວດໝູ່</th>
                 <th>ລາຍລະອຽດ</th>
                 <th style="width:20%" class="r">ຈໍານວນ (ກີບ)</th>
@@ -568,16 +460,12 @@
             @foreach ($transactions as $tx)
             <tr>
                 <td>{{ $tx->transaction_date_formatted }}</td>
-                <td>
-                    @if ($tx->is_income)
-                        <span class="badge-i">ລາຍຮັບ</span>
-                    @else
-                        <span class="badge-e">ລາຍຈ່າຍ</span>
-                    @endif
+                <td style="text-align: center;">
+                    {{ $tx->is_income ? 'ລາຍຮັບ' : 'ລາຍຈ່າຍ' }}
                 </td>
                 <td>{{ $tx->category->name ?? '—' }}</td>
                 <td>{{ $tx->description }}</td>
-                <td class="r" style="color:{{ $tx->is_income ? '#137333' : '#c5221f' }};font-weight:bold;">
+                <td class="r" style="font-weight:bold;">
                     {{ $tx->is_income ? '+' : '-' }}{{ number_format((float)$tx->amount, 0, '.', ',') }}
                 </td>
                 <td>{{ $tx->reference_number ?? '—' }}</td>
@@ -586,8 +474,8 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="4">ລວມຍອດທັງໝົດ ({{ $transactions->count() }} ລາຍການ)</td>
-                <td class="r" style="color:{{ $netBalance >= 0 ? '#137333' : '#c5221f' }};">
+                <td colspan="4">ລວມຍອດສຸດທິ ({{ $transactions->count() }} ລາຍການ)</td>
+                <td class="r">
                     {{ $netBalance >= 0 ? '+' : '' }}{{ number_format((float)$netBalance, 0, '.', ',') }} ກີບ
                 </td>
                 <td></td>
@@ -595,7 +483,6 @@
         </tfoot>
     </table>
 @endif
-
 
 {{-- ══ ພາກສ່ວນລາຍເຊັນ ແລະ ກາປະທັບ ══ --}}
 <div class="sig-section">
@@ -622,14 +509,12 @@
     </table>
 </div>
 
-
 {{-- ══ ສ່ວນທ້າຍເອກະສານ (Footer) ══ --}}
 <div class="doc-footer">
     ຫ້ອງການ {{ $orgName }} ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ &nbsp;|&nbsp; ສໍານັກງານ: {{ $orgAddress }}<br/>
     @if ($orgPhone)ໂທ: {{ $orgPhone }}@endif
     @if ($orgEmail) &nbsp;|&nbsp; ອີເມວ: {{ $orgEmail }}@endif
-    &nbsp;|&nbsp; ລະບົບ Buddhist EMS ວັນທີ {{ now()->format('d/m/Y H:i') }}
-    &nbsp;|&nbsp; <span class="page-number"></span>
+    &nbsp;|&nbsp; ລະບົບ Buddhist EMS &nbsp;|&nbsp; <span class="page-number"></span>
 </div>
 
 </body>
