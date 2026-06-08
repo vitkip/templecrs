@@ -35,11 +35,19 @@ class FinanceReportController extends Controller
             ->orderBy('transaction_date')
             ->get();
 
-        $orgName = \App\Models\Setting::get('org_name_lo', 'ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ');
+        $orgName    = \App\Models\Setting::get('org_name_lo',      'ກຳມາທິການ ສາທາຣະນູປະການ ສູນກາງ ອພສ');
+        $orgAddress = \App\Models\Setting::get('org_address_lo',   'ວັດທາດຫຼວງເໜືອ ນະຄອນຫຼວງວຽງຈັນ');
+        $orgPhone   = \App\Models\Setting::get('org_phone',        '');
+        $orgEmail   = \App\Models\Setting::get('org_email',        '');
+        $logoKey    = \App\Models\Setting::get('org_logo_url');
+        $orgLogoPath = $logoKey && file_exists(storage_path('app/public/' . $logoKey))
+            ? storage_path('app/public/' . $logoKey)
+            : null;
 
         $pdf = Pdf::loadView('finance.report-pdf', compact(
             'from', 'to', 'totalIncome', 'totalExpense', 'netBalance',
-            'byCategory', 'transactions', 'orgName', 'period',
+            'byCategory', 'transactions', 'orgName', 'orgAddress',
+            'orgPhone', 'orgEmail', 'orgLogoPath', 'period',
             'reportYear', 'reportMonth'
         ))->setPaper('a4', 'portrait');
 
