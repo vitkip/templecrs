@@ -66,28 +66,57 @@
                 @error('category_id') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
             </div>
 
-            {{-- Amount + Date (2 cols) --}}
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-label-md font-bold text-on-surface mb-1.5">{{ __('messages.amount') }} (ກີບ) <span class="text-error">*</span></label>
-                    <div class="relative">
-                        <input wire:model="amount" type="number" min="1" step="1"
-                               placeholder="0"
-                               class="w-full pl-3 pr-16 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
-                                      {{ $errors->has('amount') ? 'border-error ring-2 ring-error/20' : '' }}" />
-                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant font-bold">ກີບ</span>
-                    </div>
-                    @error('amount') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
+            {{-- Amount --}}
+            <div x-data="{
+                display: '{{ $amount ? number_format((float) str_replace(',', '', $amount), 0, '.', ',') : '' }}',
+                fmt(n) { return n ? String(parseInt(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''; },
+                isPreset(val) { return this.display === this.fmt(val); },
+                setPreset(val) { this.display = this.fmt(val); $wire.set('amount', String(val)); },
+                onInput(e) {
+                    let raw = e.target.value.replace(/[^0-9]/g, '');
+                    this.display = this.fmt(raw);
+                    $nextTick(() => { e.target.value = this.display; });
+                    $wire.set('amount', raw);
+                }
+            }">
+                <label class="block text-label-md font-bold text-on-surface mb-1.5">{{ __('messages.amount') }} (ກີບ) <span class="text-error">*</span></label>
+
+                {{-- Quick preset amounts --}}
+                <div class="flex flex-wrap gap-1.5 mb-2">
+                    @foreach ([1000000, 5000000, 10000000, 50000000, 100000000] as $preset)
+                        <button type="button"
+                                @click="setPreset({{ $preset }})"
+                                :class="isPreset({{ $preset }})
+                                    ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
+                                    : 'border-outline-variant bg-surface text-on-surface-variant hover:border-primary/40 hover:bg-primary/5 hover:text-primary'"
+                                class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all leading-none">
+                            {{ number_format($preset, 0, '.', ',') }}
+                        </button>
+                    @endforeach
                 </div>
 
-                <div>
-                    <label class="block text-label-md font-bold text-on-surface mb-1.5">{{ __('messages.transaction_date') }} <span class="text-error">*</span></label>
-                    <input wire:model="transaction_date" type="date"
-                           max="{{ now()->format('Y-m-d') }}"
-                           class="w-full px-3 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
-                                  {{ $errors->has('transaction_date') ? 'border-error ring-2 ring-error/20' : '' }}" />
-                    @error('transaction_date') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
+                {{-- Amount input with live comma formatting --}}
+                <div class="relative">
+                    <input type="text" inputmode="numeric"
+                           :value="display"
+                           @input="onInput($event)"
+                           @focus="$el.select()"
+                           placeholder="0"
+                           class="w-full pl-3 pr-16 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
+                                  {{ $errors->has('amount') ? 'border-error ring-2 ring-error/20' : '' }}" />
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant font-bold">ກີບ</span>
                 </div>
+                @error('amount') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
+            </div>
+
+            {{-- Date --}}
+            <div>
+                <label class="block text-label-md font-bold text-on-surface mb-1.5">{{ __('messages.transaction_date') }} <span class="text-error">*</span></label>
+                <input wire:model="transaction_date" type="date"
+                       max="{{ now()->format('Y-m-d') }}"
+                       class="w-full px-3 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
+                              {{ $errors->has('transaction_date') ? 'border-error ring-2 ring-error/20' : '' }}" />
+                @error('transaction_date') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
             </div>
 
             {{-- Description --}}
