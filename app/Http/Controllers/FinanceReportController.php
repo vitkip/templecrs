@@ -14,8 +14,8 @@ class FinanceReportController extends Controller
         $period      = $request->input('period', 'month');
         $reportYear  = (int) $request->input('reportYear', now()->year);
         $reportMonth = (int) $request->input('reportMonth', now()->month);
-        $dateFrom    = $request->input('dateFrom', '');
-        $dateTo      = $request->input('dateTo', '');
+        $dateFrom    = $request->input('dateFrom') ?: null;
+        $dateTo      = $request->input('dateTo')   ?: null;
 
         [$from, $to] = $this->getDateRange($period, $reportYear, $reportMonth, $dateFrom, $dateTo);
 
@@ -48,7 +48,7 @@ class FinanceReportController extends Controller
         return $pdf->download($filename);
     }
 
-    private function getDateRange(string $period, int $year, int $month, string $from, string $to): array
+    private function getDateRange(string $period, int $year, int $month, ?string $from, ?string $to): array
     {
         return match ($period) {
             'month'   => [
