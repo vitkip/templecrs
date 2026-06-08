@@ -97,11 +97,18 @@
     .badge-e { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; padding:1px 5px; font-size:7pt; font-weight:bold; }
 
     /* ══ Signature ══ */
-    .sig-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
-    .sig-table td { width: 33.33%; text-align: center; vertical-align: top; padding: 0 8px; }
-    .sig-role { font-size: 9pt; font-weight: bold; margin-bottom: 42px; }
-    .sig-line { border-top: 1px solid #333; margin: 0 12px 3px; }
-    .sig-name { font-size: 8.5pt; color: #444; }
+    .sig-section { margin-top: 22px; }
+    .sig-committee-title {
+        font-size: 9pt; font-weight: bold; text-align: center;
+        border: 1px solid #bbb; background: #f5f5f5;
+        padding: 4px 10px; margin-bottom: 12px;
+    }
+    .sig-table { width: 100%; border-collapse: collapse; }
+    .sig-table td { width: 33.33%; text-align: center; vertical-align: top; padding: 0 10px; }
+    .sig-role-label { font-size: 9pt; font-weight: bold; margin-bottom: 44px; line-height: 1.5; }
+    .sig-line { border-top: 1px solid #333; margin: 0 8px 4px; }
+    .sig-rank { font-size: 8pt; color: #555; line-height: 1.5; }
+    .sig-name-val { font-size: 8.5pt; font-weight: bold; line-height: 1.5; }
 
     /* ══ Footer ══ */
     .doc-footer { margin-top: 18px; border-top: 2px solid #111; padding-top: 5px; font-size: 7.5pt; color: #555; text-align: center; line-height: 1.7; }
@@ -263,25 +270,31 @@
 @endif
 
 {{-- ══ SIGNATURE ══ --}}
-<table class="sig-table">
-    <tr>
-        <td>
-            <div class="sig-role">ຜູ້ຈັດທຳ</div>
-            <div class="sig-line"></div>
-            <div class="sig-name">&nbsp;</div>
-        </td>
-        <td>
-            <div class="sig-role">ຜູ້ກວດສອບ</div>
-            <div class="sig-line"></div>
-            <div class="sig-name">&nbsp;</div>
-        </td>
-        <td>
-            <div class="sig-role">ຜູ້ອະນຸມັດ / ປະທານ</div>
-            <div class="sig-line"></div>
-            <div class="sig-name">&nbsp;</div>
-        </td>
-    </tr>
-</table>
+<div class="sig-section">
+    <div class="sig-committee-title">ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ ແລະ ການບັນຊີ</div>
+    <table class="sig-table">
+        <tr>
+            <td>
+                <div class="sig-role-label">ຜູ້ຈັດທຳ</div>
+                <div class="sig-line"></div>
+                <div class="sig-name-val">ພຣະອາຈານ ອາລຸນ ວົງພັກດີ</div>
+                <div class="sig-rank">ຮອງຫົວໜ້າ ຄະນະກໍາມະການ</div>
+            </td>
+            <td>
+                <div class="sig-role-label">ຜູ້ກວດສອບ</div>
+                <div class="sig-line"></div>
+                <div class="sig-name-val">ພຣະອາຈານ ຂວັນໃຈ ວິໄຊຍະເສີດ</div>
+                <div class="sig-rank">ຫົວໜ້າ ຄະນະກໍາມະການ</div>
+            </td>
+            <td>
+                <div class="sig-role-label">ຜູ້ອະນຸມັດ / ປະທານ</div>
+                <div class="sig-line"></div>
+                <div class="sig-name-val">ພຣະອາຈານໃຫຍ່ ບຸນທະວີ ປະສິດທິສັກ</div>
+                <div class="sig-rank">ຫົວໜ້າ ກັມມາທິການສາທາຣະນູປະການ</div>
+            </td>
+        </tr>
+    </table>
+</div>
 
 {{-- ══ FOOTER ══ --}}
 <div class="doc-footer">
