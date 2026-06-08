@@ -1,4 +1,4 @@
-<div x-data="financeChart(@json($chartLabels), @json($chartIncome), @json($chartExpense))">
+<div>
 
     {{-- Page Header --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -92,8 +92,13 @@
                     <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-red-400 inline-block"></span> {{ __('messages.expense') }}</span>
                 </div>
             </div>
+            <div id="fin-dash-chart-data"
+                 data-labels='@json($chartLabels)'
+                 data-income='@json($chartIncome)'
+                 data-expense='@json($chartExpense)'
+                 hidden></div>
             <div class="relative h-56">
-                <canvas x-ref="barChart"></canvas>
+                <canvas id="fin-dash-bar"></canvas>
             </div>
         </div>
 
@@ -163,44 +168,63 @@
     </div>
 </div>
 
-@push('head')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+@push('scripts')
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('financeChart', (labels, income, expense) => ({
-        chart: null,
-        init() {
-            this.$nextTick(() => {
-                if (!this.$refs.barChart || typeof Chart === 'undefined') return;
-                if (this.chart) this.chart.destroy();
-                this.chart = new Chart(this.$refs.barChart.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels,
-                        datasets: [
-                            { label: '{{ __('messages.income') }}',  data: income,  backgroundColor: 'rgba(34,197,94,0.7)',   borderRadius: 6, borderSkipped: false },
-                            { label: '{{ __('messages.expense') }}', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 6, borderSkipped: false }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-                            y: {
-                                grid: { color: 'rgba(0,0,0,0.05)' },
-                                ticks: {
-                                    font: { size: 10 },
-                                    callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v
-                                }
+(function () {
+    var _dashChart = null;
+
+    function initDashChart() {
+        var store  = document.getElementById('fin-dash-chart-data');
+        var canvas = document.getElementById('fin-dash-bar');
+        if (!store || !canvas || typeof Chart === 'undefined') return;
+
+        var labels  = JSON.parse(store.getAttribute('data-labels')  || '[]');
+        var income  = JSON.parse(store.getAttribute('data-income')  || '[]');
+        var expense = JSON.parse(store.getAttribute('data-expense') || '[]');
+
+        if (_dashChart) { _dashChart.destroy(); _dashChart = null; }
+        if (!labels.length) return;
+
+        _dashChart = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: '{{ __('messages.income') }}',  data: income,  backgroundColor: 'rgba(34,197,94,0.7)',   borderRadius: 6, borderSkipped: false },
+                    { label: '{{ __('messages.expense') }}', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 6, borderSkipped: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            font: { size: 10 },
+                            callback: function (v) {
+                                return v >= 1000000 ? (v / 1000000).toFixed(1) + 'M'
+                                     : v >= 1000    ? (v / 1000).toFixed(0)    + 'K'
+                                     : v;
                             }
                         }
                     }
-                });
-            });
-        }
-    }));
-});
+                }
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDashChart);
+    } else {
+        initDashChart();
+    }
+
+    document.addEventListener('livewire:updated', function () {
+        requestAnimationFrame(initDashChart);
+    });
+}());
 </script>
 @endpush

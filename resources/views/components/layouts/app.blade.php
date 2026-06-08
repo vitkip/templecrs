@@ -13,6 +13,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     @stack('head')
 </head>
 <body class="text-body-md text-on-surface antialiased"

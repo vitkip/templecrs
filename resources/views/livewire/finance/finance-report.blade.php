@@ -1,4 +1,4 @@
-<div x-data="reportChart(@json($chartLabels), @json($chartIncome), @json($chartExpense), @json($incomeCategories->pluck('total')->map(fn($v) => (float)$v)->toArray()), @json($incomeCategories->map(fn($r) => $r->category?->name ?? '?')->toArray()), @json($expenseCategories->pluck('total')->map(fn($v) => (float)$v)->toArray()), @json($expenseCategories->map(fn($r) => $r->category?->name ?? '?')->toArray()))">
+<div>
 
     {{-- Header --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -108,6 +108,17 @@
         </div>
     </div>
 
+    {{-- Chart data store (Livewire morphs these attributes on filter change) --}}
+    <div id="fin-report-chart-data"
+         data-labels='@json($chartLabels)'
+         data-income='@json($chartIncome)'
+         data-expense='@json($chartExpense)'
+         data-income-amounts='@json($incomeCategories->pluck("total")->map(fn($v) => (float)$v)->values())'
+         data-income-names='@json($incomeCategories->map(fn($r) => $r->category?->name ?? "?")->values())'
+         data-expense-amounts='@json($expenseCategories->pluck("total")->map(fn($v) => (float)$v)->values())'
+         data-expense-names='@json($expenseCategories->map(fn($r) => $r->category?->name ?? "?")->values())'
+         hidden></div>
+
     {{-- Charts Row --}}
     @if (count($chartLabels) > 0)
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
@@ -115,7 +126,7 @@
         <div class="lg:col-span-2 bg-surface-container rounded-2xl border border-outline-variant p-5">
             <h2 class="text-title-md font-bold text-on-surface mb-4">{{ __('messages.monthly_trend') }}</h2>
             <div class="relative h-56">
-                <canvas x-ref="barChart"></canvas>
+                <canvas id="fin-report-bar"></canvas>
             </div>
             <div class="flex items-center justify-center gap-6 mt-3 text-[10px] font-bold text-on-surface-variant">
                 <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-green-500 inline-block"></span> {{ __('messages.income') }}</span>
@@ -129,7 +140,7 @@
                 <h3 class="text-label-md font-bold text-green-700 mb-2">{{ __('messages.income') }}</h3>
                 @if ($incomeCategories->isNotEmpty())
                     <div class="relative h-28">
-                        <canvas x-ref="pieIncome"></canvas>
+                        <canvas id="fin-report-pie-income"></canvas>
                     </div>
                 @else
                     <p class="text-body-sm text-on-surface-variant text-center py-4">—</p>
@@ -139,7 +150,7 @@
                 <h3 class="text-label-md font-bold text-red-600 mb-2">{{ __('messages.expense') }}</h3>
                 @if ($expenseCategories->isNotEmpty())
                     <div class="relative h-28">
-                        <canvas x-ref="pieExpense"></canvas>
+                        <canvas id="fin-report-pie-expense"></canvas>
                     </div>
                 @else
                     <p class="text-body-sm text-on-surface-variant text-center py-4">—</p>
@@ -245,57 +256,92 @@
     </div>
 </div>
 
-@push('head')
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+@push('scripts')
 <script>
-document.addEventListener('alpine:init', () => {
-    Alpine.data('reportChart', (labels, income, expense, incomeData, incomeLabels, expenseData, expenseLabels) => ({
-        charts: [],
-        init() {
-            this.$nextTick(() => {
-                if (typeof Chart === 'undefined') return;
-                this.charts.forEach(c => c.destroy());
-                this.charts = [];
+(function () {
+    var _reportCharts = [];
 
-                if (this.$refs.barChart && labels.length) {
-                    this.charts.push(new Chart(this.$refs.barChart.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels,
-                            datasets: [
-                                { label: '{{ __('messages.income') }}',  data: income,  backgroundColor: 'rgba(34,197,94,0.7)',   borderRadius: 5, borderSkipped: false },
-                                { label: '{{ __('messages.expense') }}', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 5, borderSkipped: false }
-                            ]
-                        },
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
-                            scales: {
-                                x: { grid: { display: false }, ticks: { font: { size: 10 } } },
-                                y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 9 }, callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v } }
+    function initReportCharts() {
+        var store = document.getElementById('fin-report-chart-data');
+        if (!store || typeof Chart === 'undefined') return;
+
+        var labels         = JSON.parse(store.getAttribute('data-labels')          || '[]');
+        var income         = JSON.parse(store.getAttribute('data-income')          || '[]');
+        var expense        = JSON.parse(store.getAttribute('data-expense')         || '[]');
+        var incomeAmounts  = JSON.parse(store.getAttribute('data-income-amounts')  || '[]');
+        var incomeNames    = JSON.parse(store.getAttribute('data-income-names')    || '[]');
+        var expenseAmounts = JSON.parse(store.getAttribute('data-expense-amounts') || '[]');
+        var expenseNames   = JSON.parse(store.getAttribute('data-expense-names')   || '[]');
+
+        _reportCharts.forEach(function (c) { c.destroy(); });
+        _reportCharts = [];
+
+        var barCanvas = document.getElementById('fin-report-bar');
+        if (barCanvas && labels.length) {
+            _reportCharts.push(new Chart(barCanvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: '{{ __('messages.income') }}',  data: income,  backgroundColor: 'rgba(34,197,94,0.7)',   borderRadius: 5, borderSkipped: false },
+                        { label: '{{ __('messages.expense') }}', data: expense, backgroundColor: 'rgba(248,113,113,0.7)', borderRadius: 5, borderSkipped: false }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                        y: {
+                            grid: { color: 'rgba(0,0,0,0.04)' },
+                            ticks: {
+                                font: { size: 9 },
+                                callback: function (v) {
+                                    return v >= 1000000 ? (v / 1000000).toFixed(1) + 'M'
+                                         : v >= 1000    ? (v / 1000).toFixed(0)    + 'K'
+                                         : v;
+                                }
                             }
                         }
-                    }));
+                    }
                 }
-
-                if (this.$refs.pieIncome && incomeData.length) {
-                    this.charts.push(new Chart(this.$refs.pieIncome.getContext('2d'), {
-                        type: 'doughnut',
-                        data: { labels: incomeLabels, datasets: [{ data: incomeData, backgroundColor: ['#22c55e','#16a34a','#4ade80','#86efac','#bbf7d0','#6ee7b7'], borderWidth: 1 }] },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } } } }
-                    }));
-                }
-
-                if (this.$refs.pieExpense && expenseData.length) {
-                    this.charts.push(new Chart(this.$refs.pieExpense.getContext('2d'), {
-                        type: 'doughnut',
-                        data: { labels: expenseLabels, datasets: [{ data: expenseData, backgroundColor: ['#ef4444','#dc2626','#f87171','#fca5a5','#fecaca','#f97316','#fb923c'], borderWidth: 1 }] },
-                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } } } }
-                    }));
-                }
-            });
+            }));
         }
-    }));
-});
+
+        var pieIncomeCanvas = document.getElementById('fin-report-pie-income');
+        if (pieIncomeCanvas && incomeAmounts.length) {
+            _reportCharts.push(new Chart(pieIncomeCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: incomeNames,
+                    datasets: [{ data: incomeAmounts, backgroundColor: ['#22c55e','#16a34a','#4ade80','#86efac','#bbf7d0','#6ee7b7'], borderWidth: 1 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } } } }
+            }));
+        }
+
+        var pieExpenseCanvas = document.getElementById('fin-report-pie-expense');
+        if (pieExpenseCanvas && expenseAmounts.length) {
+            _reportCharts.push(new Chart(pieExpenseCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: expenseNames,
+                    datasets: [{ data: expenseAmounts, backgroundColor: ['#ef4444','#dc2626','#f87171','#fca5a5','#fecaca','#f97316','#fb923c'], borderWidth: 1 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { font: { size: 9 }, boxWidth: 10 } } } }
+            }));
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initReportCharts);
+    } else {
+        initReportCharts();
+    }
+
+    document.addEventListener('livewire:updated', function () {
+        requestAnimationFrame(initReportCharts);
+    });
+}());
 </script>
 @endpush
