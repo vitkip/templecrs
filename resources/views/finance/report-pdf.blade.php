@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8" />
 <style>
+    /* ══ ມາດຕະຖານຂອບເຈ້ຍເອກະສານທາງການລາວ ══ */
+    @page {
+        margin-top: 1cm;
+        margin-bottom: 1cm;
+        margin-left: 2.5cm;
+        margin-right: 1.5cm;
+    }
+
     @font-face {
         font-family: 'Phetsarath';
         src: url('file://{{ storage_path('fonts/Phetsarath-Regular.ttf') }}') format('truetype');
@@ -16,18 +24,14 @@
         font-style: normal;
     }
 
-    /* ══ ມາດຕະຖານຂອບເຈ້ຍເອກະສານທາງການລາວ ══ */
-    @page {
-        margin-top: 2.0cm;
-        margin-bottom: 2.0cm;
-        margin-left: 3.0cm;
-        margin-right: 1.5cm;
-    }
-
     * { 
-        margin: 0; 
-        padding: 0; 
         box-sizing: border-box; 
+    }
+    
+    /* Reset margins/paddings on content elements, leaving html/body to respect @page margins */
+    th, td, p, div, span, h1, h2, h3, h4, h5, h6, table, img, ul, ol, li {
+        margin: 0;
+        padding: 0;
     }
     
     body {
@@ -94,17 +98,7 @@
         object-fit: contain;
     }
 
-    /* ══ ເເສັ້ນຂັ້ນຫົວເອກະສານທາງການ ══ */
-    .rule-thick { 
-        border: 0; 
-        border-top: 2px solid #000000; 
-        margin: 6px 0 2px; 
-    }
-    .rule-thin { 
-        border: 0; 
-        border-top: 0.5px solid #000000; 
-        margin: 0 0 15px; 
-    }
+ 
 
     /* ══ ຫົວຂໍ້ເອກະສານ ══ */
     .title-block { 
@@ -228,6 +222,7 @@
     /* ══ ພາກສ່ວນລາຍເຊັນ ແລະ ກາປະທັບ ══ */
     .sig-section { 
         margin-top: 30px; 
+        margin-bottom: 50px; 
         page-break-inside: avoid; 
     }
     .sig-table { 
@@ -275,7 +270,7 @@
 
     /* ══ ສ່ວນທ້າຍເອກະສານ ══ */
     .doc-footer {
-        position: fixed;
+        position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
@@ -286,7 +281,7 @@
         line-height: 1.5;
     }
     .page-number:before {
-        content: "ໜ້າທີ " counter(page) " / " counter(pages);
+        content: "ໜ້າທີ " counter(page);
     }
 </style>
 </head>
@@ -337,8 +332,6 @@
     </tr>
 </table>
 
-<hr class="rule-thick" />
-<hr class="rule-thin" />
 
 {{-- ══ ຫົວຂໍ້ບົດລາຍງານ ══ --}}
 <div class="title-block">
@@ -499,11 +492,8 @@
             <!-- ບລັອກລາຍເຊັນຂອງຜູ້ອະນຸມັດ -->
             <td class="signature-block">
                 <div class="sig-role-label">
-                    ຜູ້ລາຍງານ / ຫົວໜ້າຄະນະກໍາມະການການເງິນ<br/>
-                    (ເຊັນ ແລະ ປະທັບກາ)
+                    ຜູ້ລາຍງານ / ຫົວໜ້າຄະນະກໍາມະການການເງິນ<br/>                   
                 </div>
-                <div class="sig-name-val">( ພຣະອາຈານໃຫຍ່ ບຸນທະວີ ປະສິດທິສັກ )</div>
-                <div class="sig-rank">ຫົວໜ້າ ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ</div>
             </td>
         </tr>
     </table>
