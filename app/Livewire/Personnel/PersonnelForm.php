@@ -230,6 +230,20 @@ class PersonnelForm extends Component
     }
 
     /**
+     * Clear monk-specific fields when switching away from monk type.
+     */
+    public function updatedGender(): void
+    {
+        if ($this->gender !== 'monk') {
+            $this->current_temple_lo  = null;
+            $this->current_temple_en  = null;
+            $this->date_of_ordination = null;
+            $this->pansa              = null;
+            $this->pansaAutoCalc      = null;
+        }
+    }
+
+    /**
      * Auto-calculate pansa when ordination date changes.
      */
     public function updatedDateOfOrdination(): void

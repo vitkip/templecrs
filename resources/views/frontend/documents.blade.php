@@ -28,8 +28,9 @@
             'file_icon'    => $d->file_icon,
             'file_size'    => $d->file_size_formatted,
             'file_name'    => $d->file_name ?? '',
-            'has_file'     => (bool) $d->file_path,
-            'download_url' => $d->file_path ? route('frontend.document.download', $d->id) : null,
+            'has_file'       => (bool) $d->file_path,
+            'download_url'   => $d->file_path ? route('frontend.document.download', $d->id) : null,
+            'download_count' => (int) $d->download_count,
             'search_text'  => strtolower(implode(' ', array_filter([
                 $d->title_lo, $d->title_en,
                 $d->doc_number,
@@ -91,6 +92,13 @@
                 <span class="text-sm font-bold text-white">{{ count($categoriesUsed) }}</span>
                 <span class="text-xs text-white/60">{{ __('messages.document_category') }}</span>
             </div>
+            @if($totalDownloads > 0)
+            <div class="flex items-center gap-1.5 px-4 py-2 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
+                <span class="material-symbols-outlined text-sm text-amber-300">download</span>
+                <span class="text-sm font-bold text-white">{{ number_format($totalDownloads) }}</span>
+                <span class="text-xs text-white/60">ດາວໂຫລດ</span>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -294,6 +302,11 @@
                                   class="flex items-center gap-1 text-[10px] text-on-surface-variant">
                                 <span class="material-symbols-outlined text-[12px]">data_usage</span>
                                 <span x-text="doc.file_size"></span>
+                            </span>
+                            <span x-show="doc.download_count > 0"
+                                  class="flex items-center gap-1 text-[10px] text-indigo-600 font-semibold">
+                                <span class="material-symbols-outlined text-[12px]">download</span>
+                                <span x-text="doc.download_count.toLocaleString() + ' ຄັ້ງ'"></span>
                             </span>
                         </div>
                     </div>

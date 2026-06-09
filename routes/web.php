@@ -44,6 +44,7 @@ Route::middleware([SetLocale::class])->group(function () {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
         abort_if(!$document->file_path, 404);
         abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+        $document->increment('download_count');
         return \Illuminate\Support\Facades\Storage::disk('local')->download(
             $document->file_path,
             $document->file_name
@@ -106,6 +107,7 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
             $document = \App\Models\Document::findOrFail($id);
             abort_if(!$document->file_path, 404);
             abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+            $document->increment('download_count');
             return \Illuminate\Support\Facades\Storage::disk('local')->download(
                 $document->file_path,
                 $document->file_name

@@ -47,15 +47,15 @@
             </div>
         </div>
 
-        {{-- Categories Mini --}}
-        <div class="col-span-12 lg:col-span-2 glass-card p-4 rounded-xl border border-outline-variant flex flex-col gap-1.5 justify-center">
-            @foreach (['order', 'announcement', 'certificate'] as $cat)
-                @php $meta = $categories[$cat]; $count = $stats['by_category'][$cat] ?? 0; @endphp
-                <div class="flex items-center justify-between text-xs">
-                    <span class="text-on-surface-variant">{{ $meta['lo'] }}</span>
-                    <span class="font-bold text-on-surface">{{ $count }}</span>
-                </div>
-            @endforeach
+        {{-- Total Downloads --}}
+        <div class="col-span-12 lg:col-span-2 glass-card p-6 rounded-xl border border-outline-variant flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700">
+                <span class="material-symbols-outlined text-2xl">download</span>
+            </div>
+            <div>
+                <p class="text-label-md text-on-surface-variant">ດາວໂຫລດທັງໝົດ</p>
+                <h3 class="text-headline-sm text-on-surface">{{ number_format($stats['total_downloads']) }}</h3>
+            </div>
         </div>
     </div>
 
@@ -162,6 +162,12 @@
                         @endif
                     </th>
                     <th class="p-3">ໄຟລ໌</th>
+                    <th class="p-3 cursor-pointer hover:bg-white/10 transition-colors text-center" wire:click="sortBy('download_count')">
+                        ດາວໂຫລດ
+                        @if ($sortBy === 'download_count')
+                            <span class="material-symbols-outlined text-xs align-middle">{{ $sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
+                        @endif
+                    </th>
                     <th class="p-3 text-center">ສະຖານະ</th>
                     <th class="p-3 text-right">ດຳເນີນການ</th>
                 </tr>
@@ -221,6 +227,14 @@
                             @endif
                         </td>
 
+                        {{-- Download Count --}}
+                        <td class="p-3 text-center">
+                            <span class="inline-flex items-center gap-1 text-xs font-bold {{ $doc->download_count > 0 ? 'text-indigo-700' : 'text-on-surface-variant/40' }}">
+                                <span class="material-symbols-outlined text-sm">download</span>
+                                {{ number_format($doc->download_count) }}
+                            </span>
+                        </td>
+
                         {{-- Active Toggle --}}
                         <td class="p-3">
                             <div class="flex justify-center">
@@ -255,7 +269,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="p-12 text-center text-on-surface-variant">
+                        <td colspan="9" class="p-12 text-center text-on-surface-variant">
                             <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">folder_off</span>
                             <p class="text-lg">ບໍ່ພົບເອກະສານ / No documents found</p>
                             <a href="{{ route('documents.create') }}" class="text-primary hover:underline mt-2 inline-block">

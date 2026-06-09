@@ -28,12 +28,14 @@ class Document extends Model
         'issued_date',
         'sort_order',
         'is_active',
+        'download_count',
     ];
 
     protected $casts = [
-        'is_active'   => 'boolean',
-        'issued_date' => 'date',
-        'file_size'   => 'integer',
+        'is_active'      => 'boolean',
+        'issued_date'    => 'date',
+        'file_size'      => 'integer',
+        'download_count' => 'integer',
     ];
 
     /* ───── Category Metadata ───── */

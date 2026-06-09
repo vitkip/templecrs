@@ -47,7 +47,7 @@
             <div class="flex gap-4">
                 <!-- Monk -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.blur="gender" value="monk" class="hidden peer" />
+                    <input type="radio" wire:model.live="gender" value="monk" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-monk peer-checked:bg-amber-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-monk/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"
@@ -59,7 +59,7 @@
 
                 <!-- Male -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.blur="gender" value="male" class="hidden peer" />
+                    <input type="radio" wire:model.live="gender" value="male" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-male peer-checked:bg-slate-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-male/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"
@@ -71,7 +71,7 @@
 
                 <!-- Female -->
                 <label class="flex-1 cursor-pointer">
-                    <input type="radio" wire:model.blur="gender" value="female" class="hidden peer" />
+                    <input type="radio" wire:model.live="gender" value="female" class="hidden peer" />
                     <div
                         class="peer-checked:border-badge-female peer-checked:bg-violet-50 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-badge-female/50">
                         <span class="material-symbols-outlined text-3xl mb-2 block"

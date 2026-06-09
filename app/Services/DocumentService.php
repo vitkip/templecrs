@@ -74,7 +74,8 @@ class DocumentService
         $stats = Document::selectRaw('
             COUNT(*) as total,
             SUM(CASE WHEN is_active = 1 THEN 1 ELSE 0 END) as active,
-            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as this_month
+            SUM(CASE WHEN MONTH(created_at) = ? AND YEAR(created_at) = ? THEN 1 ELSE 0 END) as this_month,
+            SUM(download_count) as total_downloads
         ', [now()->month, now()->year])->first();
 
         $byCategory = Document::selectRaw('category, COUNT(*) as count')
@@ -83,10 +84,11 @@ class DocumentService
             ->toArray();
 
         return [
-            'total'       => (int) $stats->total,
-            'active'      => (int) $stats->active,
-            'this_month'  => (int) $stats->this_month,
-            'by_category' => $byCategory,
+            'total'            => (int) $stats->total,
+            'active'           => (int) $stats->active,
+            'this_month'       => (int) $stats->this_month,
+            'total_downloads'  => (int) $stats->total_downloads,
+            'by_category'      => $byCategory,
         ];
     }
 }

@@ -110,6 +110,8 @@ class FrontendController extends Controller
             ->whereHas('documents', fn($q) => $q->where('is_active', true))
             ->get();
 
+        $totalDownloads = $documents->sum('download_count');
+
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
             'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
             'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
@@ -123,6 +125,7 @@ class FrontendController extends Controller
         return view('frontend.documents', compact(
             'documents',
             'departments',
+            'totalDownloads',
             'orgName',
             'orgNameEn',
             'orgLogo',
