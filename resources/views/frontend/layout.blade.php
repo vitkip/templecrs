@@ -5,8 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
-    <title>{{ $title ?? $orgName ?? 'Buddhist EMS' }}</title>
-    <meta name="description" content="{{ $orgNameEn ?? 'Buddhist Organization' }} — ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ" />
+    <title>{{ $title ?? $orgName ?? 'ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ' }}</title>
+    <meta name="description" content="{{ $orgNameEn ?? 'ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ' }} — ກຳມາທິການພຸດທະສາສະໜາ, ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທັມມະ, ວັດທະນະທຳ, ພຣະສົງລາວ" />
+    <meta name="keywords" content="
+        ອົງການພຸດທະສາສະໜາສຳພັນ, ສປປ ລາວ, ພຸດທະສາສະໜາ, ກຳມາທິການ,
+        ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທຳມະ, ທັມມະ,
+        ພຣະສົງລາວ, ວັດທະນະທຳ, ປະຕິບັດທຳ,
+        ວັດ, ສາດສະໜາ, ສາດສະໜາລາວ, ຊາວພຸດ, ພຣະພຸດທ໌, ພຣະທຳ, ພຣະສົງຄ໌,
+        ສີນ, ສະມາທິ, ປັນຍາ, ທານ, ບຸນ, ກຸສົນ,
+        ໃຫ້ທານ, ບິນທະບາດ, ບວດ, ສາມະເນນ, ອຸປະສົມບົດ,
+        ພຣະວິໄນ, ພຣະໄຕປິດົກ, ຄຳສອນ, ໄຕຣສະລະນາຄົມ,
+        ໂຮງຮຽນສົງ, ການສຶກສາທາງສາດສະໜາ, ອົງກອນສົງ, ອາຮາມ,
+        ມໍລະດົກວັດທະນະທຳ, ທ່ອງທ່ຽວທາງສາດສະໜາ, ວັດລາວ,
+        Buddhist Organization Laos, Lao Buddhism, Sangha Education,
+        Dhamma, Tipitaka, Vinaya, Meditation, Samadhi, Vipassana,
+        Buddhist Culture, Lao Monks, Moral Teaching, Buddhist Committee,
+        Lao PDR Buddhism, Buddhist Temple Laos, Merit Making,
+        Buddhist Ceremony, Religious Organization, Buddhist Association,
+        Ordination, Novice Monk, Buddhist Heritage, Buddhist Practice,
+        Almsgiving, Buddhist Education, Lao Sangha
+    " />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ $title ?? $orgName ?? 'ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ' }}" />
+    <meta property="og:description" content="ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ — ກຳມາທິການ, ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທັມມະ, ວັດທະນະທຳ, ພຣະສົງລາວ, ປະຕິບັດທຳ" />
+    @if ($orgLogo ?? false)
+        <meta property="og:image" content="{{ Storage::url($orgLogo) }}" />
+    @endif
+    <meta property="og:locale" content="lo_LA" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    @if ($orgLogo ?? false)
+        <link rel="icon" type="image/png" href="{{ Storage::url($orgLogo) }}" />
+        <link rel="apple-touch-icon" href="{{ Storage::url($orgLogo) }}" />
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}" />
+    @endif
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
 

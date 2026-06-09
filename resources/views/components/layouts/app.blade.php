@@ -6,7 +6,38 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     <title>{{ $title ?? __('messages.app_name') }} — Buddhist EMS</title>
-    <meta name="description" content="Buddhist Organization Enterprise Management System — ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ" />
+    <meta name="description" content="ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ — ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ, ກຳມາທິການພຸດທະສາສະໜາ, ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທັມມະ, ວັດທະນະທຳ" />
+    <meta name="keywords" content="
+        ອົງການພຸດທະສາສະໜາສຳພັນ, ສປປ ລາວ, ພຸດທະສາສະໜາ, ກຳມາທິການ,
+        ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທຳມະ, ທັມມະ,
+        ພຣະສົງລາວ, ວັດທະນະທຳ, ປະຕິບັດທຳ,
+        ວັດ, ສາດສະໜາ, ສາດສະໜາລາວ, ຊາວພຸດ, ພຣະພຸດທ໌, ພຣະທຳ, ພຣະສົງຄ໌,
+        ສີນ, ສະມາທິ, ປັນຍາ, ທານ, ບຸນ, ກຸສົນ,
+        ໃຫ້ທານ, ບິນທະບາດ, ບວດ, ສາມະເນນ, ອຸປະສົມບົດ,
+        ພຣະວິໄນ, ພຣະໄຕປິດົກ, ຄຳສອນ, ໄຕຣສະລະນາຄົມ,
+        ໂຮງຮຽນສົງ, ການສຶກສາທາງສາດສະໜາ, ອົງກອນສົງ, ອາຮາມ,
+        ມໍລະດົກວັດທະນະທຳ, ທ່ອງທ່ຽວທາງສາດສະໜາ, ວັດລາວ,
+        Buddhist Organization Laos, Lao Buddhism, Sangha Education,
+        Dhamma, Tipitaka, Vinaya, Meditation, Samadhi, Vipassana,
+        Buddhist Culture, Lao Monks, Moral Teaching, Buddhist Committee,
+        Lao PDR Buddhism, Buddhist Temple Laos, Merit Making,
+        Buddhist Ceremony, Religious Organization, Buddhist Association,
+        Ordination, Novice Monk, Buddhist Heritage, Buddhist Practice,
+        Almsgiving, Buddhist Education, Lao Sangha
+    " />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="{{ $title ?? __('messages.app_name') }} — ອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ" />
+    <meta property="og:description" content="ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ — ກຳມາທິການ, ການສຶກສາສົງ, ເຜີຍແຜ່ສີລະທຳ, ກຳມະຖານ, ທັມມະ, ວັດທະນະທຳ, ພຣະສົງລາວ" />
+    <meta property="og:locale" content="lo_LA" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    @php $faviconLogo = \App\Models\Setting::get('org_logo_url'); @endphp
+    @if ($faviconLogo)
+        <link rel="icon" type="image/png" href="{{ Storage::url($faviconLogo) }}" />
+        <link rel="apple-touch-icon" href="{{ Storage::url($faviconLogo) }}" />
+    @else
+        <link rel="icon" href="{{ asset('favicon.ico') }}" />
+    @endif
 
     <!-- Phetsarath + Noto: self-hosted via build | Material Symbols: jsDelivr CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
