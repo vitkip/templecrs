@@ -51,15 +51,6 @@
 
                     {{-- Slide Content --}}
                     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-                        {{-- Logo --}}
-                        <div class="w-20 h-20 lg:w-24 lg:h-24 mx-auto mb-4 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-xl">
-                            @if ($orgLogo)
-                                <img src="{{ Storage::url($orgLogo) }}" alt="Logo" class="w-full h-full object-cover rounded-full" />
-                            @else
-                                <span class="material-symbols-outlined text-white text-4xl lg:text-5xl">account_balance</span>
-                            @endif
-                        </div>
-
                         {{-- Title --}}
                         @if ($slide->title)
                             <h1 class="text-headline-lg lg:text-[44px] lg:leading-[58px] font-bold text-white mb-3 max-w-4xl">
@@ -128,15 +119,6 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative z-10">
             <div class="text-center">
-                {{-- Logo --}}
-                <div class="w-24 h-24 lg:w-32 lg:h-32 mx-auto mb-6 bg-white/15 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-2xl animate-fade-in">
-                    @if ($orgLogo)
-                        <img src="{{ Storage::url($orgLogo) }}" alt="Logo" class="w-full h-full object-cover rounded-full" />
-                    @else
-                        <span class="material-symbols-outlined text-white text-6xl lg:text-7xl">account_balance</span>
-                    @endif
-                </div>
-
                 {{-- Title --}}
                 <h1 class="text-headline-lg lg:text-[42px] lg:leading-[56px] font-bold text-white mb-3 animate-fade-in" style="animation-delay: 0.1s;">
                     {{ $orgName }}
