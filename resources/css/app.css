@@ -357,3 +357,35 @@ body {
 [x-cloak] {
     display: none !important;
 }
+
+/* ═══════════════════════════════════════════════════════
+   Hero Section — Cinematic Animations
+   ═══════════════════════════════════════════════════════ */
+
+@keyframes heroKenBurns {
+    from { transform: scale(1.0) translate(0, 0); }
+    to   { transform: scale(1.08) translate(-1%, 0.5%); }
+}
+
+@keyframes heroReveal {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes heroFloat {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-28px) scale(1.04); }
+}
+
+.hero-ken-burns {
+    animation: heroKenBurns 9s ease-out forwards;
+}
+
+.hero-reveal {
+    opacity: 0;
+    animation: heroReveal 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-float-slow   { animation: heroFloat 14s ease-in-out infinite; }
+.hero-float-medium { animation: heroFloat 9s  ease-in-out infinite 2s; }
+.hero-float-slower { animation: heroFloat 18s ease-in-out infinite 5s; }

@@ -6,98 +6,147 @@
      HERO SECTION
 ══════════════════════════════════════════════════════════════ --}}
 @if ($slides->count() > 0)
-    {{-- Image Slider Carousel (AlpineJS) --}}
-    <section x-data="{ 
-        activeSlide: 0, 
+    {{-- Cinematic Image Slider (AlpineJS) --}}
+    <section x-data="{
+        activeSlide: 0,
         slidesCount: {{ $slides->count() }},
         autoplayInterval: null,
+        progress: 0,
+        progressRaf: null,
+        progressStart: null,
+        progressDuration: 6000,
         startAutoplay() {
-            this.autoplayInterval = setInterval(() => {
-                this.next();
-            }, 6000);
+            this.resetProgress();
+            this.autoplayInterval = setInterval(() => { this.next(); }, this.progressDuration);
         },
         stopAutoplay() {
-            if (this.autoplayInterval) {
-                clearInterval(this.autoplayInterval);
-            }
+            clearInterval(this.autoplayInterval);
+            cancelAnimationFrame(this.progressRaf);
         },
-        next() {
-            this.activeSlide = (this.activeSlide + 1) % this.slidesCount;
+        resetProgress() {
+            this.progress = 0; this.progressStart = null;
+            cancelAnimationFrame(this.progressRaf);
+            if (this.slidesCount <= 1) { this.progress = 100; return; }
+            const tick = (ts) => {
+                if (!this.progressStart) this.progressStart = ts;
+                this.progress = Math.min(100, ((ts - this.progressStart) / this.progressDuration) * 100);
+                if (this.progress < 100) this.progressRaf = requestAnimationFrame(tick);
+            };
+            this.progressRaf = requestAnimationFrame(tick);
         },
-        prev() {
-            this.activeSlide = (this.activeSlide - 1 + this.slidesCount) % this.slidesCount;
-        }
-    }" 
+        next() { this.activeSlide = (this.activeSlide + 1) % this.slidesCount; this.resetProgress(); },
+        prev() { this.activeSlide = (this.activeSlide - 1 + this.slidesCount) % this.slidesCount; this.resetProgress(); }
+    }"
     x-init="if (slidesCount > 1) { startAutoplay() }"
     @mouseenter="stopAutoplay()"
     @mouseleave="if (slidesCount > 1) { startAutoplay() }"
-    class="relative overflow-hidden h-[450px] lg:h-[600px]">
-        
-        <div class="h-full w-full relative">
+    class="relative overflow-hidden h-[500px] lg:h-[640px]">
+
+        {{-- Background images (Ken Burns per slide) --}}
+        <div class="absolute inset-0">
             @foreach ($slides as $index => $slide)
                 <div x-show="activeSlide === {{ $index }}"
                      x-cloak
-                     x-transition:enter="transition ease-out duration-1000 transform"
-                     x-transition:enter-start="opacity-0 scale-[1.02]"
-                     x-transition:enter-end="opacity-100 scale-100"
-                     x-transition:leave="transition ease-in duration-800 transform"
-                     x-transition:leave-start="opacity-100 scale-100"
-                     x-transition:leave-end="opacity-0 scale-[0.98]"
-                     class="absolute inset-0 w-full h-full bg-cover bg-center"
-                     style="background-image: url('{{ $slide->image_url }}');">
-                     
-                    {{-- Dark overlay for text readability --}}
-                    <div class="absolute inset-0 bg-black/45"></div>
-
-                    {{-- Slide Content --}}
-                    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center items-center text-center">
-                        {{-- Title --}}
-                        @if ($slide->title)
-                            <h1 class="text-headline-lg lg:text-[44px] lg:leading-[58px] font-bold text-white mb-3 max-w-4xl">
-                                {{ $slide->title }}
-                            </h1>
-                        @endif
-
-                        {{-- Subtitle --}}
-                        @if ($slide->subtitle)
-                            <p class="text-body-lg lg:text-xl text-white/85 mb-8 max-w-3xl leading-relaxed">
-                                {{ $slide->subtitle }}
-                            </p>
-                        @endif
-
-                        {{-- Button --}}
-                        @if ($slide->button_link)
-                            <div>
-                                <a href="{{ $slide->button_link }}"
-                                   class="px-8 py-3.5 bg-primary text-white rounded-xl font-bold text-label-md inline-flex items-center justify-center gap-2 hover:bg-primary-container transition-all shadow-lg btn-press">
-                                    {{ $slide->button_text ?: __('messages.read_more') }}
-                                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
-                                </a>
-                            </div>
-                        @endif
-                    </div>
+                     x-transition:enter="transition-opacity ease-out duration-1000"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition-opacity ease-in duration-700"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="absolute inset-0 overflow-hidden">
+                    <div class="absolute inset-0 bg-cover bg-center hero-ken-burns"
+                         style="background-image: url('{{ $slide->image_url }}');"></div>
                 </div>
             @endforeach
         </div>
 
-        @if ($slides->count() > 1)
-            {{-- Left Arrow --}}
-            <button @click="prev()" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/10 transition-all cursor-pointer">
-                <span class="material-symbols-outlined">chevron_left</span>
-            </button>
-            {{-- Right Arrow --}}
-            <button @click="next()" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/10 transition-all cursor-pointer">
-                <span class="material-symbols-outlined">chevron_right</span>
-            </button>
+        {{-- Cinematic multi-layer overlay --}}
+        <div class="absolute inset-0 z-10 bg-gradient-to-t from-black/85 via-black/30 to-black/5"></div>
+        <div class="absolute inset-0 z-10" style="background: radial-gradient(ellipse 90% 55% at 50% 115%, rgba(141,75,0,0.3) 0%, transparent 70%);"></div>
 
-            {{-- Indicators --}}
-            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-                @foreach ($slides as $index => $_)
-                    <button @click="activeSlide = {{ $index }}"
-                            :class="activeSlide === {{ $index }} ? 'w-8 bg-primary' : 'w-2 bg-white/50 hover:bg-white'"
-                            class="h-2 rounded-full transition-all duration-300 cursor-pointer"></button>
+        {{-- Content — bottom-anchored, centered --}}
+        <div class="relative z-20 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex flex-col justify-end pb-[90px]">
+            <div class="text-center">
+
+                {{-- Eyebrow (static, animates once on load) --}}
+                <div class="flex justify-center items-center gap-3 mb-5 hero-reveal">
+                    <span class="block w-8 h-px bg-amber-400/70"></span>
+                    <span class="text-amber-400/85 text-[9px] font-bold uppercase tracking-[0.28em]">
+                        ອົງການພຸດທະສາສະໜາ &nbsp;·&nbsp; BUDDHIST ORGANIZATION
+                    </span>
+                    <span class="block w-8 h-px bg-amber-400/70"></span>
+                </div>
+
+                {{-- Per-slide: title / subtitle / button --}}
+                @foreach ($slides as $index => $slide)
+                    <div x-show="activeSlide === {{ $index }}"
+                         x-cloak
+                         x-transition:enter="transition ease-out duration-700"
+                         x-transition:enter-start="opacity-0 translate-y-3"
+                         x-transition:enter-end="opacity-100 translate-y-0">
+                        @if ($slide->title)
+                            <h1 class="font-bold text-white mb-3 leading-tight"
+                                style="font-size: clamp(26px, 4.5vw, 52px); text-shadow: 0 2px 28px rgba(0,0,0,0.55);">
+                                {{ $slide->title }}
+                            </h1>
+                        @endif
+                        @if ($slide->subtitle)
+                            <p class="text-white/75 mb-7 leading-relaxed mx-auto max-w-2xl"
+                               style="font-size: clamp(14px, 1.7vw, 18px);">
+                                {{ $slide->subtitle }}
+                            </p>
+                        @endif
+                        @if ($slide->button_link)
+                            <div class="mb-1">
+                                <a href="{{ $slide->button_link }}"
+                                   class="inline-flex items-center gap-2 px-7 py-3.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all duration-200 shadow-lg shadow-black/30 btn-press group">
+                                    {{ $slide->button_text ?: __('messages.read_more') }}
+                                    <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 @endforeach
             </div>
+
+            {{-- Progress bar (RAF-animated, smooth) --}}
+            @if ($slides->count() > 1)
+                <div class="mt-6 mx-auto w-64 sm:w-80 h-px bg-white/15 overflow-hidden rounded-full">
+                    <div class="h-full bg-amber-400/65 rounded-full"
+                         :style="'width:' + progress + '%'"></div>
+                </div>
+            @endif
+        </div>
+
+        {{-- Slide counter + nav (desktop, bottom-right) --}}
+        @if ($slides->count() > 1)
+            <div class="absolute bottom-[95px] right-8 lg:right-10 z-30 hidden lg:flex items-center gap-3">
+                <div class="text-right leading-none">
+                    <span x-text="String(activeSlide + 1).padStart(2, '0')"
+                          class="text-white text-xl font-bold font-mono block leading-none"></span>
+                    <span class="text-white/35 text-[9px] font-mono tracking-widest">/ {{ str_pad($slides->count(), 2, '0', STR_PAD_LEFT) }}</span>
+                </div>
+                <div class="flex gap-1.5">
+                    <button @click="prev()"
+                            class="w-9 h-9 border border-white/20 text-white/55 hover:border-white/55 hover:text-white flex items-center justify-center rounded-lg backdrop-blur-sm transition-all cursor-pointer">
+                        <span class="material-symbols-outlined" style="font-size:15px;">arrow_back</span>
+                    </button>
+                    <button @click="next()"
+                            class="w-9 h-9 border border-white/20 text-white/55 hover:border-white/55 hover:text-white flex items-center justify-center rounded-lg backdrop-blur-sm transition-all cursor-pointer">
+                        <span class="material-symbols-outlined" style="font-size:15px;">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Mobile arrows (vertical center) --}}
+            <button @click="prev()"
+                    class="lg:hidden absolute left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 border border-white/25 text-white/65 hover:border-white/60 hover:text-white rounded-lg flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer">
+                <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            <button @click="next()"
+                    class="lg:hidden absolute right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 border border-white/25 text-white/65 hover:border-white/60 hover:text-white rounded-lg flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer">
+                <span class="material-symbols-outlined">chevron_right</span>
+            </button>
         @endif
 
         {{-- Bottom Wave --}}
@@ -107,42 +156,76 @@
             </svg>
         </div>
     </section>
+
 @else
-    {{-- Fallback Static Gradient Hero Section --}}
-    <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #8d4b00 0%, #545f73 50%, #765700 100%);">
-        {{-- Decorative Pattern Overlay --}}
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-            <div class="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
-            <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-tertiary/20 rounded-full -translate-x-1/2 -translate-y-1/2 blur-2xl"></div>
+    {{-- Fallback: Sacred Gradient Hero --}}
+    <section class="relative overflow-hidden h-[500px] lg:h-[640px]"
+             style="background: linear-gradient(155deg, #1c0a00 0%, #3d1c00 28%, #7a3800 62%, #8d4b00 100%);">
+
+        {{-- Ambient golden orbs --}}
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute w-[700px] h-[700px] rounded-full hero-float-slow"
+                 style="background: radial-gradient(circle, rgba(249,189,34,0.13) 0%, transparent 60%); top: -280px; right: -80px;"></div>
+            <div class="absolute w-[500px] h-[500px] rounded-full hero-float-slower"
+                 style="background: radial-gradient(circle, rgba(255,183,125,0.1) 0%, transparent 60%); bottom: -100px; left: -80px;"></div>
+            <div class="absolute w-[300px] h-[300px] rounded-full hero-float-medium"
+                 style="background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 60%); top: 25%; left: 30%;"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32 relative z-10">
-            <div class="text-center">
-                {{-- Title --}}
-                <h1 class="text-headline-lg lg:text-[42px] lg:leading-[56px] font-bold text-white mb-3 animate-fade-in" style="animation-delay: 0.1s;">
-                    {{ $orgName }}
-                </h1>
-                <p class="text-body-lg lg:text-xl text-white/80 mb-8 animate-fade-in" style="animation-delay: 0.2s;">
-                    {{ $orgNameEn }}
-                </p>
+        {{-- Sacred geometry grid --}}
+        <div class="absolute inset-0" style="opacity: 0.038;">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="dhamma-grid" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse">
+                        <path d="M 64 0 L 0 0 0 64" fill="none" stroke="#f9bd22" stroke-width="0.5"/>
+                        <circle cx="0" cy="0" r="1.5" fill="#f9bd22"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#dhamma-grid)"/>
+            </svg>
+        </div>
 
-                {{-- CTA Buttons --}}
-                <div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.3s;">
-                    <a href="{{ route('frontend.news') }}" class="px-8 py-3.5 bg-white text-primary rounded-xl font-bold text-label-md flex items-center justify-center gap-2 hover:bg-primary-fixed transition-all shadow-lg btn-press">
-                        <span class="material-symbols-outlined text-lg">newspaper</span>
-                        {{ __('messages.latest_news') }}
-                    </a>
-                    <a href="#documents" class="px-8 py-3.5 bg-white/10 text-white border border-white/30 rounded-xl font-bold text-label-md flex items-center justify-center gap-2 hover:bg-white/20 transition-all backdrop-blur-sm btn-press">
-                        <span class="material-symbols-outlined text-lg">description</span>
-                        {{ __('messages.documents_nav') }}
-                    </a>
-                </div>
+        {{-- Cinematic overlay layers --}}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+        <div class="absolute inset-0" style="background: radial-gradient(ellipse 90% 55% at 50% 115%, rgba(141,75,0,0.32) 0%, transparent 70%);"></div>
+
+        <div class="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 flex flex-col justify-end pb-24 text-center">
+
+            {{-- Eyebrow --}}
+            <div class="flex justify-center items-center gap-3 mb-5 hero-reveal">
+                <span class="block w-8 h-px bg-amber-400/70"></span>
+                <span class="text-amber-400/85 text-[9px] font-bold uppercase tracking-[0.28em]">
+                    ອົງການພຸດທະສາສະໜາ &nbsp;·&nbsp; BUDDHIST ORGANIZATION
+                </span>
+                <span class="block w-8 h-px bg-amber-400/70"></span>
+            </div>
+
+            <h1 class="font-bold text-white mb-3 leading-tight hero-reveal"
+                style="font-size: clamp(26px, 4.5vw, 52px); text-shadow: 0 2px 28px rgba(0,0,0,0.55); animation-delay: 0.12s;">
+                {{ $orgName }}
+            </h1>
+            <p class="text-white/65 mb-8 hero-reveal"
+               style="font-size: clamp(13px, 1.6vw, 17px); animation-delay: 0.22s;">
+                {{ $orgNameEn }}
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3 justify-center hero-reveal" style="animation-delay: 0.33s;">
+                <a href="{{ route('frontend.news') }}"
+                   class="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-primary text-white rounded-lg font-bold text-sm hover:bg-primary-container transition-all duration-200 shadow-lg shadow-black/40 btn-press group">
+                    <span class="material-symbols-outlined text-base">newspaper</span>
+                    {{ __('messages.latest_news') }}
+                    <span class="material-symbols-outlined text-base group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+                </a>
+                <a href="#documents"
+                   class="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/25 text-white/90 rounded-lg font-bold text-sm hover:bg-white/10 transition-all duration-200 backdrop-blur-sm btn-press">
+                    <span class="material-symbols-outlined text-base">description</span>
+                    {{ __('messages.documents_nav') }}
+                </a>
             </div>
         </div>
 
         {{-- Bottom Wave --}}
-        <div class="absolute bottom-0 left-0 w-full">
+        <div class="absolute bottom-0 left-0 w-full z-10">
             <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" class="w-full">
                 <path fill="#FFFBEB" d="M0,32L60,37.3C120,43,240,53,360,53.3C480,53,600,43,720,42.7C840,43,960,53,1080,53.3C1200,53,1320,43,1380,37.3L1440,32L1440,80L1380,80C1320,80,1200,80,1080,80C960,80,840,80,720,80C600,80,480,80,360,80C240,80,120,80,60,80L0,80Z"/>
             </svg>
