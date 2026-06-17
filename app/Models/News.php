@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use App\Models\NewsCategory;
 
 class News extends Model
 {
@@ -14,6 +15,7 @@ class News extends Model
 
     protected $fillable = [
         'author_id',
+        'news_category_id',
         'title_lo',
         'title_en',
         'excerpt_lo',
@@ -73,6 +75,11 @@ class News extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(NewsCategory::class, 'news_category_id');
     }
 
     /* ───── Scopes ───── */

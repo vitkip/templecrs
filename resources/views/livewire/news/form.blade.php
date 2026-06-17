@@ -18,6 +18,33 @@
 
     <form wire:submit="save" class="space-y-8">
 
+        {{-- ═══ Section 0: Category ═══ --}}
+        <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
+            <h3 class="text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">category</span>
+                ໝວດຂ່າວ / News Category
+            </h3>
+
+            <div class="flex items-start gap-3">
+                <div class="flex-1">
+                    <label class="form-label">ໝວດຂ່າວ / Category</label>
+                    <select wire:model="news_category_id" class="form-input">
+                        <option value="">— ບໍ່ລະບຸໝວດ / Uncategorized —</option>
+                        @foreach ($categories as $cat)
+                            <option value="{{ $cat->id }}">{{ $cat->name_lo }}{{ $cat->name_en ? ' / '.$cat->name_en : '' }}</option>
+                        @endforeach
+                    </select>
+                    @error('news_category_id') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <a href="{{ route('news.categories.index') }}"
+                   class="mt-6 flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container text-label-sm transition-all shrink-0"
+                   title="ຈັດການໝວດ">
+                    <span class="material-symbols-outlined text-base">settings</span>
+                    <span class="hidden sm:inline">ຈັດການໝວດ</span>
+                </a>
+            </div>
+        </div>
+
         {{-- ═══ Section 1: Title ═══ --}}
         <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
             <h3 class="text-headline-sm text-on-surface mb-4 flex items-center gap-2">

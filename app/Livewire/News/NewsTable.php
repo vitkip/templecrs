@@ -3,6 +3,7 @@
 namespace App\Livewire\News;
 
 use App\Models\News;
+use App\Models\NewsCategory;
 use App\Services\NewsService;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -21,19 +22,24 @@ class NewsTable extends Component
     #[Url]
     public string $featuredFilter = '';
 
+    #[Url]
+    public string $categoryFilter = '';
+
     public string $sortBy  = 'published_at';
     public string $sortDir = 'desc';
     public int $perPage    = 15;
 
-    public function updatedSearch(): void        { $this->resetPage(); }
-    public function updatedStatusFilter(): void  { $this->resetPage(); }
+    public function updatedSearch(): void         { $this->resetPage(); }
+    public function updatedStatusFilter(): void   { $this->resetPage(); }
     public function updatedFeaturedFilter(): void { $this->resetPage(); }
+    public function updatedCategoryFilter(): void { $this->resetPage(); }
 
     public function clearFilters(): void
     {
         $this->search = '';
         $this->statusFilter = '';
         $this->featuredFilter = '';
+        $this->categoryFilter = '';
         $this->resetPage();
     }
 
@@ -78,18 +84,27 @@ class NewsTable extends Component
         };
 
         $news = News::query()
-            ->with('author')
+            ->with(['author', 'category'])
             ->search($this->search ?: null)
             ->when($isActive !== null, fn ($q) => $q->where('is_active', $isActive))
             ->when($isFeatured !== null, fn ($q) => $q->where('is_featured', $isFeatured))
+            ->when($this->categoryFilter !== '', function ($q) {
+                if ($this->categoryFilter === 'null') {
+                    $q->whereNull('news_category_id');
+                } else {
+                    $q->where('news_category_id', $this->categoryFilter);
+                }
+            })
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
-        $stats = app(NewsService::class)->getStatistics();
+        $categories = NewsCategory::ordered()->get();
+        $stats      = app(NewsService::class)->getStatistics();
 
         return view('livewire.news.table', [
-            'newsList' => $news,
-            'stats'    => $stats,
+            'newsList'   => $news,
+            'stats'      => $stats,
+            'categories' => $categories,
         ]);
     }
 }

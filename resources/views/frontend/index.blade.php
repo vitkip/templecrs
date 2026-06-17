@@ -244,7 +244,7 @@
         <div class="grid grid-cols-2 lg:grid-cols-4 divide-x divide-y lg:divide-y-0 divide-amber-100/50">
             <div class="px-6 py-7 text-center cursor-default hover:bg-primary/[0.03] transition-colors duration-300">
                 <p class="font-bold text-primary leading-none tracking-tight mb-2.5"
-                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $news->count() }}</p>
+                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $statsNewsCount }}</p>
                 <div class="flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[12px] text-primary/35">newspaper</span>
                     <span class="text-[9px] text-on-surface-variant/65 uppercase tracking-[0.22em] font-bold">{{ __('messages.news') }}</span>
@@ -252,7 +252,7 @@
             </div>
             <div class="px-6 py-7 text-center cursor-default hover:bg-tertiary/[0.03] transition-colors duration-300">
                 <p class="font-bold text-tertiary leading-none tracking-tight mb-2.5"
-                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $personnel->count() }}</p>
+                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $statsPersonnelCount }}</p>
                 <div class="flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[12px] text-tertiary/35">group</span>
                     <span class="text-[9px] text-on-surface-variant/65 uppercase tracking-[0.22em] font-bold">{{ __('messages.personnel') }}</span>
@@ -260,7 +260,7 @@
             </div>
             <div class="px-6 py-7 text-center cursor-default hover:bg-secondary/[0.03] transition-colors duration-300">
                 <p class="font-bold text-secondary leading-none tracking-tight mb-2.5"
-                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $documents->count() }}</p>
+                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $statsDocumentsCount }}</p>
                 <div class="flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[12px] text-secondary/35">description</span>
                     <span class="text-[9px] text-on-surface-variant/65 uppercase tracking-[0.22em] font-bold">{{ __('messages.documents_nav') }}</span>
@@ -268,7 +268,7 @@
             </div>
             <div class="px-6 py-7 text-center cursor-default hover:bg-amber-500/[0.03] transition-colors duration-300">
                 <p class="font-bold text-amber-600 leading-none tracking-tight mb-2.5"
-                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $personnel->where('gender', 'monk')->count() }}</p>
+                   style="font-size: clamp(32px, 3.5vw, 44px);">{{ $statsMonksCount }}</p>
                 <div class="flex items-center justify-center gap-1.5">
                     <span class="material-symbols-outlined text-[12px] text-amber-500/35">self_improvement</span>
                     <span class="text-[9px] text-on-surface-variant/65 uppercase tracking-[0.22em] font-bold">{{ __('messages.stat_monks') }}</span>

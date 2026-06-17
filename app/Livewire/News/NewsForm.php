@@ -3,6 +3,7 @@
 namespace App\Livewire\News;
 
 use App\Models\News;
+use App\Models\NewsCategory;
 use App\Services\NewsService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -13,6 +14,9 @@ class NewsForm extends Component
 
     public bool $editMode   = false;
     public ?int $newsId     = null;
+
+    // Category
+    public ?int $news_category_id = null;
 
     // Title
     public string $title_lo  = '';
@@ -51,8 +55,9 @@ class NewsForm extends Component
     {
         $news = News::findOrFail($id);
 
-        $this->title_lo       = $news->title_lo;
-        $this->title_en       = $news->title_en;
+        $this->news_category_id = $news->news_category_id;
+        $this->title_lo         = $news->title_lo;
+        $this->title_en         = $news->title_en;
         $this->excerpt_lo     = $news->excerpt_lo;
         $this->excerpt_en     = $news->excerpt_en;
         $this->content_lo     = $news->content_lo;
@@ -67,6 +72,7 @@ class NewsForm extends Component
     protected function rules(): array
     {
         return [
+            'news_category_id' => 'nullable|exists:news_categories,id',
             'title_lo'     => 'required|string|max:500',
             'title_en'     => 'nullable|string|max:500',
             'excerpt_lo'   => 'nullable|string|max:1000',
@@ -97,6 +103,7 @@ class NewsForm extends Component
         $service = app(NewsService::class);
 
         $data = [
+            'news_category_id' => $this->news_category_id ?: null,
             'title_lo'     => $this->title_lo,
             'title_en'     => $this->title_en,
             'excerpt_lo'   => $this->excerpt_lo,
@@ -122,6 +129,8 @@ class NewsForm extends Component
 
     public function render()
     {
-        return view('livewire.news.form');
+        $categories = NewsCategory::active()->ordered()->get();
+
+        return view('livewire.news.form', compact('categories'));
     }
 }

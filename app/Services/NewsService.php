@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\News;
+use App\Services\FrontendCacheService;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class NewsService
@@ -16,7 +18,9 @@ class NewsService
 
         $data['author_id'] = auth()->id();
 
-        return News::create($data);
+        $news = News::create($data);
+        $this->clearFrontendCache($news->id);
+        return $news;
     }
 
     public function update(int $id, array $data, ?UploadedFile $coverImage = null): News
@@ -24,7 +28,6 @@ class NewsService
         $news = News::findOrFail($id);
 
         if ($coverImage) {
-            // Remove old cover
             if ($news->cover_image) {
                 Storage::disk('public')->delete($news->cover_image);
             }
@@ -32,7 +35,7 @@ class NewsService
         }
 
         $news->update($data);
-
+        $this->clearFrontendCache($id);
         return $news->fresh();
     }
 
@@ -45,18 +48,27 @@ class NewsService
         }
 
         $news->delete();
+        $this->clearFrontendCache($id);
     }
 
     public function toggleActive(int $id): void
     {
         $news = News::findOrFail($id);
         $news->update(['is_active' => !$news->is_active]);
+        $this->clearFrontendCache($id);
     }
 
     public function toggleFeatured(int $id): void
     {
         $news = News::findOrFail($id);
         $news->update(['is_featured' => !$news->is_featured]);
+        $this->clearFrontendCache($id);
+    }
+
+    private function clearFrontendCache(int $newsId): void
+    {
+        FrontendCacheService::clearNews();
+        Cache::forget("frontend_news_related_{$newsId}");
     }
 
     public function getStatistics(): array

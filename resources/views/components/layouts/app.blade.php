@@ -188,6 +188,18 @@
                 @endif
             </a>
 
+            {{-- News › Categories sub-link --}}
+            @if ($isNews)
+                @php $isNewsCat = request()->routeIs('news.categories.*'); @endphp
+                <a href="{{ route('news.categories.index') }}"
+                   @click="sidebarOpen = false"
+                   class="group flex items-center gap-3 pl-9 pr-3 py-2 rounded-xl transition-all duration-200
+                          {{ $isNewsCat ? 'bg-white/10 text-tertiary-fixed-dim font-bold' : 'text-secondary-fixed-dim/70 hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-base shrink-0">category</span>
+                    <span class="text-label-sm">ໝວດຂ່າວ / Categories</span>
+                </a>
+            @endif
+
             {{-- Hero Slides --}}
             @php $isHeroSlides = request()->routeIs('hero-slides.*'); @endphp
             <a href="{{ route('hero-slides.index') }}"

@@ -2,7 +2,13 @@
     {{-- Page Header --}}
     <div class="flex justify-between items-start mb-8 animate-fade-in">
         <div>
-            <div class="flex items-center gap-3 mb-2">
+            <div class="flex items-center gap-2 flex-wrap mb-2">
+                @if ($news->category)
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold text-primary bg-primary/10 border border-primary/20">
+                        <span class="material-symbols-outlined text-xs">{{ $news->category->icon }}</span>
+                        {{ $news->category->name_lo }}
+                    </span>
+                @endif
                 @if ($news->is_featured)
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200">
                         <span class="material-symbols-outlined text-xs filled">star</span>
@@ -106,6 +112,21 @@
                 <h3 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-4">ຂໍ້ມູນຂ່າວ</h3>
 
                 <dl class="space-y-3">
+                    @if ($news->category)
+                        <div>
+                            <dt class="text-[10px] font-bold text-on-surface-variant uppercase">ໝວດຂ່າວ / Category</dt>
+                            <dd class="mt-0.5">
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-body-sm font-semibold text-primary bg-primary/10 border border-primary/15">
+                                    <span class="material-symbols-outlined text-sm">{{ $news->category->icon }}</span>
+                                    {{ $news->category->name_lo }}
+                                    @if ($news->category->name_en)
+                                        <span class="text-on-surface-variant/60">/ {{ $news->category->name_en }}</span>
+                                    @endif
+                                </span>
+                            </dd>
+                        </div>
+                    @endif
+
                     @if ($news->published_at)
                         <div>
                             <dt class="text-[10px] font-bold text-on-surface-variant uppercase">ວັນທີ່ເຜີຍແຜ່</dt>

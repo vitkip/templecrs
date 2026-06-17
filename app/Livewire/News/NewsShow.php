@@ -12,7 +12,7 @@ class NewsShow extends Component
 
     public function mount(int $id): void
     {
-        $this->news = News::with('author')->findOrFail($id);
+        $this->news = News::with(['author', 'category'])->findOrFail($id);
     }
 
     public function delete(): void

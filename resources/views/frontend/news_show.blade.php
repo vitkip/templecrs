@@ -71,6 +71,14 @@
 
             {{-- Badges --}}
             <div class="flex items-center flex-wrap gap-2 mb-4">
+                @if ($newsItem->category)
+                    <a href="{{ route('frontend.news') }}?category={{ $newsItem->category->id }}"
+                       class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide text-white/90 bg-white/15 border border-white/20 backdrop-blur-sm hover:bg-white/25 transition-colors"
+                       title="{{ app()->getLocale() === 'lo' ? 'ເບິ່ງຂ່າວໃນໝວດນີ້' : 'Browse this category' }}">
+                        <span class="material-symbols-outlined" style="font-size:10px;">{{ $newsItem->category->icon }}</span>
+                        {{ $newsItem->category->name }}
+                    </a>
+                @endif
                 @if ($newsItem->is_featured)
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wide text-white"
                           style="background: linear-gradient(135deg, #D4AF37, #F5D060); box-shadow: 0 2px 14px rgba(212,175,55,0.55);">
@@ -217,6 +225,16 @@
                             <span class="truncate">{{ $newsItem->author->name }}</span>
                         </div>
                     @endif
+                    @if ($newsItem->category)
+                        <div class="pt-2 border-t border-outline-variant/30">
+                            <a href="{{ route('frontend.news') }}"
+                               class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-colors"
+                               style="background: rgba(212,175,55,0.10); color: #B8960C;">
+                                <span class="material-symbols-outlined" style="font-size:11px;">{{ $newsItem->category->icon }}</span>
+                                {{ $newsItem->category->name }}
+                            </a>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Share card --}}
@@ -250,11 +268,20 @@
             {{-- Section header --}}
             <div class="flex items-center gap-3 mb-8">
                 <div class="h-px flex-1" style="background: linear-gradient(to right, transparent, rgba(212,175,55,0.35));"></div>
-                <div class="flex items-center gap-2.5 shrink-0">
-                    <span class="material-symbols-outlined" style="font-size:16px; color: #D4AF37;">spa</span>
-                    <h3 class="text-headline-sm text-on-surface font-bold">
-                        {{ app()->getLocale() === 'lo' ? 'ຂ່າວສານໜ້າສົນໃຈ' : 'Related Articles' }}
-                    </h3>
+                <div class="flex flex-col items-center gap-1 shrink-0">
+                    <div class="flex items-center gap-2.5">
+                        <span class="material-symbols-outlined" style="font-size:16px; color: #D4AF37;">spa</span>
+                        <h3 class="text-headline-sm text-on-surface font-bold">
+                            {{ app()->getLocale() === 'lo' ? 'ຂ່າວສານໜ້າສົນໃຈ' : 'Related Articles' }}
+                        </h3>
+                    </div>
+                    @if ($newsItem->category)
+                        <span class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                              style="background: rgba(212,175,55,0.12); color: #B8960C;">
+                            <span class="material-symbols-outlined" style="font-size:10px;">{{ $newsItem->category->icon }}</span>
+                            {{ $newsItem->category->name }}
+                        </span>
+                    @endif
                 </div>
                 <div class="h-px flex-1" style="background: linear-gradient(to left, transparent, rgba(212,175,55,0.35));"></div>
             </div>
@@ -281,10 +308,19 @@
 
                             {{-- Content --}}
                             <div class="p-4 flex-1 flex flex-col">
-                                <p class="flex items-center gap-1 mb-2" style="font-size: 10px; color: #D4AF37;">
-                                    <span class="material-symbols-outlined" style="font-size:10px;">calendar_today</span>
-                                    <span class="text-on-surface-variant/70">{{ $item->published_date_formatted }}</span>
-                                </p>
+                                <div class="flex items-center gap-2 mb-2 flex-wrap">
+                                    <p class="flex items-center gap-1" style="font-size: 10px; color: #D4AF37;">
+                                        <span class="material-symbols-outlined" style="font-size:10px;">calendar_today</span>
+                                        <span class="text-on-surface-variant/70">{{ $item->published_date_formatted }}</span>
+                                    </p>
+                                    @if ($item->category)
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-semibold"
+                                              style="background: rgba(212,175,55,0.10); color: #B8960C;">
+                                            <span class="material-symbols-outlined" style="font-size:9px;">{{ $item->category->icon }}</span>
+                                            {{ $item->category->name }}
+                                        </span>
+                                    @endif
+                                </div>
                                 <h4 class="text-body-md font-bold text-on-surface line-clamp-3 group-hover:text-primary transition-colors leading-snug flex-1 text-lao">
                                     {{ $item->title }}
                                 </h4>

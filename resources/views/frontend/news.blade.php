@@ -4,21 +4,33 @@
 
 @php
     $locale   = app()->getLocale();
-    $newsJson = $news->map(function ($n) {
+    $newsJson = $news->map(function ($n) use ($locale) {
         return [
-            'id'          => $n->id,
-            'title'       => $n->title,
-            'excerpt'     => $n->excerpt ?? '',
-            'cover'       => $n->cover_image_url,
-            'date'        => $n->published_date_formatted,
-            'is_featured' => (bool) $n->is_featured,
-            'url'         => route('frontend.news.show', $n->id),
-            'search_text' => strtolower(implode(' ', array_filter([
+            'id'            => $n->id,
+            'title'         => $n->title,
+            'excerpt'       => $n->excerpt ?? '',
+            'cover'         => $n->cover_image_url,
+            'date'          => $n->published_date_formatted,
+            'is_featured'   => (bool) $n->is_featured,
+            'category_id'   => $n->news_category_id,
+            'category_name' => $n->category ? ($locale === 'lo' ? $n->category->name_lo : ($n->category->name_en ?? $n->category->name_lo)) : null,
+            'category_icon' => $n->category?->icon ?? null,
+            'category_color'=> $n->category?->color ?? null,
+            'url'           => route('frontend.news.show', $n->id),
+            'search_text'   => strtolower(implode(' ', array_filter([
                 $n->title_lo, $n->title_en,
                 $n->excerpt_lo, $n->excerpt_en,
             ]))),
         ];
     })->values()->toArray();
+
+    $categoriesJson = $categories->map(fn($c) => [
+        'id'    => $c->id,
+        'name'  => $locale === 'lo' ? $c->name_lo : ($c->name_en ?? $c->name_lo),
+        'icon'  => $c->icon,
+        'color' => $c->color,
+        'count' => $c->news_count,
+    ])->values()->toArray();
 @endphp
 
 {{-- ══════════════════════════════════════════════════════════════
@@ -64,6 +76,13 @@
                 <span class="text-sm font-bold text-white">{{ $news->where('is_featured', true)->count() }}</span>
                 <span class="text-xs text-white/60">{{ __('messages.featured') }}</span>
             </div>
+            @if ($categories->count() > 0)
+            <div class="flex items-center gap-1.5 px-4 py-2 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
+                <span class="material-symbols-outlined text-sm text-amber-300">category</span>
+                <span class="text-sm font-bold text-white">{{ $categories->count() }}</span>
+                <span class="text-xs text-white/60">{{ app()->getLocale() === 'lo' ? 'ໝວດ' : 'Categories' }}</span>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -82,7 +101,9 @@
      x-data="{
         search: '',
         showFeatured: false,
+        selectedCategory: null,
         news: @js($newsJson),
+        categories: @js($categoriesJson),
         perPage: 9,
         currentPage: 1,
         perPageOptions: [9, 18, 27],
@@ -90,6 +111,7 @@
             const q = this.search.toLowerCase().trim();
             return this.news.filter(n => {
                 if (this.showFeatured && !n.is_featured) return false;
+                if (this.selectedCategory !== null && n.category_id !== this.selectedCategory) return false;
                 if (q && !n.search_text.includes(q)) return false;
                 return true;
             });
@@ -109,10 +131,20 @@
             if (curr >= total - 3) return [1, '...', total-4, total-3, total-2, total-1, total];
             return [1, '...', curr-1, curr, curr+1, '...', total];
         },
+        selectCategory(id) {
+            this.selectedCategory = this.selectedCategory === id ? null : id;
+            this.currentPage = 1;
+        },
         init() {
-            this.$watch('search',      () => { this.currentPage = 1; });
-            this.$watch('showFeatured',() => { this.currentPage = 1; });
-            this.$watch('perPage',     () => { this.currentPage = 1; });
+            const params = new URLSearchParams(window.location.search);
+            const catId = parseInt(params.get('category'));
+            if (!isNaN(catId) && this.categories.find(c => c.id === catId)) {
+                this.selectedCategory = catId;
+            }
+            this.$watch('search',          () => { this.currentPage = 1; });
+            this.$watch('showFeatured',    () => { this.currentPage = 1; });
+            this.$watch('selectedCategory',() => { this.currentPage = 1; });
+            this.$watch('perPage',         () => { this.currentPage = 1; });
         }
      }">
 
@@ -133,29 +165,60 @@
             </button>
         </div>
 
-        {{-- Featured Filter --}}
+        {{-- Featured + Category Filter --}}
         <div class="flex flex-wrap gap-2 justify-center">
-            <button @click="showFeatured = false"
-                    :class="!showFeatured
+            {{-- All --}}
+            <button @click="showFeatured = false; selectedCategory = null"
+                    :class="!showFeatured && selectedCategory === null
                         ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
                         : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary/40 hover:text-primary'"
                     class="px-4 py-2 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-sm">newspaper</span>
                 {{ __('messages.all_news') }}
                 <span x-text="news.length"
-                      :class="!showFeatured ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
+                      :class="!showFeatured && selectedCategory === null ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
                       class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center"></span>
             </button>
-            <button @click="showFeatured = true"
+
+            {{-- Featured --}}
+            <button @click="showFeatured = !showFeatured; selectedCategory = null"
                     :class="showFeatured
-                        ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                        : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary/40 hover:text-primary'"
+                        ? 'bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20'
+                        : 'bg-white text-on-surface-variant border-outline-variant hover:border-amber-400 hover:text-amber-600'"
                     class="px-4 py-2 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-sm">star</span>
                 {{ __('messages.featured_only') }}
                 <span x-text="news.filter(n => n.is_featured).length"
                       :class="showFeatured ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
                       class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center"></span>
+            </button>
+
+            {{-- Category pills --}}
+            <template x-for="cat in categories" :key="cat.id">
+                <button @click="showFeatured = false; selectCategory(cat.id)"
+                        :class="selectedCategory === cat.id
+                            ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
+                            : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary/40 hover:text-primary'"
+                        class="px-4 py-2 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm" x-text="cat.icon"></span>
+                    <span x-text="cat.name"></span>
+                    <span x-text="cat.count"
+                          :class="selectedCategory === cat.id ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
+                          class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center"></span>
+                </button>
+            </template>
+        </div>
+
+        {{-- Active filter indicator --}}
+        <div x-show="showFeatured || selectedCategory !== null"
+             class="flex items-center justify-center gap-2 text-xs text-on-surface-variant">
+            <span class="material-symbols-outlined text-sm text-primary">filter_list</span>
+            <span x-show="showFeatured">{{ app()->getLocale() === 'lo' ? 'ກຳລັງສະແດງ: ຂ່າວແນະນຳ' : 'Showing: Featured news' }}</span>
+            <span x-show="selectedCategory !== null" x-text="'{{ app()->getLocale() === 'lo' ? 'ກຳລັງສະແດງໝວດ:' : 'Category:' }} ' + (categories.find(c => c.id === selectedCategory)?.name ?? '')"></span>
+            <button @click="showFeatured = false; selectedCategory = null"
+                    class="ml-1 flex items-center gap-1 text-error hover:text-error/80 transition-colors">
+                <span class="material-symbols-outlined text-sm">close</span>
+                {{ app()->getLocale() === 'lo' ? 'ລ້າງ' : 'Clear' }}
             </button>
         </div>
 
@@ -202,6 +265,14 @@
                             </span>
                         </div>
 
+                        {{-- Category Badge --}}
+                        <div x-show="item.category_name" class="absolute top-3 right-3">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-black/50 text-white text-[10px] font-semibold rounded-full backdrop-blur-sm border border-white/15">
+                                <span class="material-symbols-outlined text-[10px]" x-text="item.category_icon || 'label'"></span>
+                                <span x-text="item.category_name"></span>
+                            </span>
+                        </div>
+
                         {{-- Date overlay --}}
                         <div class="absolute bottom-3 left-3">
                             <span class="text-[10px] text-white/80 flex items-center gap-1">
@@ -220,9 +291,16 @@
                                x-text="item.excerpt"
                                class="text-sm text-on-surface-variant line-clamp-2 leading-relaxed"></p>
                         </div>
-                        <div class="mt-4 flex items-center gap-1 text-[11px] text-primary font-bold group-hover:gap-2 transition-all">
-                            <span>{{ __('messages.read_more') }}</span>
-                            <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div x-show="item.category_name"
+                                 class="flex items-center gap-1 text-[10px] font-semibold text-on-surface-variant/70">
+                                <span class="material-symbols-outlined text-[10px]" x-text="item.category_icon || 'label'"></span>
+                                <span x-text="item.category_name"></span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[11px] text-primary font-bold group-hover:gap-2 transition-all ml-auto">
+                                <span>{{ __('messages.read_more') }}</span>
+                                <span class="material-symbols-outlined text-[12px]">arrow_forward</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -279,7 +357,7 @@
         <span class="material-symbols-outlined text-7xl text-on-surface-variant/15 mb-4 block">manage_search</span>
         <p class="text-body-lg font-semibold text-on-surface-variant mb-2">{{ __('messages.no_news_results_found') }}</p>
         <p class="text-sm text-on-surface-variant/70 mb-6">{{ __('messages.no_news_results_hint') }}</p>
-        <button @click="search = ''; showFeatured = false"
+        <button @click="search = ''; showFeatured = false; selectedCategory = null"
                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-label-md font-bold hover:bg-primary-container transition-all btn-press">
             <span class="material-symbols-outlined text-base">restart_alt</span>
             {{ __('messages.clear_filters') }}

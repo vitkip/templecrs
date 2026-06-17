@@ -87,6 +87,21 @@
                     <option value="not_featured">ບໍ່ແນະນຳ</option>
                 </select>
             </div>
+
+            {{-- Category Filter --}}
+            <div class="w-48">
+                <label class="block text-[10px] font-bold text-on-surface-variant mb-1 uppercase">
+                    CATEGORY / ໝວດ
+                </label>
+                <select wire:model.live="categoryFilter"
+                        class="w-full bg-white border border-outline-variant rounded-lg p-2 text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">ທຸກໝວດ</option>
+                    <option value="null">— ບໍ່ມີໝວດ</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->id }}">{{ $cat->name_lo }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
         <button wire:click="clearFilters"
@@ -149,13 +164,19 @@
 
                         {{-- Title --}}
                         <td class="p-3">
-                            <div class="flex flex-col">
+                            <div class="flex flex-col gap-1">
                                 <a href="{{ route('news.show', $item->id) }}"
                                    class="font-bold text-on-surface hover:text-primary transition-colors">
                                     {{ $item->title_lo }}
                                 </a>
                                 @if ($item->title_en)
                                     <span class="text-on-surface-variant opacity-70 text-xs">{{ $item->title_en }}</span>
+                                @endif
+                                @if ($item->category)
+                                    <span class="inline-flex items-center gap-1 w-fit px-1.5 py-0.5 rounded text-[10px] font-semibold text-primary bg-primary/10 border border-primary/15">
+                                        <span class="material-symbols-outlined text-[10px]">{{ $item->category->icon }}</span>
+                                        {{ $item->category->name_lo }}
+                                    </span>
                                 @endif
                             </div>
                         </td>

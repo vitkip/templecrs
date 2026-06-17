@@ -8,6 +8,7 @@ use App\Livewire\Documents\CategoryManager as DocumentCategoryManager;
 use App\Livewire\Documents\DocumentForm;
 use App\Livewire\Documents\DocumentShow;
 use App\Livewire\Documents\DocumentTable;
+use App\Livewire\News\CategoryManager as NewsCategoryManager;
 use App\Livewire\News\NewsForm;
 use App\Livewire\News\NewsShow;
 use App\Livewire\News\NewsTable;
@@ -122,6 +123,7 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     // ─── News Management ───
     Route::prefix('news')->name('news.')->group(function () {
         Route::get('/', NewsTable::class)->name('index');
+        Route::get('/categories', NewsCategoryManager::class)->name('categories.index');
         Route::get('/create', NewsForm::class)->name('create');
         Route::get('/{id}', NewsShow::class)->name('show');
         Route::get('/{id}/edit', NewsForm::class)->name('edit');

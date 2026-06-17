@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Department;
 use App\Models\Document;
 use App\Models\News;
+use App\Models\NewsCategory;
 use App\Models\Personnel;
 use App\Models\Setting;
 use App\Models\HeroSlide;
@@ -36,6 +37,11 @@ class FrontendController extends Controller
             Document::active()->ordered()->with('department')->limit(8)->get()
         );
 
+        $statsNewsCount      = Cache::remember('stats_news_count', 600, fn() => News::published()->count());
+        $statsPersonnelCount = Cache::remember('stats_personnel_count', 3600, fn() => Personnel::active()->count());
+        $statsDocumentsCount = Cache::remember('stats_documents_count', 1800, fn() => Document::active()->count());
+        $statsMonksCount     = Cache::remember('stats_monks_count', 3600, fn() => Personnel::active()->where('gender', 'monk')->count());
+
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
             'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
             'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
@@ -55,13 +61,23 @@ class FrontendController extends Controller
             'orgName',
             'orgNameEn',
             'orgLogo',
+            'statsNewsCount',
+            'statsPersonnelCount',
+            'statsDocumentsCount',
+            'statsMonksCount',
         ));
     }
 
     public function newsIndex(): View
     {
         $news = Cache::remember('frontend_news_all', 600, fn() =>
-            News::published()->ordered()->get()
+            News::published()->with('category')->ordered()->get()
+        );
+
+        $categories = Cache::remember('frontend_news_categories', 1800, fn() =>
+            NewsCategory::active()->ordered()->withCount([
+                'news as news_count' => fn($q) => $q->published(),
+            ])->get()
         );
 
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
@@ -74,7 +90,7 @@ class FrontendController extends Controller
         $orgNameEn = $settings['org_name_en'];
         $orgLogo   = $settings['org_logo_url'];
 
-        return view('frontend.news', compact('news', 'orgName', 'orgNameEn', 'orgLogo'));
+        return view('frontend.news', compact('news', 'categories', 'orgName', 'orgNameEn', 'orgLogo'));
     }
 
     public function personnelIndex(): View
@@ -134,12 +150,18 @@ class FrontendController extends Controller
 
     public function show(int $id): View
     {
-        $newsItem = News::published()->findOrFail($id);
+        $newsItem = News::published()->with('category')->findOrFail($id);
 
-        // Fetch other latest news for related section, excluding current news
-        $relatedNews = Cache::remember("frontend_news_related_{$id}", 600, fn() =>
-            News::published()->where('id', '!=', $id)->ordered()->limit(3)->get()
-        );
+        $relatedNews = Cache::remember("frontend_news_related_{$id}", 600, function () use ($id, $newsItem) {
+            if ($newsItem->news_category_id) {
+                $result = News::published()->with('category')
+                    ->where('id', '!=', $id)
+                    ->where('news_category_id', $newsItem->news_category_id)
+                    ->ordered()->limit(3)->get();
+                if ($result->count() >= 2) return $result;
+            }
+            return News::published()->with('category')->where('id', '!=', $id)->ordered()->limit(3)->get();
+        });
 
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
             'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),

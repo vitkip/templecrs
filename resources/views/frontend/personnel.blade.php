@@ -268,7 +268,7 @@
                 {{-- Affiliation filter --}}
                 <div x-show="hasAffiliationData" class="flex gap-1.5 items-center sm:ml-auto">
                     <span class="hidden sm:inline"
-                        style="font-size:9px; font-weight:700; letter-spacing:0.15em; color:rgba(124,77,15,0.45); text-transform:uppercase;">ລະສັງກັດ</span>
+                        style="font-size:9px; font-weight:700; letter-spacing:0.15em; color:rgba(124,77,15,0.45); text-transform:uppercase;">ແຕ່ລະສັງກັດ</span>
 
                     <button @click="activeAffiliation = 'all'" :style="activeAffiliation === 'all'
                                 ? 'background:#3D3525; color:white; border-color:#3D3525;'
@@ -305,7 +305,7 @@
                 {{-- Results count + Clear all --}}
                 <div class="flex items-center gap-2">
                     <span style="font-size:11px; color:rgba(124,77,15,0.5);">
-                        <span x-text="filtered.length" class="font-bold" style="color:#7C4D0F;"></span> ຄົນ
+                        <span x-text="filtered.length" class="font-bold" style="color:#7C4D0F;"></span> ອົງ/ທ່ານ
                     </span>
                     <button x-show="hasActiveFilters" @click="clearAll()"
                         class="flex items-center gap-0.5 transition-colors"
