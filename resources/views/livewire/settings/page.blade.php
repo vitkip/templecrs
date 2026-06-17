@@ -152,6 +152,31 @@
                 </div>
             </div>
 
+            {{-- Donation / Bank Info --}}
+            <div class="border-t border-outline-variant pt-6">
+                <h4 class="text-label-lg font-bold text-on-surface mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary text-base">volunteer_activism</span>
+                    ຊ່ອງທາງບໍລິຈາກ / Donation Info
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                        <label class="form-label">ຊື່ທະນາຄານ / Bank Name</label>
+                        <input type="text" wire:model="donate_bank_name" placeholder="ທະນາຄານ BCEL..." class="form-input" />
+                        @error('donate_bank_name') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">ຊື່ເລກບັນຊີ / Account Name</label>
+                        <input type="text" wire:model="donate_account_name" placeholder="ຊື່ເຈົ້າຂອງບັນຊີ..." class="form-input" />
+                        @error('donate_account_name') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">ເລກບັນຊີ / Account Number</label>
+                        <input type="text" wire:model="donate_account_no" placeholder="000-000-000-000" class="form-input" />
+                        @error('donate_account_no') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
             <div class="flex justify-end">
                 <button type="submit"
                         class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"

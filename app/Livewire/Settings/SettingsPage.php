@@ -28,6 +28,9 @@ class SettingsPage extends Component
     public string $org_established_year = '';
     public $org_logo = null;
     public ?string $existing_logo_url = null;
+    public string $donate_bank_name    = '';
+    public string $donate_account_name = '';
+    public string $donate_account_no   = '';
 
     // ─── System ─────────────────────────────────────────────
     public string $default_locale = 'lo';
@@ -66,6 +69,9 @@ class SettingsPage extends Component
         $this->org_website          = Setting::get('org_website', '');
         $this->org_established_year = Setting::get('org_established_year', '');
         $this->existing_logo_url    = Setting::get('org_logo_url') ?: null;
+        $this->donate_bank_name     = Setting::get('donate_bank_name', '');
+        $this->donate_account_name  = Setting::get('donate_account_name', '');
+        $this->donate_account_no    = Setting::get('donate_account_no', '');
     }
 
     private function loadSystem(): void
@@ -91,6 +97,9 @@ class SettingsPage extends Component
             'org_website'           => 'nullable|url|max:300',
             'org_established_year'  => 'nullable|digits:4|integer|min:1800|max:2100',
             'org_logo'              => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'donate_bank_name'      => 'nullable|string|max:200',
+            'donate_account_name'   => 'nullable|string|max:200',
+            'donate_account_no'     => 'nullable|string|max:100',
         ]);
 
         if ($this->org_logo) {
@@ -113,6 +122,9 @@ class SettingsPage extends Component
             'org_email'            => $this->org_email,
             'org_website'          => $this->org_website,
             'org_established_year' => $this->org_established_year,
+            'donate_bank_name'     => $this->donate_bank_name,
+            'donate_account_name'  => $this->donate_account_name,
+            'donate_account_no'    => $this->donate_account_no,
         ], 'organization');
 
         session()->flash('settings_message', 'ບັນທຶກຂໍ້ມູນອົງການສຳເລັດ / Organization info saved.');

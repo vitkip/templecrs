@@ -148,6 +148,32 @@ class FrontendController extends Controller
         ));
     }
 
+    public function about(): View
+    {
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        $orgName   = $settings['org_name_lo'];
+        $orgNameEn = $settings['org_name_en'];
+        $orgLogo   = $settings['org_logo_url'];
+
+        $statsPersonnelCount = Cache::remember('stats_personnel_count', 3600, fn() => Personnel::active()->count());
+        $statsDocumentsCount = Cache::remember('stats_documents_count', 1800, fn() => Document::active()->count());
+        $statsNewsCount      = Cache::remember('stats_news_count', 600, fn() => News::published()->count());
+
+        return view('frontend.about', compact(
+            'orgName',
+            'orgNameEn',
+            'orgLogo',
+            'statsPersonnelCount',
+            'statsDocumentsCount',
+            'statsNewsCount',
+        ));
+    }
+
     public function show(int $id): View
     {
         $newsItem = News::published()->with('category')->findOrFail($id);

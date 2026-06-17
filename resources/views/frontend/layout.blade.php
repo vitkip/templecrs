@@ -106,6 +106,7 @@
                         $isNewsPage      = request()->routeIs('frontend.news', 'frontend.news.show');
                         $isPersonnelPage = request()->routeIs('frontend.personnel');
                         $isDocumentsPage = request()->routeIs('frontend.documents');
+                        $isAboutPage     = request()->routeIs('frontend.about');
                     @endphp
 
                     <a href="{{ route('frontend.index') }}"
@@ -115,16 +116,6 @@
                            class="{{ $navInactive }}"
                        @endif>
                         {{ __('messages.homepage') }}
-                    </a>
-                    <a href="{{ route('frontend.news') }}"
-                       @if($isNewsPage)
-                           class="{{ $navActive }}"
-                       @elseif($isHomePage)
-                           :class="activeSection === 'news' ? '{{ $navActive }}' : '{{ $navInactive }}'"
-                       @else
-                           class="{{ $navInactive }}"
-                       @endif>
-                        {{ __('messages.news') }}
                     </a>
                     <a href="{{ route('frontend.personnel') }}"
                        @if($isPersonnelPage)
@@ -145,6 +136,20 @@
                            class="{{ $navInactive }}"
                        @endif>
                         {{ __('messages.documents_nav') }}
+                    </a>
+                    <a href="{{ route('frontend.news') }}"
+                       @if($isNewsPage)
+                           class="{{ $navActive }}"
+                       @elseif($isHomePage)
+                           :class="activeSection === 'news' ? '{{ $navActive }}' : '{{ $navInactive }}'"
+                       @else
+                           class="{{ $navInactive }}"
+                       @endif>
+                        {{ __('messages.news') }}
+                    </a>
+                    <a href="{{ route('frontend.about') }}"
+                       class="{{ $isAboutPage ? $navActive : $navInactive }}">
+                        {{ __('messages.about_nav') }}
                     </a>
                     <div class="h-6 w-px bg-outline-variant mx-2"></div>
 
@@ -188,10 +193,6 @@
                    @else
                        class="{{ $mobileInactive }}"
                    @endif>{{ __('messages.homepage') }}</a>
-                <a href="{{ route('frontend.news') }}" @click="mobileMenu = false"
-                   @if($isNewsPage) class="{{ $mobileActive }}"
-                   @elseif($isHomePage) :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
-                   @else class="{{ $mobileInactive }}" @endif>{{ __('messages.news') }}</a>
                 <a href="{{ route('frontend.personnel') }}" @click="mobileMenu = false"
                    @if($isPersonnelPage) class="{{ $mobileActive }}"
                    @elseif($isHomePage) :class="activeSection === 'personnel' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
@@ -200,6 +201,12 @@
                    @if($isDocumentsPage) class="{{ $mobileActive }}"
                    @elseif($isHomePage) :class="activeSection === 'documents' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
                    @else class="{{ $mobileInactive }}" @endif>{{ __('messages.documents_nav') }}</a>
+                <a href="{{ route('frontend.news') }}" @click="mobileMenu = false"
+                   @if($isNewsPage) class="{{ $mobileActive }}"
+                   @elseif($isHomePage) :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
+                   @else class="{{ $mobileInactive }}" @endif>{{ __('messages.news') }}</a>
+                <a href="{{ route('frontend.about') }}" @click="mobileMenu = false"
+                   class="{{ $isAboutPage ? $mobileActive : $mobileInactive }}">{{ __('messages.about_nav') }}</a>
                 <div class="pt-2 border-t border-outline-variant space-y-1">
                     {{-- Language Toggle --}}
                     <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"

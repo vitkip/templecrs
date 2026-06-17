@@ -42,6 +42,7 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/article/{id}', [FrontendController::class, 'show'])->name('frontend.news.show');
     Route::get('/committee', [FrontendController::class, 'personnelIndex'])->name('frontend.personnel');
     Route::get('/library', [FrontendController::class, 'documentsIndex'])->name('frontend.documents');
+    Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
     Route::get('/library/{id}/download', function (int $id) {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
         abort_if(!$document->file_path, 404);
