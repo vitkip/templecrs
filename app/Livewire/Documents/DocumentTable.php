@@ -4,6 +4,7 @@ namespace App\Livewire\Documents;
 
 use App\Models\Department;
 use App\Models\Document;
+use App\Models\DocumentCategory;
 use App\Services\DocumentService;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -83,12 +84,13 @@ class DocumentTable extends Component
 
         $stats       = app(DocumentService::class)->getStatistics();
         $departments = Department::active()->ordered()->get(['id', 'name_lo', 'name_en']);
+        $categories  = DocumentCategory::active()->ordered()->get();
 
         return view('livewire.documents.table', [
             'documents'   => $documents,
             'stats'       => $stats,
             'departments' => $departments,
-            'categories'  => Document::$categories,
+            'categories'  => $categories,
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Livewire\Documents;
 
 use App\Models\Department;
 use App\Models\Document;
+use App\Models\DocumentCategory;
 use App\Services\DocumentService;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -73,7 +74,7 @@ class DocumentForm extends Component
             'title_lo'       => 'required|string|max:300',
             'title_en'       => 'nullable|string|max:300',
             'doc_number'     => 'nullable|string|max:100',
-            'category'       => 'required|in:order,announcement,certificate,report,project,other',
+            'category'       => 'required|exists:document_categories,slug',
             'description_lo' => 'nullable|string',
             'description_en' => 'nullable|string',
             'department_id'  => 'nullable|exists:departments,id',
@@ -128,10 +129,11 @@ class DocumentForm extends Component
     public function render()
     {
         $departments = Department::active()->ordered()->get(['id', 'name_lo', 'name_en']);
+        $categories  = DocumentCategory::active()->ordered()->get();
 
         return view('livewire.documents.form', [
             'departments' => $departments,
-            'categories'  => Document::$categories,
+            'categories'  => $categories,
         ]);
     }
 }

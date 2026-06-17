@@ -5,10 +5,11 @@
 @php
     $locale = app()->getLocale();
 
-    $categories = \App\Models\Document::$categories;
+    $docCategoryMap = \App\Models\DocumentCategory::all()->keyBy('slug');
+    $fallbackCat    = (object)['name_lo'=>'ອື່ນໆ','name_en'=>'Other','icon'=>'description','color_class'=>'text-gray-700 bg-gray-50 border-gray-200'];
 
-    $documentsJson = $documents->map(function ($d) use ($locale, $categories) {
-        $cat = $categories[$d->category] ?? $categories['other'];
+    $documentsJson = $documents->map(function ($d) use ($locale, $docCategoryMap, $fallbackCat) {
+        $cat = $docCategoryMap->get($d->category) ?? $fallbackCat;
         return [
             'id'           => $d->id,
             'title'        => $locale === 'lo'
@@ -16,9 +17,9 @@
                 : ($d->title_en ?? $d->title_lo ?? ''),
             'doc_number'   => $d->doc_number ?? '',
             'category'     => $d->category ?? 'other',
-            'cat_label'    => $locale === 'lo' ? $cat['lo'] : $cat['en'],
-            'cat_icon'     => $cat['icon'],
-            'cat_color'    => $cat['color'],
+            'cat_label'    => $locale === 'lo' ? $cat->name_lo : ($cat->name_en ?? $cat->name_lo),
+            'cat_icon'     => $cat->icon,
+            'cat_color'    => $cat->color_class,
             'description'  => $locale === 'lo'
                 ? ($d->description_lo ?? $d->description_en ?? '')
                 : ($d->description_en ?? $d->description_lo ?? ''),
@@ -36,7 +37,7 @@
                 $d->doc_number,
                 $d->description_lo, $d->description_en,
                 $d->department?->name_lo, $d->department?->name_en,
-                $locale === 'lo' ? $cat['lo'] : $cat['en'],
+                $locale === 'lo' ? $cat->name_lo : ($cat->name_en ?? $cat->name_lo),
             ]))),
         ];
     })->values()->toArray();
@@ -216,8 +217,8 @@
 
             @foreach($categoriesUsed as $catKey)
             @php
-                $catMeta = \App\Models\Document::$categories[$catKey] ?? \App\Models\Document::$categories['other'];
-                $catLabel = $locale === 'lo' ? $catMeta['lo'] : $catMeta['en'];
+                $catMeta  = $docCategoryMap->get($catKey) ?? $fallbackCat;
+                $catLabel = $locale === 'lo' ? $catMeta->name_lo : ($catMeta->name_en ?? $catMeta->name_lo);
                 $catCount = $documents->where('category', $catKey)->count();
             @endphp
             <button @click="activeCat = '{{ $catKey }}'"
@@ -225,7 +226,7 @@
                         ? 'bg-secondary text-white border-secondary shadow-sm'
                         : 'bg-white text-on-surface-variant border-outline-variant hover:border-secondary/40 hover:text-secondary'"
                     class="px-3 py-1.5 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">{{ $catMeta['icon'] }}</span>
+                <span class="material-symbols-outlined text-sm">{{ $catMeta->icon }}</span>
                 {{ $catLabel }}
                 <span :class="activeCat === '{{ $catKey }}' ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
                       class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">{{ $catCount }}</span>

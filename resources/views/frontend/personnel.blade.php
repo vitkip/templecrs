@@ -24,378 +24,587 @@
             'email'            => $p->email,
             'phone'            => $p->phone,
             'facebook'         => $p->facebook,
-            'search_text'      => strtolower(implode(' ', array_filter([
+            'affiliation_level'    => $p->affiliation_level,
+            'affiliation_province' => $p->affiliation_province,
+            'search_text'          => strtolower(implode(' ', array_filter([
                 $p->name_lo, $p->name_en,
                 $p->position_lo, $p->position_en,
                 $p->title_lo, $p->title_en,
                 $p->department?->name_lo, $p->department?->name_en,
+                $p->affiliation_province,
             ]))),
         ];
     })->values()->toArray();
+
+    $totalCount      = $personnel->count();
+    $monkCount       = $personnel->where('gender', 'monk')->count();
+    $deptCount       = $departments->count();
+    $centralCount    = $personnel->where('affiliation_level', 'central')->count();
+    $provincialCount = $personnel->where('affiliation_level', 'provincial')->count();
 @endphp
 
-{{-- ══════════════════════════════════════════════════════════════
-     PAGE HEADER
-══════════════════════════════════════════════════════════════ --}}
-<div class="relative overflow-hidden" style="background: linear-gradient(135deg, #6b4c00 0%, #545f73 60%, #765700 100%);">
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full -translate-x-1/3 -translate-y-1/3 blur-3xl"></div>
-        <div class="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full translate-x-1/4 translate-y-1/4 blur-3xl"></div>
+{{-- ════════════════════════════════════════════════════
+     HERO — Deep temple palette + lotus texture
+════════════════════════════════════════════════════ --}}
+<div class="relative overflow-hidden" style="background: linear-gradient(150deg, #2C1A08 0%, #3D2A12 40%, #1C2B1C 100%); min-height: 260px;">
+
+    {{-- Lotus 8-petal repeating SVG texture --}}
+    <div class="absolute inset-0 pointer-events-none" style="opacity: 0.055;" aria-hidden="true">
+        <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="lotuspat" x="0" y="0" width="64" height="64" patternUnits="userSpaceOnUse">
+                    <g transform="translate(32,32)" fill="#D4AF37">
+                        <ellipse rx="4.5" ry="10" transform="rotate(0)"/>
+                        <ellipse rx="4.5" ry="10" transform="rotate(45)"/>
+                        <ellipse rx="4.5" ry="10" transform="rotate(90)"/>
+                        <ellipse rx="4.5" ry="10" transform="rotate(135)"/>
+                    </g>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#lotuspat)"/>
+        </svg>
     </div>
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 relative z-10">
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+
         {{-- Breadcrumb --}}
-        <nav class="flex items-center gap-2 text-xs text-white/60 mb-6">
-            <a href="{{ route('frontend.index') }}" class="hover:text-white transition-colors flex items-center gap-1">
-                <span class="material-symbols-outlined text-xs">home</span>
+        <nav class="flex items-center gap-2 mb-8" aria-label="Breadcrumb">
+            <a href="{{ route('frontend.index') }}" class="flex items-center gap-1 transition-colors"
+               style="font-size:11px; color: rgba(255,255,255,0.45);"
+               onmouseover="this.style.color='rgba(212,175,55,0.85)'" onmouseout="this.style.color='rgba(255,255,255,0.45)'">
+                <span class="material-symbols-outlined" style="font-size:12px;">home</span>
                 {{ __('messages.homepage') }}
             </a>
-            <span class="material-symbols-outlined text-[10px] text-white/30">chevron_right</span>
-            <span class="text-white/90 font-medium">{{ __('messages.personnel') }}</span>
+            <span style="color: rgba(255,255,255,0.2); font-size:11px;">›</span>
+            <span style="font-size:11px; color: rgba(255,255,255,0.7);">{{ __('messages.personnel') }}</span>
         </nav>
 
-        <div class="flex items-center gap-2 mb-2 justify-center">
-            <span class="w-8 h-1 bg-amber-400 rounded-full"></span>
-            <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">{{ __('messages.our_people') }}</span>
-            <span class="w-8 h-1 bg-amber-400 rounded-full"></span>
-        </div>
-        <h1 class="text-headline-lg lg:text-[40px] font-bold text-white text-center mb-2">
-            {{ __('messages.personnel_directory') }}
-        </h1>
-        <p class="text-body-md text-white/70 text-center max-w-2xl mx-auto">
-            {{ __('messages.personnel_dir_subtitle') }}
-        </p>
+        <div class="flex flex-col lg:flex-row lg:items-end gap-8 lg:gap-16">
 
-        {{-- Stats chips --}}
-        <div class="flex flex-wrap items-center justify-center gap-3 mt-6">
-            <div class="flex items-center gap-1.5 px-4 py-2 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
-                <span class="material-symbols-outlined text-sm text-amber-300">group</span>
-                <span class="text-sm font-bold text-white">{{ $personnel->count() }}</span>
-                <span class="text-xs text-white/60">{{ __('messages.personnel') }}</span>
+            {{-- Title block --}}
+            <div class="flex-1">
+                <p class="flex items-center gap-3 mb-4" style="font-size:10px; font-weight:700; color:#C8953A; letter-spacing:0.22em; text-transform:uppercase;">
+                    <span style="width:32px; height:1px; background: rgba(200,149,58,0.45); display:inline-block;"></span>
+                    {{ __('messages.our_people') }}
+                    <span style="width:32px; height:1px; background: rgba(200,149,58,0.45); display:inline-block;"></span>
+                </p>
+                <h1 class="font-bold text-white leading-tight mb-3"
+                    style="font-size: clamp(26px, 5vw, 44px); letter-spacing: -0.015em;">
+                    {{ __('messages.personnel_directory') }}
+                </h1>
+                <p style="font-size:14px; line-height:1.65; color:rgba(255,255,255,0.5); max-width:460px;">
+                    {{ __('messages.personnel_dir_subtitle') }}
+                </p>
             </div>
-            <div class="flex items-center gap-1.5 px-4 py-2 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
-                <span class="material-symbols-outlined text-sm text-amber-300">verified</span>
-                <span class="text-sm font-bold text-white">{{ $personnel->where('gender', 'monk')->count() }}</span>
-                <span class="text-xs text-white/60">{{ __('messages.stat_monks') }}</span>
-            </div>
-            <div class="flex items-center gap-1.5 px-4 py-2 bg-white/10 rounded-full border border-white/15 backdrop-blur-sm">
-                <span class="material-symbols-outlined text-sm text-amber-300">corporate_fare</span>
-                <span class="text-sm font-bold text-white">{{ $departments->count() }}</span>
-                <span class="text-xs text-white/60">{{ __('messages.departments') }}</span>
+
+            {{-- Stats — editorial numbers --}}
+            <div class="flex items-end gap-8 shrink-0 pb-1">
+                <div class="text-center">
+                    <p class="font-bold text-white tabular-nums" style="font-size:42px; line-height:1;">{{ $totalCount }}</p>
+                    <p style="font-size:10px; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase;">{{ __('messages.personnel') }}</p>
+                </div>
+                <div style="width:1px; height:48px; background:rgba(255,255,255,0.08); align-self:center;"></div>
+                <div class="text-center">
+                    <p class="font-bold tabular-nums" style="font-size:42px; line-height:1; color:#C8953A;">{{ $monkCount }}</p>
+                    <p style="font-size:10px; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase;">{{ __('messages.stat_monks') }}</p>
+                </div>
+                @if($deptCount > 0)
+                <div style="width:1px; height:48px; background:rgba(255,255,255,0.08); align-self:center;"></div>
+                <div class="text-center">
+                    <p class="font-bold text-white tabular-nums" style="font-size:42px; line-height:1;">{{ $deptCount }}</p>
+                    <p style="font-size:10px; letter-spacing:0.1em; color:rgba(255,255,255,0.4); margin-top:4px; text-transform:uppercase;">{{ __('messages.departments') }}</p>
+                </div>
+                @endif
             </div>
         </div>
-    </div>
-
-    {{-- Bottom Wave --}}
-    <div class="absolute bottom-0 left-0 w-full z-20">
-        <svg viewBox="0 0 1440 56" xmlns="http://www.w3.org/2000/svg" class="w-full">
-            <path fill="#FFFBEB" d="M0,20L60,23C120,26,240,32,360,33C480,34,600,28,720,28C840,28,960,34,1080,34C1200,34,1320,28,1380,25L1440,22L1440,56L1380,56C1320,56,1200,56,1080,56C960,56,840,56,720,56C600,56,480,56,360,56C240,56,120,56,60,56L0,56Z"/>
-        </svg>
     </div>
 </div>
 
-{{-- ══════════════════════════════════════════════════════════════
-     SEARCH + FILTER + GRID (Alpine Component)
-══════════════════════════════════════════════════════════════ --}}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+{{-- ════════════════════════════════════════════════════
+     MAIN CONTENT AREA — Alpine component
+════════════════════════════════════════════════════ --}}
+<div style="background-color: #FAF6EF;"
      x-data="{
         search: '',
         activeDept: 'all',
+        activeAffiliation: 'all',
+        activeProvince: 'all',
         personnel: @js($personnelJson),
+        provinces: [
+            'ນະຄອນຫຼວງວຽງຈັນ','ແຂວງຜົ້ງສາລີ','ແຂວງຫຼວງນ້ຳທາ','ແຂວງອຸດົມໄຊ',
+            'ແຂວງບໍ່ແກ້ວ','ແຂວງຫຼວງພຣະບາງ','ແຂວງຫົວພັນ','ແຂວງໄຊຍະບູລີ',
+            'ແຂວງຊຽງຂວາງ','ແຂວງວຽງຈັນ','ແຂວງບໍລິຄຳໄຊ','ແຂວງຄຳມ່ວນ',
+            'ແຂວງສະຫວັນນະເຂດ','ແຂວງສາລະວັນ','ແຂວງເຊກອງ','ແຂວງຈຳປາສັກ',
+            'ແຂວງອັດຕະປື','ແຂວງໄຊສົມບູນ'
+        ],
         perPage: 9,
         currentPage: 1,
         perPageOptions: [9, 18, 27],
         get filtered() {
             const q = this.search.toLowerCase().trim();
             return this.personnel.filter(p => {
-                const deptOk = this.activeDept === 'all' || p.dept_id === this.activeDept;
+                const deptOk   = this.activeDept === 'all' || p.dept_id === this.activeDept;
+                const affOk    = this.activeAffiliation === 'all' || p.affiliation_level === this.activeAffiliation;
+                const provOk   = this.activeProvince === 'all' || p.affiliation_province === this.activeProvince;
                 const searchOk = !q || p.search_text.includes(q);
-                return deptOk && searchOk;
+                return deptOk && affOk && provOk && searchOk;
             });
         },
-        get totalPages() {
-            return Math.max(1, Math.ceil(this.filtered.length / this.perPage));
-        },
+        get totalPages() { return Math.max(1, Math.ceil(this.filtered.length / this.perPage)); },
         get paginated() {
             const start = (this.currentPage - 1) * this.perPage;
             return this.filtered.slice(start, start + this.perPage);
         },
         get pageNumbers() {
-            const total = this.totalPages;
-            const curr = this.currentPage;
+            const total = this.totalPages, curr = this.currentPage;
             if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
             if (curr <= 4) return [1, 2, 3, 4, 5, '...', total];
             if (curr >= total - 3) return [1, '...', total-4, total-3, total-2, total-1, total];
             return [1, '...', curr-1, curr, curr+1, '...', total];
         },
+        countByAffiliation(level) { return this.personnel.filter(p => p.affiliation_level === level).length; },
+        countByProvince(prov) {
+            return this.personnel.filter(p => p.affiliation_level === 'provincial' && p.affiliation_province === prov).length;
+        },
+        get provincesWithData() { return this.provinces.filter(prov => this.countByProvince(prov) > 0); },
+        get hasAffiliationData() { return this.personnel.some(p => p.affiliation_level); },
+        get hasActiveFilters() {
+            return this.search !== '' || this.activeDept !== 'all' || this.activeAffiliation !== 'all' || this.activeProvince !== 'all';
+        },
+        clearAll() { this.search = ''; this.activeDept = 'all'; this.activeAffiliation = 'all'; this.activeProvince = 'all'; },
         init() {
-            this.$watch('search',     () => { this.currentPage = 1; });
-            this.$watch('activeDept', () => { this.currentPage = 1; });
-            this.$watch('perPage',    () => { this.currentPage = 1; });
+            this.$watch('search',            () => { this.currentPage = 1; });
+            this.$watch('activeDept',        () => { this.currentPage = 1; });
+            this.$watch('activeAffiliation', () => { this.currentPage = 1; this.activeProvince = 'all'; });
+            this.$watch('activeProvince',    () => { this.currentPage = 1; });
+            this.$watch('perPage',           () => { this.currentPage = 1; });
         }
      }">
 
-    {{-- ─── Search + Department Filter Bar ─── --}}
-    <div class="mb-8 space-y-4">
-        {{-- Search Input --}}
-        <div class="relative max-w-xl mx-auto">
-            <span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-on-surface-variant/50 pointer-events-none">search</span>
-            <input
-                x-model="search"
-                type="text"
-                placeholder="{{ __('messages.search_placeholder') }}"
-                class="w-full pl-12 pr-12 py-3.5 rounded-xl border border-outline-variant bg-white text-body-md text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm transition-all"
-            />
-            <button x-show="search"
-                    @click="search = ''"
-                    class="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-base">close</span>
-            </button>
-        </div>
-
-        {{-- Department Filter Tabs --}}
-        @if($departments->count() > 0)
-        <div class="flex flex-wrap gap-2 justify-center">
-            <button @click="activeDept = 'all'"
-                    :class="activeDept === 'all'
-                        ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                        : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary/40 hover:text-primary'"
-                    class="px-4 py-2 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">apps</span>
-                {{ __('messages.all_departments') }}
-                <span x-text="personnel.length"
-                      :class="activeDept === 'all' ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
-                      class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center"></span>
-            </button>
-
-            @foreach($departments as $dept)
-            @php
-                $deptPersonnelCount = $personnel->where('department_id', $dept->id)->count();
-            @endphp
-            <button @click="activeDept = '{{ $dept->id }}'"
-                    :class="activeDept === '{{ $dept->id }}'
-                        ? 'bg-primary text-white border-primary shadow-md shadow-primary/20'
-                        : 'bg-white text-on-surface-variant border-outline-variant hover:border-primary/40 hover:text-primary'"
-                    class="px-4 py-2 rounded-lg text-label-sm font-semibold border transition-all duration-200 flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-sm">corporate_fare</span>
-                {{ $dept->name }}
-                <span :class="activeDept === '{{ $dept->id }}' ? 'bg-white/25 text-white' : 'bg-surface-container text-on-surface-variant'"
-                      class="text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center">{{ $deptPersonnelCount }}</span>
-            </button>
-            @endforeach
-        </div>
-        @endif
-
-        {{-- Results Count --}}
-        <div class="text-center">
-            <span class="text-xs text-on-surface-variant">
-                <span x-text="Math.min((currentPage-1)*perPage+1, filtered.length)" class="font-bold text-primary"></span>–<span x-text="Math.min(currentPage*perPage, filtered.length)" class="font-bold text-primary"></span>
-                /
-                <span x-text="filtered.length" class="font-bold text-primary"></span>
-                {{ __('messages.results_count') }}
-            </span>
-        </div>
+    {{-- Lotus divider — signature transition element --}}
+    <div class="flex items-center justify-center py-5" aria-hidden="true">
+        <div style="height:1px; width:96px; background: linear-gradient(to right, transparent, rgba(200,149,58,0.3));"></div>
+        <svg class="mx-4 shrink-0" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="13" cy="13" rx="3" ry="8" fill="#C8953A" opacity="0.45" transform="rotate(0 13 13)"/>
+            <ellipse cx="13" cy="13" rx="3" ry="8" fill="#C8953A" opacity="0.45" transform="rotate(45 13 13)"/>
+            <ellipse cx="13" cy="13" rx="3" ry="8" fill="#C8953A" opacity="0.45" transform="rotate(90 13 13)"/>
+            <ellipse cx="13" cy="13" rx="3" ry="8" fill="#C8953A" opacity="0.45" transform="rotate(135 13 13)"/>
+            <circle cx="13" cy="13" r="2.5" fill="#C8953A" opacity="0.65"/>
+        </svg>
+        <div style="height:1px; width:96px; background: linear-gradient(to left, transparent, rgba(200,149,58,0.3));"></div>
     </div>
 
-    {{-- ─── Personnel Grid ─── --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {{-- ── Sticky Filter Bar ──────────────────────────────── --}}
+    <div class="sticky top-16 lg:top-20 z-30 border-b"
+         style="background: rgba(250,246,239,0.97); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: rgba(200,149,58,0.18);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap gap-2.5 items-center">
 
-        <template x-for="person in paginated" :key="person.id">
-            <div class="group relative bg-white rounded-2xl border border-outline-variant/60 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-400 hover:-translate-y-1.5 flex flex-col"
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="opacity-0 scale-95"
-                 x-transition:enter-end="opacity-100 scale-100">
-
-                {{-- Card Header (gradient banner) --}}
-                <div class="relative h-24 shrink-0 overflow-hidden"
-                     :class="person.gender === 'monk'
-                        ? 'bg-gradient-to-br from-amber-200 via-amber-100 to-yellow-50'
-                        : 'bg-gradient-to-br from-slate-100 via-surface-container to-surface-container-low'">
-                    {{-- Decorative circles --}}
-                    <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-20"
-                         :class="person.gender === 'monk' ? 'bg-amber-400' : 'bg-slate-300'"></div>
-                    <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-full opacity-15"
-                         :class="person.gender === 'monk' ? 'bg-amber-500' : 'bg-slate-400'"></div>
-
-                    {{-- Gender Badge --}}
-                    <div class="absolute top-3 right-3 z-10">
-                        <span class="px-2.5 py-1 rounded-full text-[9px] font-bold tracking-wide shadow-md"
-                              :class="person.gender_badge.class"
-                              x-text="person.gender_badge.label"></span>
-                    </div>
-                </div>
-
-                {{-- Circular Avatar (overlapping header) --}}
-                <div class="relative flex justify-center -mt-12 px-4 shrink-0 z-10">
-                    <div class="relative">
-                        <template x-if="person.photo_url">
-                            <img :src="person.photo_url" :alt="person.name"
-                                 loading="lazy"
-                                 class="w-24 h-24 rounded-full object-cover ring-4 ring-white shadow-lg group-hover:scale-105 transition-transform duration-500 ease-out" />
-                        </template>
-                        <template x-if="!person.photo_url">
-                            <div class="w-24 h-24 rounded-full ring-4 ring-white shadow-lg flex items-center justify-center"
-                                 :class="person.gender === 'monk'
-                                    ? 'bg-gradient-to-br from-amber-100 to-amber-200'
-                                    : 'bg-gradient-to-br from-surface-container to-surface-container-high'">
-                                <span class="material-symbols-outlined text-5xl"
-                                      :class="person.gender === 'monk' ? 'text-amber-400/60' : 'text-on-surface-variant/25'">person</span>
-                            </div>
-                        </template>
-                        {{-- Monk golden ring --}}
-                        <template x-if="person.gender === 'monk'">
-                            <div class="absolute inset-0 rounded-full ring-2 ring-amber-400 ring-offset-2 ring-offset-white pointer-events-none"></div>
-                        </template>
-                    </div>
-                </div>
-
-                {{-- Card Body --}}
-                <div class="px-5 pb-5 pt-3 flex flex-col flex-1 gap-3">
-
-                    {{-- Name + Position (centered) --}}
-                    <div class="text-center">
-                        <p x-show="person.title"
-                           x-text="person.title"
-                           class="text-[10px] text-primary font-bold uppercase tracking-widest mb-1"></p>
-                        <h3 x-text="person.name"
-                            class="text-body-lg font-bold text-on-surface leading-snug group-hover:text-primary transition-colors duration-200"></h3>
-                        <p x-show="person.position"
-                           x-text="person.position"
-                           class="text-xs text-on-surface-variant mt-0.5 font-medium"></p>
-                    </div>
-
-                    {{-- Department (centered) --}}
-                    <div x-show="person.dept_name" class="flex justify-center">
-                        <span class="inline-flex items-center gap-1 text-[10px] text-primary/80 bg-primary/5 px-2.5 py-1 rounded-md border border-primary/10 font-semibold">
-                            <span class="material-symbols-outlined text-xs">corporate_fare</span>
-                            <span x-text="person.dept_name"></span>
-                        </span>
-                    </div>
-
-                    {{-- Divider --}}
-                    <div class="border-t border-outline-variant/40"></div>
-
-                    {{-- Bio --}}
-                    <p x-show="person.bio"
-                       x-text="person.bio"
-                       class="text-xs text-on-surface-variant leading-relaxed line-clamp-3"></p>
-
-                    {{-- Education --}}
-                    <div x-show="person.education" class="flex items-start gap-1.5 text-xs text-on-surface-variant">
-                        <span class="material-symbols-outlined text-sm text-secondary shrink-0 mt-px">school</span>
-                        <span x-text="person.education" class="line-clamp-2"></span>
-                    </div>
-
-                    {{-- Monk-specific info --}}
-                    <template x-if="person.gender === 'monk' && (person.date_of_ordination || person.pansa || person.current_temple)">
-                        <div class="rounded-lg bg-amber-50 border border-amber-100 px-3 py-2.5 space-y-1.5">
-                            <div x-show="person.date_of_ordination" class="flex items-center gap-2 text-xs text-amber-800">
-                                <span class="material-symbols-outlined text-sm text-amber-600">event</span>
-                                <span class="font-medium">{{ __('messages.date_of_ordination') }}:</span>
-                                <span x-text="person.date_of_ordination"></span>
-                            </div>
-                            <div x-show="person.pansa" class="flex items-center gap-2 text-xs text-amber-800">
-                                <span class="material-symbols-outlined text-sm text-amber-600">nights_stay</span>
-                                <span class="font-medium">{{ __('messages.pansa_label') }}:</span>
-                                <span x-text="person.pansa + ' {{ __('messages.pansa_label') }}'"></span>
-                            </div>
-                            <div x-show="person.current_temple" class="flex items-center gap-2 text-xs text-amber-800">
-                                <span class="material-symbols-outlined text-sm text-amber-600">temple_buddhist</span>
-                                <span class="font-medium">{{ __('messages.current_temple') }}:</span>
-                                <span x-text="person.current_temple" class="line-clamp-1"></span>
-                            </div>
-                        </div>
-                    </template>
-
-                    {{-- Contact Row (pushed to bottom, centered) --}}
-                    <div class="mt-auto">
-                        <div x-show="person.email || person.phone || person.facebook"
-                             class="pt-3 border-t border-outline-variant/40 flex items-center justify-center gap-2">
-                            <a x-show="person.email"
-                               :href="'mailto:' + (person.email || '')"
-                               @click.stop
-                               class="w-9 h-9 rounded-full bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm text-sm"
-                               title="Email">
-                                <span class="material-symbols-outlined text-base">mail</span>
-                            </a>
-                            <a x-show="person.phone"
-                               :href="'tel:' + (person.phone || '')"
-                               @click.stop
-                               class="w-9 h-9 rounded-full bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
-                               title="Phone">
-                                <span class="material-symbols-outlined text-base">phone</span>
-                            </a>
-                            <a x-show="person.facebook"
-                               :href="person.facebook || '#'"
-                               target="_blank"
-                               rel="noopener noreferrer"
-                               @click.stop
-                               class="w-9 h-9 rounded-full bg-primary/5 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all shadow-sm"
-                               title="Facebook">
-                                <span class="material-symbols-outlined text-base">share</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            {{-- Search --}}
+            <div class="relative min-w-[160px] flex-1 max-w-xs">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined pointer-events-none"
+                      style="font-size:15px; color: rgba(124,77,15,0.4);">search</span>
+                <input x-model="search" type="text" placeholder="ຄົ້ນຫາຊື່, ຕຳແໜ່ງ..."
+                       class="w-full pl-8 pr-8 py-2 rounded-lg border text-sm focus:outline-none transition-all"
+                       style="background:white; border-color:rgba(200,149,58,0.22); font-size:12px; color:#1C1208;"
+                       onfocus="this.style.borderColor='rgba(200,149,58,0.55)'; this.style.boxShadow='0 0 0 3px rgba(200,149,58,0.1)'"
+                       onblur="this.style.borderColor='rgba(200,149,58,0.22)'; this.style.boxShadow='none'"/>
+                <button x-show="search" @click="search=''"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 transition-colors"
+                        style="color: rgba(124,77,15,0.4);"
+                        onmouseover="this.style.color='rgba(124,77,15,0.8)'" onmouseout="this.style.color='rgba(124,77,15,0.4)'">
+                    <span class="material-symbols-outlined" style="font-size:14px;">close</span>
+                </button>
             </div>
-        </template>
 
+            {{-- Separator --}}
+            <div class="hidden sm:block" style="width:1px; height:24px; background:rgba(200,149,58,0.15);"></div>
+
+            {{-- Department filter --}}
+            @if($departments->count() > 0)
+            <div class="flex flex-wrap gap-1.5 items-center">
+                <span class="hidden sm:inline" style="font-size:9px; font-weight:700; letter-spacing:0.15em; color:rgba(124,77,15,0.45); text-transform:uppercase;">ພະແນກ</span>
+                <button @click="activeDept = 'all'"
+                        :class="activeDept === 'all' ? 'font-bold' : ''"
+                        :style="activeDept === 'all'
+                            ? 'background:#7C4D0F; color:white; border-color:#7C4D0F;'
+                            : 'background:white; color:#6B7280; border-color:rgba(200,149,58,0.2);'"
+                        class="px-2.5 py-1 rounded-full border transition-all"
+                        style="font-size:11px;">
+                    ທັງໝົດ
+                    <span x-text="personnel.length" class="ml-0.5 opacity-70" style="font-size:10px;"></span>
+                </button>
+                @foreach($departments as $dept)
+                @php $dCount = $personnel->where('department_id', $dept->id)->count(); @endphp
+                <button @click="activeDept = '{{ $dept->id }}'"
+                        :class="activeDept === '{{ $dept->id }}' ? 'font-bold' : ''"
+                        :style="activeDept === '{{ $dept->id }}'
+                            ? 'background:#7C4D0F; color:white; border-color:#7C4D0F;'
+                            : 'background:white; color:#6B7280; border-color:rgba(200,149,58,0.2);'"
+                        class="px-2.5 py-1 rounded-full border transition-all"
+                        style="font-size:11px;">
+                    {{ $dept->name }}
+                    <span class="ml-0.5 opacity-70" style="font-size:10px;">{{ $dCount }}</span>
+                </button>
+                @endforeach
+            </div>
+            @endif
+
+            {{-- Affiliation filter --}}
+            <div x-show="hasAffiliationData" class="flex gap-1.5 items-center sm:ml-auto">
+                <span class="hidden sm:inline" style="font-size:9px; font-weight:700; letter-spacing:0.15em; color:rgba(124,77,15,0.45); text-transform:uppercase;">ລະສັງກັດ</span>
+
+                <button @click="activeAffiliation = 'all'"
+                        :style="activeAffiliation === 'all'
+                            ? 'background:#3D3525; color:white; border-color:#3D3525;'
+                            : 'background:white; color:#6B7280; border-color:rgba(200,149,58,0.2);'"
+                        class="px-2.5 py-1 rounded-full border transition-all font-medium"
+                        style="font-size:11px;">
+                    ທັງໝົດ
+                </button>
+
+                <button @click="activeAffiliation = 'central'"
+                        :style="activeAffiliation === 'central'
+                            ? 'background:#3730A3; color:white; border-color:#3730A3;'
+                            : 'background:white; color:#6B7280; border-color:rgba(200,149,58,0.2);'"
+                        class="px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
+                        style="font-size:11px;">
+                    <span class="material-symbols-outlined" style="font-size:11px;">location_city</span>
+                    ສູນການ
+                    <span x-text="countByAffiliation('central')"
+                          :class="activeAffiliation === 'central' ? 'opacity-70' : 'opacity-50'"
+                          style="font-size:9px;"></span>
+                </button>
+
+                <button @click="activeAffiliation = 'provincial'"
+                        :style="activeAffiliation === 'provincial'
+                            ? 'background:#3D5A47; color:white; border-color:#3D5A47;'
+                            : 'background:white; color:#6B7280; border-color:rgba(200,149,58,0.2);'"
+                        class="px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
+                        style="font-size:11px;">
+                    <span class="material-symbols-outlined" style="font-size:11px;">map</span>
+                    ແຂວງ
+                    <span x-text="countByAffiliation('provincial')"
+                          :class="activeAffiliation === 'provincial' ? 'opacity-70' : 'opacity-50'"
+                          style="font-size:9px;"></span>
+                </button>
+            </div>
+
+            {{-- Results count + Clear all --}}
+            <div class="flex items-center gap-2">
+                <span style="font-size:11px; color:rgba(124,77,15,0.5);">
+                    <span x-text="filtered.length" class="font-bold" style="color:#7C4D0F;"></span> ຄົນ
+                </span>
+                <button x-show="hasActiveFilters" @click="clearAll()"
+                        class="flex items-center gap-0.5 transition-colors"
+                        style="font-size:10px; color:rgba(124,77,15,0.55); text-decoration:underline; text-underline-offset:2px;"
+                        onmouseover="this.style.color='rgba(124,77,15,0.9)'" onmouseout="this.style.color='rgba(124,77,15,0.55)'">
+                    <span class="material-symbols-outlined" style="font-size:12px;">restart_alt</span>
+                    ລ້າງທຸກ
+                </button>
+            </div>
+        </div>
     </div>
 
-    {{-- ─── Pagination ─── --}}
-    <div x-show="totalPages > 1 && filtered.length > 0" class="mt-10 flex justify-center">
-        <div class="inline-flex items-center gap-1 px-3 py-2.5 bg-white rounded-2xl shadow-sm border border-outline-variant/60 flex-wrap justify-center">
-            <button @click="if(currentPage > 1) currentPage--"
-                    :disabled="currentPage === 1"
-                    :class="currentPage === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-surface-container cursor-pointer'"
-                    class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant transition-all">
-                <span class="material-symbols-outlined text-base leading-none">chevron_left</span>
+    {{-- ── Province Sub-filter panel ───────────────────────── --}}
+    <div x-show="activeAffiliation === 'provincial' && provincesWithData.length > 0"
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0 -translate-y-1"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-end="opacity-0"
+         class="border-b"
+         style="background:#EFF7F2; border-color:rgba(61,90,71,0.18);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap gap-1.5 items-center">
+            <span class="material-symbols-outlined shrink-0" style="font-size:13px; color:#3D5A47;">pin_drop</span>
+
+            {{-- All provinces --}}
+            <button @click="activeProvince = 'all'"
+                    :style="activeProvince === 'all'
+                        ? 'background:#3D5A47; color:white; border-color:#3D5A47;'
+                        : 'background:white; color:#3D5A47; border-color:rgba(61,90,71,0.25);'"
+                    class="px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
+                    style="font-size:11px; font-weight:600;">
+                ທຸກແຂວງ
+                <span x-text="countByAffiliation('provincial')"
+                      :class="activeProvince === 'all' ? 'opacity-65' : 'opacity-50'"
+                      style="font-size:9px;"></span>
             </button>
-            <template x-for="(page, idx) in pageNumbers" :key="idx">
-                <div class="contents">
-                    <button x-show="page !== '...'"
-                            @click="currentPage = page"
-                            :class="currentPage === page
-                                ? 'bg-primary text-white shadow-sm shadow-primary/30'
-                                : 'text-on-surface hover:bg-surface-container hover:text-primary'"
-                            class="w-9 h-9 flex items-center justify-center rounded-full text-sm font-semibold transition-all">
-                        <span x-text="page"></span>
-                    </button>
-                    <span x-show="page === '...'"
-                          class="w-9 h-9 flex items-center justify-center text-on-surface-variant/50 text-sm select-none">···</span>
-                </div>
+
+            {{-- Per-province buttons --}}
+            <template x-for="prov in provincesWithData" :key="prov">
+                <button @click="activeProvince = prov"
+                        :style="activeProvince === prov
+                            ? 'background:#3D5A47; color:white; border-color:#3D5A47;'
+                            : 'background:white; color:#3D5A47; border-color:rgba(61,90,71,0.25);'"
+                        class="px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
+                        style="font-size:11px;">
+                    <span x-text="prov.replace('ແຂວງ', '').replace('ນະຄອນຫຼວງ', 'ນຄຫລ').trim()"></span>
+                    <span x-text="countByProvince(prov)"
+                          :class="activeProvince === prov ? 'opacity-65' : 'opacity-50'"
+                          style="font-size:9px;"></span>
+                </button>
             </template>
-            <button @click="if(currentPage < totalPages) currentPage++"
-                    :disabled="currentPage === totalPages"
-                    :class="currentPage === totalPages ? 'opacity-30 cursor-not-allowed' : 'hover:bg-surface-container cursor-pointer'"
-                    class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant transition-all">
-                <span class="material-symbols-outlined text-base leading-none">chevron_right</span>
+
+            <button x-show="activeProvince !== 'all'" @click="activeProvince = 'all'"
+                    class="ml-auto flex items-center gap-0.5 transition-colors"
+                    style="font-size:10px; color:rgba(61,90,71,0.55); text-decoration:underline; text-underline-offset:2px;"
+                    onmouseover="this.style.color='rgba(61,90,71,0.9)'" onmouseout="this.style.color='rgba(61,90,71,0.55)'">
+                <span class="material-symbols-outlined" style="font-size:12px;">close</span> ລ້າງ
             </button>
-            <div class="ml-1 relative">
-                <select x-model.number="perPage"
-                        class="pl-3 pr-8 py-2 rounded-full border border-outline-variant/70 bg-white text-sm text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer">
-                    <template x-for="opt in perPageOptions" :key="opt">
-                        <option :value="opt" x-text="opt + ' / page'"></option>
-                    </template>
-                </select>
-                <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xs text-on-surface-variant">expand_more</span>
-            </div>
         </div>
     </div>
 
-    {{-- ─── Empty State ─── --}}
-    <div x-show="filtered.length === 0"
-         x-transition.opacity
-         class="text-center py-20">
-        <span class="material-symbols-outlined text-7xl text-on-surface-variant/15 mb-4 block">manage_search</span>
-        <p class="text-body-lg font-semibold text-on-surface-variant mb-2">{{ __('messages.no_results_found') }}</p>
-        <p class="text-sm text-on-surface-variant/70 mb-6">{{ __('messages.search_placeholder') }}</p>
-        <button @click="search = ''; activeDept = 'all'"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-label-md font-bold hover:bg-primary-container transition-all btn-press">
-            <span class="material-symbols-outlined text-base">restart_alt</span>
-            {{ __('messages.clear_filters') }}
-        </button>
-    </div>
+    {{-- ── Card Grid ─────────────────────────────────────── --}}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <template x-for="person in paginated" :key="person.id">
+
+                <div class="group flex flex-col rounded-xl overflow-hidden border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                     :style="person.gender === 'monk'
+                        ? 'background:#FFFCF4; border-color:rgba(200,149,58,0.3);'
+                        : 'background:white; border-color:rgba(0,0,0,0.08);'"
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0">
+
+                    {{-- Top accent stripe — colour taxonomy by type --}}
+                    <div class="h-[3px] shrink-0"
+                         :style="person.gender === 'monk'
+                            ? 'background: linear-gradient(to right, #C8953A, #E8B455, #C8953A)'
+                            : person.gender === 'female'
+                            ? 'background: linear-gradient(to right, #7C3AED, #A78BFA)'
+                            : 'background: linear-gradient(to right, #475569, #64748B)'">
+                    </div>
+
+                    <div class="flex flex-col flex-1 p-4 gap-3.5">
+
+                        {{-- ── Avatar + Identity ─── --}}
+                        <div class="flex items-start gap-3.5">
+
+                            {{-- Photo --}}
+                            <div class="shrink-0 relative">
+                                <template x-if="person.photo_url">
+                                    <img :src="person.photo_url" :alt="person.name"
+                                         loading="lazy"
+                                         class="w-[68px] h-[68px] rounded-xl object-cover transition-shadow duration-300"
+                                         :style="person.gender === 'monk'
+                                            ? 'box-shadow: 0 0 0 2px #C8953A, 0 0 0 4px rgba(200,149,58,0.15);'
+                                            : 'box-shadow: 0 1px 4px rgba(0,0,0,0.1);'" />
+                                </template>
+                                <template x-if="!person.photo_url">
+                                    <div class="w-[68px] h-[68px] rounded-xl flex items-center justify-center"
+                                         :style="person.gender === 'monk'
+                                            ? 'background:linear-gradient(135deg,#FEF3C7,#FDE68A); box-shadow:0 0 0 2px #C8953A,0 0 0 4px rgba(200,149,58,0.12);'
+                                            : person.gender === 'female'
+                                            ? 'background:linear-gradient(135deg,#EDE9FE,#DDD6FE); box-shadow:0 1px 4px rgba(0,0,0,0.08);'
+                                            : 'background:linear-gradient(135deg,#F1F5F9,#E2E8F0); box-shadow:0 1px 4px rgba(0,0,0,0.08);'">
+                                        <span class="material-symbols-outlined"
+                                              :style="person.gender === 'monk' ? 'font-size:30px;color:#C8953A;' : 'font-size:30px;color:#94A3B8;'">
+                                            person
+                                        </span>
+                                    </div>
+                                </template>
+                            </div>
+
+                            {{-- Name · Position · Chips --}}
+                            <div class="flex-1 min-w-0 pt-0.5">
+                                <p x-show="person.title" x-text="person.title"
+                                   class="font-bold uppercase tracking-widest truncate"
+                                   :style="person.gender === 'monk'
+                                       ? 'font-size:9px; color:#C8953A; margin-bottom:2px;'
+                                       : 'font-size:9px; color:#94A3B8; margin-bottom:2px;'"></p>
+                                <h3 x-text="person.name"
+                                    class="font-bold leading-snug truncate transition-colors duration-200"
+                                    :style="person.gender === 'monk'
+                                        ? 'font-size:14px; color:#3D2A12;'
+                                        : 'font-size:14px; color:#1C1208;'"
+                                    style="group-hover: color:#7C4D0F;"></h3>
+                                <p x-show="person.position" x-text="person.position"
+                                   class="line-clamp-2 mt-0.5"
+                                   style="font-size:11px; line-height:1.45; color:#64748B;"></p>
+
+                                {{-- Tags --}}
+                                <div class="flex flex-wrap gap-1 mt-2">
+                                    <template x-if="person.dept_name">
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded"
+                                              style="font-size:10px; font-weight:500; background:rgba(0,0,0,0.04); color:#6B7280;">
+                                            <span class="material-symbols-outlined" style="font-size:10px;">corporate_fare</span>
+                                            <span x-text="person.dept_name"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="person.affiliation_level === 'central'">
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded"
+                                              style="font-size:10px; font-weight:700; background:#EEF2FF; color:#3730A3;">
+                                            <span class="material-symbols-outlined" style="font-size:10px;">location_city</span>
+                                            ສູນການ
+                                        </span>
+                                    </template>
+                                    <template x-if="person.affiliation_level === 'provincial'">
+                                        <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded"
+                                              style="font-size:10px; font-weight:700; background:#EFF7F2; color:#3D5A47;">
+                                            <span class="material-symbols-outlined" style="font-size:10px;">map</span>
+                                            <span x-text="person.affiliation_province || 'ແຂວງ'"></span>
+                                        </span>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ── Detail section (conditional) ─── --}}
+                        <template x-if="person.bio || person.education || (person.gender === 'monk' && (person.date_of_ordination || person.pansa || person.current_temple))">
+                            <div>
+                                <div class="mb-3" :style="person.gender === 'monk' ? 'border-top:1px solid rgba(200,149,58,0.2);' : 'border-top:1px solid rgba(0,0,0,0.06);'"></div>
+
+                                {{-- Bio --}}
+                                <p x-show="person.bio" x-text="person.bio"
+                                   class="line-clamp-2 mb-2"
+                                   style="font-size:11.5px; line-height:1.55; color:#64748B;"></p>
+
+                                {{-- Education --}}
+                                <div x-show="person.education" class="flex items-start gap-1.5 mb-2" style="color:#64748B;">
+                                    <span class="material-symbols-outlined shrink-0 mt-px" style="font-size:13px; color:#7C4D0F;">school</span>
+                                    <span x-text="person.education" class="line-clamp-2" style="font-size:11.5px;"></span>
+                                </div>
+
+                                {{-- Monk panel --}}
+                                <template x-if="person.gender === 'monk' && (person.date_of_ordination || person.pansa || person.current_temple)">
+                                    <div class="rounded-lg px-3 py-2.5 space-y-1.5"
+                                         style="background:rgba(200,149,58,0.07); border:1px solid rgba(200,149,58,0.18);">
+                                        <div x-show="person.pansa" class="flex items-baseline gap-1.5">
+                                            <span class="material-symbols-outlined shrink-0" style="font-size:13px; color:#C8953A; margin-top:1px;">nights_stay</span>
+                                            <span style="font-size:11px; color:#7C5418;">{{ __('messages.pansa_label') }}:</span>
+                                            <span x-text="person.pansa" class="font-bold" style="font-size:16px; color:#C8953A; line-height:1;"></span>
+                                            <span style="font-size:11px; color:#8B6528;">ພັນສາ</span>
+                                        </div>
+                                        <div x-show="person.date_of_ordination" class="flex items-center gap-1.5" style="font-size:11px; color:#8B6528;">
+                                            <span class="material-symbols-outlined" style="font-size:12px; color:#C8953A;">event</span>
+                                            {{ __('messages.date_of_ordination') }}: <span x-text="person.date_of_ordination"></span>
+                                        </div>
+                                        <div x-show="person.current_temple" class="flex items-start gap-1.5" style="font-size:11px; color:#8B6528;">
+                                            <span class="material-symbols-outlined shrink-0 mt-px" style="font-size:12px; color:#C8953A;">temple_buddhist</span>
+                                            <span x-text="person.current_temple" class="line-clamp-1"></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        {{-- ── Contact row (pinned to bottom) ─── --}}
+                        <div class="mt-auto" x-show="person.email || person.phone || person.facebook">
+                            <div class="flex items-center gap-1.5 pt-3"
+                                 :style="person.gender === 'monk' ? 'border-top:1px solid rgba(200,149,58,0.18);' : 'border-top:1px solid rgba(0,0,0,0.06);'">
+                                <a x-show="person.email"
+                                   :href="'mailto:' + (person.email || '')"
+                                   @click.stop
+                                   class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
+                                   style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
+                                   onmouseover="this.style.background='rgba(200,149,58,0.18)'" onmouseout="this.style.background='rgba(200,149,58,0.08)'"
+                                   title="Email">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">mail</span>
+                                    Email
+                                </a>
+                                <a x-show="person.phone"
+                                   :href="'tel:' + (person.phone || '')"
+                                   @click.stop
+                                   class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
+                                   style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
+                                   onmouseover="this.style.background='rgba(200,149,58,0.18)'" onmouseout="this.style.background='rgba(200,149,58,0.08)'"
+                                   title="ໂທ">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">phone</span>
+                                    ໂທ
+                                </a>
+                                <a x-show="person.facebook"
+                                   :href="person.facebook || '#'"
+                                   target="_blank" rel="noopener noreferrer"
+                                   @click.stop
+                                   class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
+                                   style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
+                                   onmouseover="this.style.background='rgba(200,149,58,0.18)'" onmouseout="this.style.background='rgba(200,149,58,0.08)'"
+                                   title="Facebook">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">share</span>
+                                    Facebook
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </template>
+        </div>
+
+        {{-- ── Empty State ──────────────────────────────── --}}
+        <div x-show="filtered.length === 0" x-transition.opacity class="text-center py-20">
+            <div class="w-18 h-18 mx-auto mb-6 rounded-full flex items-center justify-center"
+                 style="width:72px; height:72px; background:rgba(200,149,58,0.07);">
+                <span class="material-symbols-outlined" style="font-size:38px; color:rgba(200,149,58,0.3);">manage_search</span>
+            </div>
+            <p class="font-semibold mb-1.5" style="font-size:16px; color:#3D2A12;">ບໍ່ພົບຜູ້ໃດ</p>
+            <p class="mb-6" style="font-size:13px; color:#94A3B8;">ລອງປ່ຽນຄຳຄົ້ນຫາ ຫຼື ລ້າງ filter ທີ່ໃຊ້ຢູ່</p>
+            <button @click="clearAll()"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold transition-all"
+                    style="font-size:13px; background:#7C4D0F; color:white;"
+                    onmouseover="this.style.background='#5D3908'" onmouseout="this.style.background='#7C4D0F'">
+                <span class="material-symbols-outlined" style="font-size:15px;">restart_alt</span>
+                ລ້າງທຸກ filter
+            </button>
+        </div>
+
+        {{-- ── Pagination ────────────────────────────── --}}
+        <div x-show="totalPages > 1 && filtered.length > 0" class="mt-10 flex justify-center">
+            <div class="inline-flex items-center gap-1 px-3 py-2 bg-white rounded-2xl border shadow-sm"
+                 style="border-color:rgba(200,149,58,0.18);">
+
+                <button @click="if(currentPage>1) currentPage--" :disabled="currentPage===1"
+                        :class="currentPage===1 ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer'"
+                        class="w-8 h-8 flex items-center justify-center rounded-full transition-all"
+                        :style="currentPage===1 ? '' : ''"
+                        onmouseover="if(!this.disabled) this.style.background='rgba(200,149,58,0.1)'"
+                        onmouseout="this.style.background='transparent'"
+                        style="color:#7C4D0F;">
+                    <span class="material-symbols-outlined" style="font-size:16px; line-height:1;">chevron_left</span>
+                </button>
+
+                <template x-for="(page, idx) in pageNumbers" :key="idx">
+                    <div class="contents">
+                        <button x-show="page !== '...'" @click="currentPage = page"
+                                :style="currentPage === page ? 'background:#7C4D0F; color:white;' : 'color:#4B3A2A;'"
+                                class="w-8 h-8 flex items-center justify-center rounded-full text-sm font-semibold transition-all"
+                                onmouseover="if(this.style.background !== 'rgb(124, 77, 15)') this.style.background='rgba(200,149,58,0.1)'"
+                                onmouseout="if(this.style.background !== 'rgb(124, 77, 15)') this.style.background='transparent'">
+                            <span x-text="page"></span>
+                        </button>
+                        <span x-show="page === '...'"
+                              class="w-8 h-8 flex items-center justify-center text-sm select-none"
+                              style="color:rgba(0,0,0,0.2);">···</span>
+                    </div>
+                </template>
+
+                <button @click="if(currentPage<totalPages) currentPage++" :disabled="currentPage===totalPages"
+                        :class="currentPage===totalPages ? 'opacity-25 cursor-not-allowed' : 'cursor-pointer'"
+                        class="w-8 h-8 flex items-center justify-center rounded-full transition-all"
+                        onmouseover="if(!this.disabled) this.style.background='rgba(200,149,58,0.1)'"
+                        onmouseout="this.style.background='transparent'"
+                        style="color:#7C4D0F;">
+                    <span class="material-symbols-outlined" style="font-size:16px; line-height:1;">chevron_right</span>
+                </button>
+
+                <div class="ml-1 relative">
+                    <select x-model.number="perPage"
+                            class="pl-3 pr-6 py-1.5 rounded-full border text-xs appearance-none cursor-pointer focus:outline-none"
+                            style="border-color:rgba(200,149,58,0.25); color:#7C4D0F; background:white;">
+                        <template x-for="opt in perPageOptions" :key="opt">
+                            <option :value="opt" x-text="opt + ' / ໜ້າ'"></option>
+                        </template>
+                    </select>
+                    <span class="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 material-symbols-outlined"
+                          style="font-size:11px; color:#7C4D0F;">expand_more</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 @endsection

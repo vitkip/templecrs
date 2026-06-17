@@ -5,11 +5,18 @@
             <h2 class="text-headline-lg text-on-surface mb-1">ຄັງເອກະສານ</h2>
             <p class="text-body-md text-on-surface-variant">Document Management System (DMS)</p>
         </div>
-        <a href="{{ route('documents.create') }}"
-           class="bg-primary text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press">
-            <span class="material-symbols-outlined">upload_file</span>
-            ອັບໂຫລດເອກະສານ
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('documents.categories.index') }}"
+               class="border border-outline-variant text-on-surface-variant px-4 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-surface-container transition-all btn-press">
+                <span class="material-symbols-outlined text-base">category</span>
+                ໝວດເອກະສານ
+            </a>
+            <a href="{{ route('documents.create') }}"
+               class="bg-primary text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press">
+                <span class="material-symbols-outlined">upload_file</span>
+                ອັບໂຫລດເອກະສານ
+            </a>
+        </div>
     </div>
 
     {{-- Stats Overview --}}
@@ -70,8 +77,8 @@
                 <select wire:model.live="category"
                         class="w-full bg-white border border-outline-variant rounded-lg p-2 text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
                     <option value="">ທຸກໝວດ / All</option>
-                    @foreach ($categories as $key => $meta)
-                        <option value="{{ $key }}">{{ $meta['lo'] }} ({{ $meta['en'] }})</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->slug }}">{{ $cat->name_lo }}{{ $cat->name_en ? ' (' . $cat->name_en . ')' : '' }}</option>
                     @endforeach
                 </select>
             </div>
@@ -131,12 +138,12 @@
                        {{ $category === '' ? 'bg-primary text-white border-primary' : 'border-outline-variant text-on-surface-variant hover:border-primary/50' }}">
             ທຸກໝວດ
         </button>
-        @foreach ($categories as $key => $meta)
-            <button wire:click="$set('category', '{{ $key }}')"
+        @foreach ($categories as $cat)
+            <button wire:click="$set('category', '{{ $cat->slug }}')"
                     class="px-3 py-1.5 rounded-full text-label-md border transition-all flex items-center gap-1
-                           {{ $category === $key ? 'bg-primary text-white border-primary' : 'border-outline-variant text-on-surface-variant hover:border-primary/50' }}">
-                <span class="material-symbols-outlined text-xs">{{ $meta['icon'] }}</span>
-                {{ $meta['lo'] }}
+                           {{ $category === $cat->slug ? 'bg-primary text-white border-primary' : 'border-outline-variant text-on-surface-variant hover:border-primary/50' }}">
+                <span class="material-symbols-outlined text-xs">{{ $cat->icon }}</span>
+                {{ $cat->name_lo }}
             </button>
         @endforeach
     </div>

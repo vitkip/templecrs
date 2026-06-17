@@ -216,6 +216,78 @@
                 </select>
             </div>
 
+            <!-- Affiliation Level -->
+            <div class="mt-4" x-data="{ level: @entangle('affiliation_level') }">
+                <label class="form-label mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-base text-primary">account_tree</span>
+                    ລະສັງກັດ / Affiliation Level
+                </label>
+                <div class="flex gap-3 flex-wrap">
+                    <!-- ຂັ້ນສູນການ -->
+                    <label class="cursor-pointer">
+                        <input type="radio" wire:model.live="affiliation_level" value="central" class="hidden peer" />
+                        <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
+                            <span class="material-symbols-outlined text-lg"
+                                :class="level === 'central' ? 'text-primary' : 'text-on-surface-variant'">location_city</span>
+                            <div>
+                                <span class="font-bold text-body-md block">ຂັ້ນສູນການ</span>
+                                <span class="text-xs text-on-surface-variant">Central Level</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- ຂັ້ນແຂວງ -->
+                    <label class="cursor-pointer">
+                        <input type="radio" wire:model.live="affiliation_level" value="provincial" class="hidden peer" />
+                        <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
+                            <span class="material-symbols-outlined text-lg"
+                                :class="level === 'provincial' ? 'text-primary' : 'text-on-surface-variant'">map</span>
+                            <div>
+                                <span class="font-bold text-body-md block">ຂັ້ນແຂວງ</span>
+                                <span class="text-xs text-on-surface-variant">Provincial Level</span>
+                            </div>
+                        </div>
+                    </label>
+
+                    <!-- Clear -->
+                    @if ($affiliation_level)
+                        <button type="button" wire:click="$set('affiliation_level', null)"
+                            class="self-center text-xs text-on-surface-variant hover:text-error transition-colors flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                            ລ້າງ
+                        </button>
+                    @endif
+                </div>
+                @error('affiliation_level') <p class="form-error mt-1">{{ $message }}</p> @enderror
+
+                <!-- Province dropdown — shown only when provincial -->
+                <div x-show="level === 'provincial'" x-transition class="mt-3 max-w-sm">
+                    <label class="form-label">ເລືອກແຂວງ / Select Province</label>
+                    <select wire:model="affiliation_province" class="form-input">
+                        <option value="">— ເລືອກແຂວງ —</option>
+                        <option value="ນະຄອນຫຼວງວຽງຈັນ">ນະຄອນຫຼວງວຽງຈັນ (Vientiane Capital)</option>
+                        <option value="ແຂວງຜົ້ງສາລີ">ແຂວງຜົ້ງສາລີ (Phongsali)</option>
+                        <option value="ແຂວງຫຼວງນ້ຳທາ">ແຂວງຫຼວງນ້ຳທາ (Luang Namtha)</option>
+                        <option value="ແຂວງອຸດົມໄຊ">ແຂວງອຸດົມໄຊ (Oudomxai)</option>
+                        <option value="ແຂວງບໍ່ແກ້ວ">ແຂວງບໍ່ແກ້ວ (Bokeo)</option>
+                        <option value="ແຂວງຫຼວງພຣະບາງ">ແຂວງຫຼວງພຣະບາງ (Luang Prabang)</option>
+                        <option value="ແຂວງຫົວພັນ">ແຂວງຫົວພັນ (Houaphanh)</option>
+                        <option value="ແຂວງໄຊຍະບູລີ">ແຂວງໄຊຍະບູລີ (Xayaboury)</option>
+                        <option value="ແຂວງຊຽງຂວາງ">ແຂວງຊຽງຂວາງ (Xiengkhouang)</option>
+                        <option value="ແຂວງວຽງຈັນ">ແຂວງວຽງຈັນ (Vientiane Province)</option>
+                        <option value="ແຂວງບໍລິຄຳໄຊ">ແຂວງບໍລິຄຳໄຊ (Borikhamxay)</option>
+                        <option value="ແຂວງຄຳມ່ວນ">ແຂວງຄຳມ່ວນ (Khammouane)</option>
+                        <option value="ແຂວງສະຫວັນນະເຂດ">ແຂວງສະຫວັນນະເຂດ (Savannakhet)</option>
+                        <option value="ແຂວງສາລະວັນ">ແຂວງສາລະວັນ (Salavan)</option>
+                        <option value="ແຂວງເຊກອງ">ແຂວງເຊກອງ (Sekong)</option>
+                        <option value="ແຂວງຈຳປາສັກ">ແຂວງຈຳປາສັກ (Champasak)</option>
+                        <option value="ແຂວງອັດຕະປື">ແຂວງອັດຕະປື (Attapeu)</option>
+                        <option value="ແຂວງໄຊສົມບູນ">ແຂວງໄຊສົມບູນ (Xaisomboun)</option>
+                    </select>
+                    @error('affiliation_province') <p class="form-error mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
             <!-- Term of Service -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>

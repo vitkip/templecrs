@@ -4,6 +4,7 @@ use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Middleware\SetLocale;
 use App\Livewire\Auth\LoginPage;
+use App\Livewire\Documents\CategoryManager as DocumentCategoryManager;
 use App\Livewire\Documents\DocumentForm;
 use App\Livewire\Documents\DocumentShow;
 use App\Livewire\Documents\DocumentTable;
@@ -102,6 +103,7 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
     // ─── Document Management (DMS) ───
     Route::prefix('documents')->name('documents.')->group(function () {
         Route::get('/', DocumentTable::class)->name('index');
+        Route::get('/categories', DocumentCategoryManager::class)->name('categories.index');
         Route::get('/create', DocumentForm::class)->name('create');
         Route::get('/{id}/download', function (int $id) {
             $document = \App\Models\Document::findOrFail($id);

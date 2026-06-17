@@ -38,6 +38,10 @@ class PersonnelForm extends Component
     // Department
     public ?int $department_id = null;
 
+    // Affiliation level
+    public ?string $affiliation_level = null;    // 'central' or 'provincial'
+    public ?string $affiliation_province = null;
+
     // Location
     public ?string $birth_village_lo = null;
     public ?string $birth_village_en = null;
@@ -110,6 +114,8 @@ class PersonnelForm extends Component
         $this->position_lo = $p->position_lo ?? '';
         $this->position_en = $p->position_en;
         $this->department_id = $p->department_id;
+        $this->affiliation_level = $p->affiliation_level;
+        $this->affiliation_province = $p->affiliation_province;
         $this->birth_village_lo = $p->birth_village_lo;
         $this->birth_village_en = $p->birth_village_en;
         $this->district_lo = $p->district_lo;
@@ -147,6 +153,8 @@ class PersonnelForm extends Component
             'position_lo' => 'required|string|max:200',
             'position_en' => 'nullable|string|max:200',
             'department_id' => 'nullable|exists:departments,id',
+            'affiliation_level'    => 'nullable|in:central,provincial',
+            'affiliation_province' => 'nullable|string|max:100',
             'first_name_lo' => 'nullable|string|max:100',
             'first_name_en' => 'nullable|string|max:100',
             'last_name_lo'  => 'nullable|string|max:100',
@@ -340,6 +348,8 @@ class PersonnelForm extends Component
             'position_lo' => $this->position_lo,
             'position_en' => $this->position_en,
             'department_id' => $this->department_id,
+            'affiliation_level'    => $this->affiliation_level,
+            'affiliation_province' => $this->affiliation_level === 'provincial' ? $this->affiliation_province : null,
             'birth_village_lo' => $this->birth_village_lo,
             'birth_village_en' => $this->birth_village_en,
             'district_lo' => $this->district_lo,

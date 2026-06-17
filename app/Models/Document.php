@@ -38,17 +38,6 @@ class Document extends Model
         'download_count' => 'integer',
     ];
 
-    /* ───── Category Metadata ───── */
-
-    public static array $categories = [
-        'order'        => ['lo' => 'ຄຳສັ່ງ',        'en' => 'Order / Directive',  'icon' => 'gavel',        'color' => 'text-red-700 bg-red-50 border-red-200'],
-        'announcement' => ['lo' => 'ແຈ້ງການ',       'en' => 'Announcement',       'icon' => 'campaign',     'color' => 'text-blue-700 bg-blue-50 border-blue-200'],
-        'certificate'  => ['lo' => 'ໃບຢັ້ງຢືນ',    'en' => 'Certificate',        'icon' => 'workspace_premium', 'color' => 'text-amber-700 bg-amber-50 border-amber-200'],
-        'report'       => ['lo' => 'ລາຍງານ',        'en' => 'Report',             'icon' => 'assessment',   'color' => 'text-green-700 bg-green-50 border-green-200'],
-        'project'      => ['lo' => 'ໂຄງການ',        'en' => 'Project Document',   'icon' => 'folder_special','color' => 'text-purple-700 bg-purple-50 border-purple-200'],
-        'other'        => ['lo' => 'ອື່ນໆ',          'en' => 'Other',              'icon' => 'description',  'color' => 'text-gray-700 bg-gray-50 border-gray-200'],
-    ];
-
     /* ───── Accessors ───── */
 
     public function getTitleAttribute(): string
@@ -58,20 +47,26 @@ class Document extends Model
             : ($this->title_en ?? $this->title_lo ?? '');
     }
 
+    private function getCategoryModel(): ?DocumentCategory
+    {
+        return DocumentCategory::where('slug', $this->category)->first();
+    }
+
     public function getCategoryLabelAttribute(): string
     {
-        $meta = self::$categories[$this->category] ?? self::$categories['other'];
-        return app()->getLocale() === 'lo' ? $meta['lo'] : $meta['en'];
+        $cat = $this->getCategoryModel();
+        if (!$cat) return $this->category;
+        return app()->getLocale() === 'lo' ? $cat->name_lo : ($cat->name_en ?? $cat->name_lo);
     }
 
     public function getCategoryIconAttribute(): string
     {
-        return self::$categories[$this->category]['icon'] ?? 'description';
+        return $this->getCategoryModel()?->icon ?? 'description';
     }
 
     public function getCategoryColorAttribute(): string
     {
-        return self::$categories[$this->category]['color'] ?? self::$categories['other']['color'];
+        return $this->getCategoryModel()?->color_class ?? 'text-gray-700 bg-gray-50 border-gray-200';
     }
 
     public function getFileSizeFormattedAttribute(): string

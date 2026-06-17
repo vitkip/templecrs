@@ -26,13 +26,13 @@
             </h3>
 
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                @foreach ($categories as $key => $meta)
+                @foreach ($categories as $cat)
                     <label class="cursor-pointer">
-                        <input type="radio" wire:model.live="category" value="{{ $key }}" class="hidden peer" />
+                        <input type="radio" wire:model.live="category" value="{{ $cat->slug }}" class="hidden peer" />
                         <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-primary/40">
-                            <span class="material-symbols-outlined text-2xl mb-1.5 block text-on-surface-variant peer-checked:text-primary">{{ $meta['icon'] }}</span>
-                            <span class="font-bold block text-xs text-on-surface leading-tight">{{ $meta['lo'] }}</span>
-                            <span class="text-[10px] text-on-surface-variant">{{ $meta['en'] }}</span>
+                            <span class="material-symbols-outlined text-2xl mb-1.5 block text-on-surface-variant peer-checked:text-primary">{{ $cat->icon }}</span>
+                            <span class="font-bold block text-xs text-on-surface leading-tight">{{ $cat->name_lo }}</span>
+                            <span class="text-[10px] text-on-surface-variant">{{ $cat->name_en }}</span>
                         </div>
                     </label>
                 @endforeach

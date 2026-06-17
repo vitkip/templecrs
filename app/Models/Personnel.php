@@ -14,7 +14,7 @@ class Personnel extends Model
     protected $table = 'personnel';
 
     protected $fillable = [
-        'department_id', 'gender',
+        'department_id', 'affiliation_level', 'affiliation_province', 'gender',
         'first_name_lo', 'first_name_en',
         'last_name_lo', 'last_name_en',
         'name_lo', 'name_en',

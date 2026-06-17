@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             PersonnelSeeder::class,
             SettingsSeeder::class,
             NewsSeeder::class,
+            DocumentCategorySeeder::class,
             DocumentSeeder::class,
             HeroSlideSeeder::class,
         ]);
