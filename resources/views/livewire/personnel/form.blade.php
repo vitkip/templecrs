@@ -223,14 +223,15 @@
                     ລະສັງກັດ / Affiliation Level
                 </label>
                 <div class="flex gap-3 flex-wrap">
-                    <!-- ຂັ້ນສູນການ -->
+                    <!-- ຂັ້ນສູນກາງ -->
                     <label class="cursor-pointer">
                         <input type="radio" wire:model.live="affiliation_level" value="central" class="hidden peer" />
-                        <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
+                        <div
+                            class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
                             <span class="material-symbols-outlined text-lg"
                                 :class="level === 'central' ? 'text-primary' : 'text-on-surface-variant'">location_city</span>
                             <div>
-                                <span class="font-bold text-body-md block">ຂັ້ນສູນການ</span>
+                                <span class="font-bold text-body-md block">ຂັ້ນສູນກາງ</span>
                                 <span class="text-xs text-on-surface-variant">Central Level</span>
                             </div>
                         </div>
@@ -238,8 +239,10 @@
 
                     <!-- ຂັ້ນແຂວງ -->
                     <label class="cursor-pointer">
-                        <input type="radio" wire:model.live="affiliation_level" value="provincial" class="hidden peer" />
-                        <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
+                        <input type="radio" wire:model.live="affiliation_level" value="provincial"
+                            class="hidden peer" />
+                        <div
+                            class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl px-5 py-3 flex items-center gap-2 transition-all hover:border-primary/50">
                             <span class="material-symbols-outlined text-lg"
                                 :class="level === 'provincial' ? 'text-primary' : 'text-on-surface-variant'">map</span>
                             <div>
@@ -347,7 +350,8 @@
                     <label class="form-label flex items-center gap-2">
                         ພັນສາ (Pansa / Vassa)
                         @if ($pansaAutoCalc !== null)
-                            <span class="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
+                            <span
+                                class="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">
                                 <span class="material-symbols-outlined" style="font-size:10px">auto_awesome</span>
                                 ອັດຕະໂນມັດ
                             </span>
@@ -359,7 +363,8 @@
                     {{-- Auto-calculated hint --}}
                     @if ($pansaAutoCalc !== null)
                         <div class="mt-2 flex items-start gap-2 p-2.5 bg-amber-50 border border-amber-200 rounded-lg">
-                            <span class="material-symbols-outlined text-amber-600 text-base shrink-0 mt-0.5">calculate</span>
+                            <span
+                                class="material-symbols-outlined text-amber-600 text-base shrink-0 mt-0.5">calculate</span>
                             <div class="text-xs leading-relaxed">
                                 <p class="font-bold text-amber-800">
                                     ຄຳນວນອັດຕະໂນມັດ: <span class="text-lg text-amber-600">{{ $pansaAutoCalc }}</span> ພັນສາ
