@@ -43,6 +43,7 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/articles', [FrontendController::class, 'newsIndex'])->name('frontend.news');
     Route::get('/article/{id}', [FrontendController::class, 'show'])->name('frontend.news.show');
     Route::get('/committee', [FrontendController::class, 'personnelIndex'])->name('frontend.personnel');
+    Route::get('/committee/{id}', [FrontendController::class, 'personnelShow'])->name('frontend.personnel.show');
     Route::get('/library', [FrontendController::class, 'documentsIndex'])->name('frontend.documents');
     Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
     Route::get('/library/{id}/download', function (int $id) {

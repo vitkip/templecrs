@@ -39,6 +39,7 @@ class FinanceReportController extends Controller
         $orgAddress = \App\Models\Setting::get('org_address_lo',   'ວັດທາດຫຼວງເໜືອ ນະຄອນຫຼວງວຽງຈັນ');
         $orgPhone   = \App\Models\Setting::get('org_phone',        '');
         $orgEmail   = \App\Models\Setting::get('org_email',        '');
+        $orgWebsite = \App\Models\Setting::get('org_website',      '');
         $logoKey    = \App\Models\Setting::get('org_logo_url');
         $orgLogoPath = $logoKey && file_exists(storage_path('app/public/' . $logoKey))
             ? storage_path('app/public/' . $logoKey)
@@ -47,7 +48,7 @@ class FinanceReportController extends Controller
         $pdf = Pdf::loadView('finance.report-pdf', compact(
             'from', 'to', 'totalIncome', 'totalExpense', 'netBalance',
             'byCategory', 'transactions', 'orgName', 'orgAddress',
-            'orgPhone', 'orgEmail', 'orgLogoPath', 'period',
+            'orgPhone', 'orgEmail', 'orgWebsite', 'orgLogoPath', 'period',
             'reportYear', 'reportMonth'
         ))
         ->setBasePath(base_path())

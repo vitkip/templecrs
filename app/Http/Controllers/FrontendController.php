@@ -119,6 +119,33 @@ class FrontendController extends Controller
         ));
     }
 
+    public function personnelShow(int $id): View
+    {
+        $person = Personnel::active()->with('department')->findOrFail($id);
+
+        $otherPersonnel = Personnel::active()->ordered()->with('department')
+            ->where('id', '!=', $id)
+            ->limit(4)->get();
+
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        $orgName   = $settings['org_name_lo'];
+        $orgNameEn = $settings['org_name_en'];
+        $orgLogo   = $settings['org_logo_url'];
+
+        return view('frontend.personnel_show', compact(
+            'person',
+            'otherPersonnel',
+            'orgName',
+            'orgNameEn',
+            'orgLogo',
+        ));
+    }
+
     public function documentsIndex(): View
     {
         $documents = Document::active()->ordered()->with('department')->get();

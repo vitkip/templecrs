@@ -46,7 +46,7 @@
     .state-header { 
         text-align: center; 
         margin-bottom: 15px; 
-        line-height: 1.4; 
+        line-height: 1.1; 
     }
     .state-republic { 
         font-size: 12pt; 
@@ -65,29 +65,26 @@
         margin-top: 5px;
         margin-bottom: 10px; 
     }
-    .org-left { 
-        width: 45%; 
-        vertical-align: top; 
-        text-align: left;
+    .org-left, .org-right {
+        width: 45%;
+        vertical-align: top;
         line-height: 1.4;
     }
-    .org-mid { 
-        width: 10%; 
-        vertical-align: middle; 
-        text-align: center; 
-    }
-    .org-right { 
-        width: 45%; 
-        vertical-align: top; 
-        text-align: right; 
-        line-height: 1.4;
+    .org-left { text-align: left; }
+    .org-right { text-align: right; }
+    .org-mid {
+        width: 10%;
+        vertical-align: middle;
+        text-align: center;
     }
     .org-parent { 
         font-size: 10.5pt; 
+        text-align: center;
     }
     .org-name { 
         font-size: 11pt; 
-        font-weight: bold; 
+        text-align: center;
+        
     }
     .ref-line { 
         font-size: 10.5pt; 
@@ -104,6 +101,7 @@
     .title-block { 
         text-align: center; 
         margin: 20px 0; 
+        line-height: 1.1;
     }
     .title-main { 
         font-size: 16pt; 
@@ -315,8 +313,9 @@
 <table class="org-row">
     <tr>
         <td class="org-left">
-            <div class="org-parent">ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ</div>
-            <div class="org-name">{{ $orgName }}</div>
+            <div class="org-parent">ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ</div>
+            <div class="org-name">ແຫ່ງ ສປປ ລາວ</div>
+            <div class="org-name">ກັມມາທິການສາທາຣະນູປະການ</div>
         </td>
         <td class="org-mid">
             @if ($orgLogoPath)
@@ -325,8 +324,8 @@
                 <div style="width:60px;height:60px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:56px;font-size:22pt;color:#000;">☸</div>
             @endif
         </td>
-        <td class="org-right">
-            <div class="ref-line">ເລກທີ: .................../ກສປ</div>
+        <td class="org-right" style="padding-top: 45pt;">
+            <div class="ref-line">ເລກທີ:....../ກສປ</div>
             <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ $currentDay }} ເດືອນ {{ $currentMonth }} ປີ {{ $currentYear }}</div>
         </td>
     </tr>
@@ -336,8 +335,7 @@
 {{-- ══ ຫົວຂໍ້ບົດລາຍງານ ══ --}}
 <div class="title-block">
     <div class="title-main">ບົດລາຍງານສະຫຼຸບ ລາຍຮັບ-ລາຍຈ່າຍ</div>
-    <div class="title-sub">{{ $orgName }}</div>
-    <div class="title-about">ວ່າດ້ວຍການສະຫຼຸບລາຍຮັບ-ລາຍຈ່າຍ ໄລຍະ: ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }} ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }}</div>
+    <div class="title-about">ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ ຄະນະກໍາມະການຮັບຜິດຊອບການເງີນ-ການບັນຊີ ຂໍສະຫລຸບລາຍຮັບລາຍຈ່າຍ ໃນຄັ້ງ: ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }} ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }}</div>
 </div>
 
 {{-- ══ ຕາຕະລາງສະຫຼຸບຕົວເລກຫຼັກ ══ --}}
@@ -483,10 +481,7 @@
         <tr>
             <!-- ບ່ອນສົ່ງ (Distribution list) ຕາມຮູບແບບທາງການລາວ -->
             <td class="distribution-list">
-                <div class="dist-title">ບ່ອນສົ່ງ:</div>
-                <div class="dist-item">- ຫ້ອງການ ກສປ "ເພື່ອຊາບ"</div>
-                <div class="dist-item">- ຄະນະກໍາມະການ "ເພື່ອຕິດຕາມ"</div>
-                <div class="dist-item">- ເກັບມ້ຽນເອກະສານ 1 ສະບັບ</div>
+              
             </td>
             
             <!-- ບລັອກລາຍເຊັນຂອງຜູ້ອະນຸມັດ -->
@@ -501,10 +496,10 @@
 
 {{-- ══ ສ່ວນທ້າຍເອກະສານ (Footer) ══ --}}
 <div class="doc-footer">
-    ຫ້ອງການ {{ $orgName }} ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ &nbsp;|&nbsp; ສໍານັກງານ: {{ $orgAddress }}<br/>
+    ຫ້ອງການ {{ $orgName }}ກັມມາທິການສາທາຣະນູປະການ ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນ ແຫ່ງ ສປປ ລາວ  ສໍານັກງານ ຕັ້ງຢູ່ທີ່ {{ $orgAddress }}
     @if ($orgPhone)ໂທ: {{ $orgPhone }}@endif
-    @if ($orgEmail) &nbsp;|&nbsp; ອີເມວ: {{ $orgEmail }}@endif
-    &nbsp;|&nbsp; ລະບົບ Buddhist EMS &nbsp;|&nbsp; <span class="page-number"></span>
+    @if ($orgEmail) ອີເມວ: {{ $orgEmail }}@endif
+    @if ($orgWebsite) website:{{ $orgWebsite }}@endif
 </div>
 
 </body>

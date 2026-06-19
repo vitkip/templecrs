@@ -418,12 +418,15 @@
                                         class="font-bold uppercase tracking-widest truncate" :style="person.gender === 'monk'
                                            ? 'font-size:9px; color:#C8953A; margin-bottom:2px;'
                                            : 'font-size:9px; color:#94A3B8; margin-bottom:2px;'"></p>
-                                    <h3 x-text="person.name"
-                                        class="font-bold leading-snug truncate transition-colors duration-200" :style="person.gender === 'monk'
-                                            ? 'font-size:14px; color:#3D2A12;'
-                                            : 'font-size:14px; color:#1C1208;'" style="group-hover: color:#7C4D0F;"></h3>
-                                    <p x-show="person.position" x-text="person.position" class="line-clamp-2 mt-0.5"
-                                        style="font-size:11px; line-height:1.45; color:#64748B;"></p>
+                                    <a :href="'{{ url('/committee') }}/' + person.id"
+                                        x-text="person.name"
+                                        class="block font-bold leading-snug transition-colors duration-200 hover:underline"
+                                        style="text-decoration:none;"
+                                        :style="person.gender === 'monk'
+                                            ? 'font-size:15px; color:#3D2A12; line-height:1.3;'
+                                            : 'font-size:15px; color:#1C1208; line-height:1.3;'"></a>
+                                    <p x-show="person.position" x-text="person.position" class="line-clamp-3 mt-1"
+                                        style="font-size:12px; line-height:1.5; color:#5A6A80;"></p>
 
                                     {{-- Tags --}}
                                     <div class="flex flex-wrap gap-1 mt-2">
@@ -456,7 +459,7 @@
 
                             {{-- ── Detail section (conditional) ─── --}}
                             <template
-                                x-if="person.bio || person.education || (person.gender === 'monk' && (person.date_of_ordination || person.pansa || person.current_temple))">
+                                x-if="person.bio || person.education || person.current_temple"
                                 <div>
                                     <div class="mb-3"
                                         :style="person.gender === 'monk' ? 'border-top:1px solid rgba(200,149,58,0.2);' : 'border-top:1px solid rgba(0,0,0,0.06);'">
@@ -467,75 +470,81 @@
                                         style="font-size:11.5px; line-height:1.55; color:#64748B;"></p>
 
                                     {{-- Education --}}
-                                    <div x-show="person.education" class="flex items-start gap-1.5 mb-2"
-                                        style="color:#64748B;">
-                                        <span class="material-symbols-outlined shrink-0 mt-px"
-                                            style="font-size:13px; color:#7C4D0F;">school</span>
-                                        <span x-text="person.education" class="line-clamp-2"
-                                            style="font-size:11.5px;"></span>
+                                    <div x-show="person.education" class="flex items-start gap-1.5 mb-2">
+                                        <span class="material-symbols-outlined shrink-0"
+                                            style="font-size:14px; color:#7C4D0F; margin-top:1px;">school</span>
+                                        <div class="min-w-0">
+                                            <p style="font-size:9px; font-weight:700; color:rgba(124,77,15,0.5); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:1px;">ລະດັບການສຶກສາ</p>
+                                            <span x-text="person.education" class="line-clamp-2"
+                                                style="font-size:11.5px; color:#5A6A80;"></span>
+                                        </div>
                                     </div>
 
-                                    {{-- Monk panel --}}
-                                    <template
-                                        x-if="person.gender === 'monk' && (person.date_of_ordination || person.pansa || person.current_temple)">
-                                        <div class="rounded-lg px-3 py-2.5 space-y-1.5"
-                                            style="background:rgba(200,149,58,0.07); border:1px solid rgba(200,149,58,0.18);">
-                                            <div x-show="person.pansa" class="flex items-baseline gap-1.5">
-                                                <span class="material-symbols-outlined shrink-0"
-                                                    style="font-size:13px; color:#C8953A; margin-top:1px;">nights_stay</span>
-                                                <span
-                                                    style="font-size:11px; color:#7C5418;">{{ __('messages.pansa_label') }}:</span>
-                                                <span x-text="person.pansa" class="font-bold"
-                                                    style="font-size:16px; color:#C8953A; line-height:1;"></span>
-                                                <span style="font-size:11px; color:#8B6528;">ພັນສາ</span>
-                                            </div>
-                                            <div x-show="person.date_of_ordination" class="flex items-center gap-1.5"
-                                                style="font-size:11px; color:#8B6528;">
-                                                <span class="material-symbols-outlined"
-                                                    style="font-size:12px; color:#C8953A;">event</span>
-                                                {{ __('messages.date_of_ordination') }}: <span
-                                                    x-text="person.date_of_ordination"></span>
-                                            </div>
-                                            <div x-show="person.current_temple" class="flex items-start gap-1.5"
-                                                style="font-size:11px; color:#8B6528;">
-                                                <span class="material-symbols-outlined shrink-0 mt-px"
-                                                    style="font-size:12px; color:#C8953A;">temple_buddhist</span>
-                                                <span x-text="person.current_temple" class="line-clamp-1"></span>
-                                            </div>
+                                    {{-- Current temple — shown for ALL personnel --}}
+                                    <div x-show="person.current_temple" class="flex items-start gap-1.5 mb-2">
+                                        <span class="material-symbols-outlined shrink-0"
+                                            :style="person.gender === 'monk' ? 'font-size:14px; color:#C8953A; margin-top:1px;' : 'font-size:14px; color:#7C4D0F; margin-top:1px;'">temple_buddhist</span>
+                                        <div class="min-w-0">
+                                            <p style="font-size:9px; font-weight:700; color:rgba(124,77,15,0.5); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:1px;">ວັດຢູ່ປະຈຸບັນ</p>
+                                            <span x-text="person.current_temple" class="line-clamp-2"
+                                                style="font-size:11.5px; color:#5A6A80;"></span>
                                         </div>
-                                    </template>
+                                    </div>
+
                                 </div>
                             </template>
 
+                            {{-- ── View detail link ─── --}}
+                            <div class="mt-auto">
+                                <a :href="'{{ url('/committee') }}/' + person.id"
+                                    class="flex items-center gap-1 mt-3 font-bold transition-all duration-200"
+                                    style="font-size:11px; text-decoration:none;"
+                                    :style="person.gender === 'monk' ? 'color:#C8953A;' : 'color:#7C4D0F;'"
+                                    onmouseover="this.querySelector('.arr').style.transform='translateX(3px)'"
+                                    onmouseout="this.querySelector('.arr').style.transform='translateX(0)'">
+                                    ເບິ່ງລາຍລະອຽດ
+                                    <span class="material-symbols-outlined arr" style="font-size:13px; transition:transform 0.15s;">arrow_forward</span>
+                                </a>
+                            </div>
+
                             {{-- ── Contact row (pinned to bottom) ─── --}}
-                            <div class="mt-auto" x-show="person.email || person.phone || person.facebook">
-                                <div class="flex items-center gap-1.5 pt-3"
+                            <div x-show="person.email || person.phone || person.facebook">
+                                <div class="pt-3"
                                     :style="person.gender === 'monk' ? 'border-top:1px solid rgba(200,149,58,0.18);' : 'border-top:1px solid rgba(0,0,0,0.06);'">
-                                    <a x-show="person.email" :href="'mailto:' + (person.email || '')" @click.stop
-                                        class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
-                                        style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
-                                        onmouseover="this.style.background='rgba(200,149,58,0.18)'"
-                                        onmouseout="this.style.background='rgba(200,149,58,0.08)'" title="Email">
-                                        <span class="material-symbols-outlined" style="font-size:13px;">mail</span>
-                                        Email
-                                    </a>
-                                    <a x-show="person.phone" :href="'tel:' + (person.phone || '')" @click.stop
-                                        class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
-                                        style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
-                                        onmouseover="this.style.background='rgba(200,149,58,0.18)'"
-                                        onmouseout="this.style.background='rgba(200,149,58,0.08)'" title="ໂທ">
-                                        <span class="material-symbols-outlined" style="font-size:13px;">phone</span>
-                                        ໂທ
-                                    </a>
-                                    <a x-show="person.facebook" :href="person.facebook || '#'" target="_blank"
-                                        rel="noopener noreferrer" @click.stop
-                                        class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg transition-all"
-                                        style="font-size:11px; font-weight:600; color:#7C4D0F; background:rgba(200,149,58,0.08);"
-                                        onmouseover="this.style.background='rgba(200,149,58,0.18)'"
-                                        onmouseout="this.style.background='rgba(200,149,58,0.08)'" title="Facebook">
-                                        <span class="material-symbols-outlined" style="font-size:13px;">share</span>
-                                        Facebook
-                                    </a>
+                                    <p style="font-size:9px; font-weight:700; color:rgba(124,77,15,0.45); letter-spacing:0.12em; text-transform:uppercase; margin-bottom:6px;">ຂໍ້ມູນຕິດຕໍ່</p>
+                                    <div class="space-y-1.5">
+                                        <a x-show="person.phone" :href="'tel:' + (person.phone || '')" @click.stop
+                                            class="flex items-center gap-2 transition-colors"
+                                            style="text-decoration:none;"
+                                            onmouseover="this.querySelector('span.val').style.textDecoration='underline'"
+                                            onmouseout="this.querySelector('span.val').style.textDecoration='none'">
+                                            <span class="material-symbols-outlined shrink-0"
+                                                style="font-size:15px; color:#C8953A;">phone</span>
+                                            <span class="val font-semibold" x-text="person.phone"
+                                                style="font-size:13px; color:#7C4D0F;"></span>
+                                        </a>
+                                        <a x-show="person.email" :href="'mailto:' + (person.email || '')" @click.stop
+                                            class="flex items-center gap-2 transition-colors min-w-0"
+                                            style="text-decoration:none;"
+                                            onmouseover="this.querySelector('span.val').style.textDecoration='underline'"
+                                            onmouseout="this.querySelector('span.val').style.textDecoration='none'">
+                                            <span class="material-symbols-outlined shrink-0"
+                                                style="font-size:15px; color:#C8953A;">mail</span>
+                                            <span class="val truncate" x-text="person.email"
+                                                style="font-size:11.5px; color:#7C4D0F; min-width:0;"></span>
+                                        </a>
+                                        <a x-show="person.facebook" :href="person.facebook || '#'" target="_blank"
+                                            rel="noopener noreferrer" @click.stop
+                                            class="flex items-center gap-2 transition-colors"
+                                            style="text-decoration:none;"
+                                            onmouseover="this.querySelector('span.val').style.textDecoration='underline'"
+                                            onmouseout="this.querySelector('span.val').style.textDecoration='none'">
+                                            <span class="material-symbols-outlined shrink-0"
+                                                style="font-size:15px; color:#C8953A;">share</span>
+                                            <span class="val font-semibold"
+                                                style="font-size:12px; color:#7C4D0F;">Facebook</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
 
