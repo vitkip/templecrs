@@ -254,4 +254,19 @@ return [
     'validation_date_not_future'=> 'Date cannot be in the future',
     'validation_file_type'     => 'File must be JPG, PNG or PDF',
     'validation_file_size'     => 'File must not exceed 5MB',
+
+    // Users & Profile
+    'users'   => 'Users',
+    'profile' => 'My Profile',
+
+    // Dashboard
+    'welcome'           => 'Welcome',
+    'monks'             => 'Monks',
+    'laypersons'        => 'Laypersons',
+    'published'         => 'Published',
+    'draft'             => 'Draft',
+    'downloads'         => 'Downloads',
+    'monthly_summary'   => 'Monthly Summary',
+    'quick_actions'     => 'Quick Actions',
+    'news_add'          => 'Add News',
 ];

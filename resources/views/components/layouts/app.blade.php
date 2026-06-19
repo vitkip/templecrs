@@ -108,9 +108,9 @@
         </div>
 
         {{-- Navigation --}}
-        <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+        <nav class="flex-1 px-3 py-4 overflow-y-auto space-y-0.5">
 
-            {{-- Dashboard --}}
+            {{-- Dashboard — all roles --}}
             @php $isDashboard = request()->routeIs('dashboard'); @endphp
             <a href="{{ route('dashboard') }}"
                @click="sidebarOpen = false"
@@ -123,126 +123,152 @@
                 @endif
             </a>
 
-            {{-- Personnel --}}
-            @php $isPersonnel = request()->routeIs('personnel.*'); @endphp
-            <a href="{{ route('personnel.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isPersonnel ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isPersonnel ? 'filled' : '' }}">group</span>
-                <span class="text-label-md">{{ __('messages.personnel') }}</span>
-                @if ($isPersonnel)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
+            {{-- Section: ເນື້ອຫາ — admin + superadmin (personnel/docs/news) or manager (finance) --}}
+            @if (auth()->user()->isAdmin() || auth()->user()->isManager())
+                <div class="pt-4 pb-1 px-3">
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-white/25">ເນື້ອຫາ</p>
+                </div>
+            @endif
 
-            {{-- Departments --}}
-            @php $isDepts = request()->routeIs('settings') && request()->input('tab', '') === 'departments'; @endphp
-            <a href="{{ route('settings') }}?tab=departments"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isDepts ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isDepts ? 'filled' : '' }}">category</span>
-                <span class="text-label-md">{{ __('messages.departments') }}</span>
-                @if ($isDepts)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
-
-            {{-- Users --}}
-            @php $isUsers = request()->routeIs('users.*'); @endphp
-            <a href="{{ route('users.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isUsers ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isUsers ? 'filled' : '' }}">manage_accounts</span>
-                <span class="text-label-md">ຜູ້ໃຊ້ / Users</span>
-                @if ($isUsers)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
-
-            {{-- Documents --}}
-            @php $isDocs = request()->routeIs('documents.*'); @endphp
-            <a href="{{ route('documents.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isDocs ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isDocs ? 'filled' : '' }}">description</span>
-                <span class="text-label-md">{{ __('messages.documents') }}</span>
-                @if ($isDocs)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
-
-            {{-- News --}}
-            @php $isNews = request()->routeIs('news.*'); @endphp
-            <a href="{{ route('news.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isNews ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isNews ? 'filled' : '' }}">newspaper</span>
-                <span class="text-label-md">{{ __('messages.news') }}</span>
-                @if ($isNews)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
-
-            {{-- News › Categories sub-link --}}
-            @if ($isNews)
-                @php $isNewsCat = request()->routeIs('news.categories.*'); @endphp
-                <a href="{{ route('news.categories.index') }}"
+            {{-- Personnel — superadmin + admin --}}
+            @if (auth()->user()->isAdmin())
+                @php $isPersonnel = request()->routeIs('personnel.*'); @endphp
+                <a href="{{ route('personnel.index') }}"
                    @click="sidebarOpen = false"
-                   class="group flex items-center gap-3 pl-9 pr-3 py-2 rounded-xl transition-all duration-200
-                          {{ $isNewsCat ? 'bg-white/10 text-tertiary-fixed-dim font-bold' : 'text-secondary-fixed-dim/70 hover:bg-white/8 hover:text-white' }}">
-                    <span class="material-symbols-outlined text-base shrink-0">category</span>
-                    <span class="text-label-sm">ໝວດຂ່າວ / Categories</span>
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isPersonnel ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isPersonnel ? 'filled' : '' }}">group</span>
+                    <span class="text-label-md">{{ __('messages.personnel') }}</span>
+                    @if ($isPersonnel)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
                 </a>
             @endif
 
-            {{-- Hero Slides --}}
-            @php $isHeroSlides = request()->routeIs('hero-slides.*'); @endphp
-            <a href="{{ route('hero-slides.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isHeroSlides ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isHeroSlides ? 'filled' : '' }}">photo_library</span>
-                <span class="text-label-md">{{ __('messages.hero_slides') }}</span>
-                @if ($isHeroSlides)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
+            {{-- Documents — superadmin + admin --}}
+            @if (auth()->user()->isAdmin())
+                @php $isDocs = request()->routeIs('documents.*'); @endphp
+                <a href="{{ route('documents.index') }}"
+                   @click="sidebarOpen = false"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isDocs ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isDocs ? 'filled' : '' }}">description</span>
+                    <span class="text-label-md">{{ __('messages.documents') }}</span>
+                    @if ($isDocs)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
+                </a>
+            @endif
 
-            {{-- Finance --}}
-            @php $isFinance = request()->routeIs('finance.*'); @endphp
-            <a href="{{ route('finance.index') }}"
-               @click="sidebarOpen = false"
-               class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isFinance ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isFinance ? 'filled' : '' }}">account_balance_wallet</span>
-                <span class="text-label-md">{{ __('messages.finance') }}</span>
-                @if ($isFinance)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
+            {{-- News — superadmin + admin --}}
+            @if (auth()->user()->isAdmin())
+                @php $isNews = request()->routeIs('news.*'); @endphp
+                <a href="{{ route('news.index') }}"
+                   @click="sidebarOpen = false"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isNews ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isNews ? 'filled' : '' }}">newspaper</span>
+                    <span class="text-label-md">{{ __('messages.news') }}</span>
+                    @if ($isNews)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
+                </a>
 
-            {{-- Reports (coming soon) --}}
-            <div class="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-secondary-fixed-dim/40 cursor-not-allowed select-none">
-                <span class="material-symbols-outlined text-xl shrink-0">assessment</span>
-                <span class="text-label-md">{{ __('messages.reports') }}</span>
-                <span class="ml-auto text-[9px] font-bold bg-white/10 text-white/40 px-1.5 py-0.5 rounded-full uppercase">Soon</span>
-            </div>
+                {{-- News › Categories sub-link --}}
+                @if ($isNews)
+                    @php $isNewsCat = request()->routeIs('news.categories.*'); @endphp
+                    <a href="{{ route('news.categories.index') }}"
+                       @click="sidebarOpen = false"
+                       class="group flex items-center gap-3 pl-9 pr-3 py-2 rounded-xl transition-all duration-200
+                              {{ $isNewsCat ? 'bg-white/10 text-tertiary-fixed-dim font-bold' : 'text-secondary-fixed-dim/70 hover:bg-white/8 hover:text-white' }}">
+                        <span class="material-symbols-outlined text-base shrink-0">category</span>
+                        <span class="text-label-sm">ໝວດຂ່າວ / Categories</span>
+                    </a>
+                @endif
+            @endif
+
+            {{-- Finance — superadmin + manager --}}
+            @if (auth()->user()->isSuperAdmin() || auth()->user()->isManager())
+                @php $isFinance = request()->routeIs('finance.*'); @endphp
+                <a href="{{ route('finance.index') }}"
+                   @click="sidebarOpen = false"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isFinance ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isFinance ? 'filled' : '' }}">account_balance_wallet</span>
+                    <span class="text-label-md">{{ __('messages.finance') }}</span>
+                    @if ($isFinance)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
+                </a>
+            @endif
+
+            {{-- Section: ຈັດການລະບົບ — superadmin + admin --}}
+            @if (auth()->user()->isAdmin())
+                <div class="pt-4 pb-1 px-3">
+                    <p class="text-[9px] font-bold uppercase tracking-widest text-white/25">ຈັດການລະບົບ</p>
+                </div>
+
+                {{-- Hero Slides — superadmin + admin --}}
+                @php $isHeroSlides = request()->routeIs('hero-slides.*'); @endphp
+                <a href="{{ route('hero-slides.index') }}"
+                   @click="sidebarOpen = false"
+                   class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isHeroSlides ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isHeroSlides ? 'filled' : '' }}">photo_library</span>
+                    <span class="text-label-md">{{ __('messages.hero_slides') }}</span>
+                    @if ($isHeroSlides)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
+                </a>
+
+                {{-- Departments — superadmin only --}}
+                @if (auth()->user()->isSuperAdmin())
+                    @php $isDepts = request()->routeIs('settings') && request()->input('tab', '') === 'departments'; @endphp
+                    <a href="{{ route('settings') }}?tab=departments"
+                       @click="sidebarOpen = false"
+                       class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                              {{ $isDepts ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                        <span class="material-symbols-outlined text-xl shrink-0 {{ $isDepts ? 'filled' : '' }}">category</span>
+                        <span class="text-label-md">{{ __('messages.departments') }}</span>
+                        @if ($isDepts)
+                            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                        @endif
+                    </a>
+
+                    {{-- Users — superadmin only --}}
+                    @php $isUsers = request()->routeIs('users.*'); @endphp
+                    <a href="{{ route('users.index') }}"
+                       @click="sidebarOpen = false"
+                       class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                              {{ $isUsers ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                        <span class="material-symbols-outlined text-xl shrink-0 {{ $isUsers ? 'filled' : '' }}">manage_accounts</span>
+                        <span class="text-label-md">{{ __('messages.users') }}</span>
+                        @if ($isUsers)
+                            <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                        @endif
+                    </a>
+
+                    {{-- Reports — superadmin only (coming soon) --}}
+                    <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-secondary-fixed-dim/40 cursor-not-allowed select-none">
+                        <span class="material-symbols-outlined text-xl shrink-0">assessment</span>
+                        <span class="text-label-md">{{ __('messages.reports') }}</span>
+                        <span class="ml-auto text-[9px] font-bold bg-white/10 text-white/40 px-1.5 py-0.5 rounded-full uppercase">Soon</span>
+                    </div>
+                @endif
+            @endif
 
             {{-- Divider --}}
             <div class="border-t border-white/10 my-3"></div>
 
-            {{-- New Entry Button --}}
-            <a href="{{ route('personnel.create') }}"
-               @click="sidebarOpen = false"
-               class="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-container text-white font-bold py-3 px-4 rounded-xl transition-all btn-press shadow-md">
-                <span class="material-symbols-outlined text-lg">person_add</span>
-                <span class="text-label-md">{{ __('messages.new_entry') }}</span>
-            </a>
+            {{-- New Entry Button — superadmin + admin --}}
+            @if (auth()->user()->isAdmin())
+                <a href="{{ route('personnel.create') }}"
+                   @click="sidebarOpen = false"
+                   class="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-container text-white font-bold py-3 px-4 rounded-xl transition-all btn-press shadow-md">
+                    <span class="material-symbols-outlined text-lg">person_add</span>
+                    <span class="text-label-md">{{ __('messages.new_entry') }}</span>
+                </a>
+            @endif
         </nav>
 
         {{-- Footer --}}
@@ -336,25 +362,56 @@
 
                 {{-- User + Logout --}}
                 @auth
-                <div class="flex items-center gap-2 sm:gap-3">
+                <div class="flex items-center gap-2 sm:gap-3" x-data="{ open: false }" @click.outside="open = false">
                     <div class="text-right hidden sm:block">
                         <p class="text-label-md font-bold text-primary leading-tight">{{ auth()->user()->name }}</p>
                         <p class="text-[10px] text-on-surface-variant uppercase tracking-wider">{{ auth()->user()->role_label ?? auth()->user()->role }}</p>
                     </div>
-                    <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden">
-                        @if (auth()->user()->avatar_url)
-                            <img src="{{ Storage::url(auth()->user()->avatar_url) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" />
-                        @else
-                            <span class="material-symbols-outlined text-primary text-base">person</span>
-                        @endif
-                    </div>
-                    <form method="POST" action="{{ route('logout') }}" class="hidden sm:block">
-                        @csrf
-                        <button type="submit" title="ອອກຈາກລະບົບ / Logout"
-                                class="p-2 text-on-surface-variant hover:text-error hover:bg-error/5 rounded-full transition-colors">
-                            <span class="material-symbols-outlined text-base">logout</span>
+
+                    {{-- Avatar button (dropdown trigger) --}}
+                    <div class="relative">
+                        <button @click="open = !open"
+                                class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden ring-2 ring-transparent hover:ring-primary/30 transition-all focus:outline-none focus:ring-primary/50">
+                            @if (auth()->user()->avatar_url)
+                                <img src="{{ Storage::url(auth()->user()->avatar_url) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover" />
+                            @else
+                                <span class="material-symbols-outlined text-primary text-base">person</span>
+                            @endif
                         </button>
-                    </form>
+
+                        {{-- Dropdown --}}
+                        <div x-show="open"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 scale-95"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 scale-100"
+                             x-transition:leave-end="opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-52 bg-surface-bright border border-outline-variant rounded-2xl shadow-xl z-50 overflow-hidden"
+                             style="display:none;">
+                            <div class="px-4 py-3 border-b border-outline-variant">
+                                <p class="text-label-md font-bold text-on-surface truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-xs text-on-surface-variant truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                            <div class="p-1.5 space-y-0.5">
+                                <a href="{{ route('profile') }}"
+                                   wire:navigate
+                                   @click="open = false"
+                                   class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-body-md text-on-surface hover:bg-surface-container transition-colors">
+                                    <span class="material-symbols-outlined text-base text-on-surface-variant">manage_accounts</span>
+                                    ໂປຣໄຟລ / Profile
+                                </a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <button type="submit"
+                                            class="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-body-md text-error hover:bg-error/5 transition-colors">
+                                        <span class="material-symbols-outlined text-base">logout</span>
+                                        ອອກຈາກລະບົບ / Logout
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 @endauth
             </div>
@@ -391,29 +448,37 @@
     <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-outline-variant safe-area-bottom">
         <div class="flex">
             @php
+                $user = auth()->user();
                 $bottomNav = [
-                    ['href' => route('dashboard'),        'icon' => 'dashboard',   'label' => 'ຫຼັກ',    'active' => request()->routeIs('dashboard')],
-                    ['href' => route('personnel.index'),  'icon' => 'group',       'label' => 'ບຸກຄະລາ', 'active' => request()->routeIs('personnel.*')],
-                    ['href' => route('personnel.create'), 'icon' => 'person_add',  'label' => 'ເພີ່ມ',   'active' => false, 'primary' => true],
-                    ['href' => route('news.index'),       'icon' => 'newspaper',   'label' => 'ຂ່າວ',    'active' => request()->routeIs('news.*')],
-                    ['href' => route('documents.index'),  'icon' => 'description', 'label' => 'ເອກະສານ', 'active' => request()->routeIs('documents.*')],
+                    ['href' => route('dashboard'), 'icon' => 'dashboard', 'label' => 'ຫຼັກ', 'active' => request()->routeIs('dashboard'), 'show' => true],
                 ];
+
+                if ($user->isAdmin()) {
+                    $bottomNav[] = ['href' => route('personnel.index'),  'icon' => 'group',       'label' => 'ບຸກຄະລາ', 'active' => request()->routeIs('personnel.*'), 'show' => true];
+                    $bottomNav[] = ['href' => route('personnel.create'), 'icon' => 'person_add',  'label' => 'ເພີ່ມ',   'active' => false, 'primary' => true, 'show' => true];
+                    $bottomNav[] = ['href' => route('news.index'),       'icon' => 'newspaper',   'label' => 'ຂ່າວ',    'active' => request()->routeIs('news.*'), 'show' => true];
+                    $bottomNav[] = ['href' => route('documents.index'),  'icon' => 'description', 'label' => 'ເອກະສານ', 'active' => request()->routeIs('documents.*'), 'show' => true];
+                } elseif ($user->isManager()) {
+                    $bottomNav[] = ['href' => route('finance.index'), 'icon' => 'account_balance_wallet', 'label' => 'ການເງິນ', 'active' => request()->routeIs('finance.*'), 'show' => true];
+                }
             @endphp
 
             @foreach ($bottomNav as $item)
-                <a href="{{ $item['href'] }}"
-                   class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors
-                          {{ $item['active'] ?? false ? 'text-primary' : 'text-on-surface-variant' }}
-                          {{ $item['primary'] ?? false ? 'relative -mt-4' : '' }}">
-                    @if ($item['primary'] ?? false)
-                        <span class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
-                            <span class="material-symbols-outlined text-white text-xl">{{ $item['icon'] }}</span>
-                        </span>
-                    @else
-                        <span class="material-symbols-outlined text-xl {{ ($item['active'] ?? false) ? 'filled' : '' }}">{{ $item['icon'] }}</span>
-                        <span class="text-[9px] font-medium leading-none">{{ $item['label'] }}</span>
-                    @endif
-                </a>
+                @if ($item['show'] ?? false)
+                    <a href="{{ $item['href'] }}"
+                       class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors
+                              {{ $item['active'] ?? false ? 'text-primary' : 'text-on-surface-variant' }}
+                              {{ $item['primary'] ?? false ? 'relative -mt-4' : '' }}">
+                        @if ($item['primary'] ?? false)
+                            <span class="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg">
+                                <span class="material-symbols-outlined text-white text-xl">{{ $item['icon'] }}</span>
+                            </span>
+                        @else
+                            <span class="material-symbols-outlined text-xl {{ ($item['active'] ?? false) ? 'filled' : '' }}">{{ $item['icon'] }}</span>
+                            <span class="text-[9px] font-medium leading-none">{{ $item['label'] }}</span>
+                        @endif
+                    </a>
+                @endif
             @endforeach
         </div>
     </nav>

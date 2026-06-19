@@ -28,9 +28,30 @@ class SettingsPage extends Component
     public string $org_established_year = '';
     public $org_logo = null;
     public ?string $existing_logo_url = null;
-    public string $donate_bank_name    = '';
-    public string $donate_account_name = '';
-    public string $donate_account_no   = '';
+    // ─── Donation (4 currencies) ─────────────────────────────
+    public string $donate_kip_bank_name    = '';
+    public string $donate_kip_account_name = '';
+    public string $donate_kip_account_no   = '';
+    public $donate_kip_qr = null;
+    public ?string $donate_kip_qr_url = null;
+
+    public string $donate_baht_bank_name    = '';
+    public string $donate_baht_account_name = '';
+    public string $donate_baht_account_no   = '';
+    public $donate_baht_qr = null;
+    public ?string $donate_baht_qr_url = null;
+
+    public string $donate_usd_bank_name    = '';
+    public string $donate_usd_account_name = '';
+    public string $donate_usd_account_no   = '';
+    public $donate_usd_qr = null;
+    public ?string $donate_usd_qr_url = null;
+
+    public string $donate_cny_bank_name    = '';
+    public string $donate_cny_account_name = '';
+    public string $donate_cny_account_no   = '';
+    public $donate_cny_qr = null;
+    public ?string $donate_cny_qr_url = null;
 
     // ─── System ─────────────────────────────────────────────
     public string $default_locale = 'lo';
@@ -56,6 +77,7 @@ class SettingsPage extends Component
 
         $this->loadOrganization();
         $this->loadSystem();
+        $this->loadDonation();
     }
 
     private function loadOrganization(): void
@@ -69,9 +91,16 @@ class SettingsPage extends Component
         $this->org_website          = Setting::get('org_website', '');
         $this->org_established_year = Setting::get('org_established_year', '');
         $this->existing_logo_url    = Setting::get('org_logo_url') ?: null;
-        $this->donate_bank_name     = Setting::get('donate_bank_name', '');
-        $this->donate_account_name  = Setting::get('donate_account_name', '');
-        $this->donate_account_no    = Setting::get('donate_account_no', '');
+    }
+
+    private function loadDonation(): void
+    {
+        foreach (['kip', 'baht', 'usd', 'cny'] as $c) {
+            $this->{"donate_{$c}_bank_name"}    = Setting::get("donate_{$c}_bank_name", '');
+            $this->{"donate_{$c}_account_name"} = Setting::get("donate_{$c}_account_name", '');
+            $this->{"donate_{$c}_account_no"}   = Setting::get("donate_{$c}_account_no", '');
+            $this->{"donate_{$c}_qr_url"}       = Setting::get("donate_{$c}_qr_url") ?: null;
+        }
     }
 
     private function loadSystem(): void
@@ -97,9 +126,6 @@ class SettingsPage extends Component
             'org_website'           => 'nullable|url|max:300',
             'org_established_year'  => 'nullable|digits:4|integer|min:1800|max:2100',
             'org_logo'              => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
-            'donate_bank_name'      => 'nullable|string|max:200',
-            'donate_account_name'   => 'nullable|string|max:200',
-            'donate_account_no'     => 'nullable|string|max:100',
         ]);
 
         if ($this->org_logo) {
@@ -122,9 +148,6 @@ class SettingsPage extends Component
             'org_email'            => $this->org_email,
             'org_website'          => $this->org_website,
             'org_established_year' => $this->org_established_year,
-            'donate_bank_name'     => $this->donate_bank_name,
-            'donate_account_name'  => $this->donate_account_name,
-            'donate_account_no'    => $this->donate_account_no,
         ], 'organization');
 
         session()->flash('settings_message', 'ບັນທຶກຂໍ້ມູນອົງການສຳເລັດ / Organization info saved.');
@@ -149,6 +172,44 @@ class SettingsPage extends Component
         ], 'system');
 
         session()->flash('settings_message', 'ບັນທຶກການຕັ້ງຄ່າລະບົບສຳເລັດ / System settings saved.');
+    }
+
+    /* ── Donation ──────────────────────────────────────────── */
+
+    public function saveDonation(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+
+        $rules = [];
+        foreach (['kip', 'baht', 'usd', 'cny'] as $c) {
+            $rules["donate_{$c}_bank_name"]    = 'nullable|string|max:200';
+            $rules["donate_{$c}_account_name"] = 'nullable|string|max:200';
+            $rules["donate_{$c}_account_no"]   = 'nullable|string|max:100';
+            $rules["donate_{$c}_qr"]           = 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048';
+        }
+        $this->validate($rules);
+
+        foreach (['kip', 'baht', 'usd', 'cny'] as $c) {
+            $qrProp = "donate_{$c}_qr";
+            if ($this->$qrProp) {
+                $old = Setting::get("donate_{$c}_qr_url");
+                if ($old) {
+                    Storage::disk('public')->delete($old);
+                }
+                $path = $this->$qrProp->store('settings/donation-qr', 'public');
+                Setting::set("donate_{$c}_qr_url", $path, 'donation');
+                $this->{"donate_{$c}_qr_url"} = $path;
+                $this->$qrProp = null;
+            }
+
+            Setting::setMany([
+                "donate_{$c}_bank_name"    => $this->{"donate_{$c}_bank_name"},
+                "donate_{$c}_account_name" => $this->{"donate_{$c}_account_name"},
+                "donate_{$c}_account_no"   => $this->{"donate_{$c}_account_no"},
+            ], 'donation');
+        }
+
+        session()->flash('settings_message', 'ບັນທຶກຂໍ້ມູນການບໍລິຈາກສຳເລັດ / Donation info saved.');
     }
 
     /* ── Departments ───────────────────────────────────────── */

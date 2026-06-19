@@ -47,6 +47,13 @@
             ພາກສ່ວນ / Departments
             <span class="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $departments->count() }}</span>
         </button>
+        <button type="button"
+                @click="tab = 'donation'; $wire.set('activeTab', 'donation')"
+                :class="tab === 'donation' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
+                class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
+            <span class="material-symbols-outlined text-base" :class="tab === 'donation' ? 'filled' : ''">volunteer_activism</span>
+            ການບໍລິຈາກ / Donation
+        </button>
     </div>
 
     {{-- ═══════════════════════════════════════════════
@@ -149,31 +156,6 @@
                     <label class="form-label">ປີກໍ່ຕັ້ງ / Established Year</label>
                     <input type="number" wire:model="org_established_year" placeholder="ຕົວຢ່າງ: 1975" min="1800" max="2100" class="form-input" />
                     @error('org_established_year') <p class="form-error">{{ $message }}</p> @enderror
-                </div>
-            </div>
-
-            {{-- Donation / Bank Info --}}
-            <div class="border-t border-outline-variant pt-6">
-                <h4 class="text-label-lg font-bold text-on-surface mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary text-base">volunteer_activism</span>
-                    ຊ່ອງທາງບໍລິຈາກ / Donation Info
-                </h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div>
-                        <label class="form-label">ຊື່ທະນາຄານ / Bank Name</label>
-                        <input type="text" wire:model="donate_bank_name" placeholder="ທະນາຄານ BCEL..." class="form-input" />
-                        @error('donate_bank_name') <p class="form-error">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="form-label">ຊື່ເລກບັນຊີ / Account Name</label>
-                        <input type="text" wire:model="donate_account_name" placeholder="ຊື່ເຈົ້າຂອງບັນຊີ..." class="form-input" />
-                        @error('donate_account_name') <p class="form-error">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="form-label">ເລກບັນຊີ / Account Number</label>
-                        <input type="text" wire:model="donate_account_no" placeholder="000-000-000-000" class="form-input" />
-                        @error('donate_account_no') <p class="form-error">{{ $message }}</p> @enderror
-                    </div>
                 </div>
             </div>
 
@@ -457,6 +439,134 @@
             <span>ບໍ່ໃຊ້ງານ: <strong class="text-red-500">{{ $departments->where('is_active', false)->count() }}</strong></span>
             <span>ທັງໝົດ: <strong class="text-on-surface">{{ $departments->count() }}</strong></span>
         </div>
+    </div>
+
+    {{-- ═══════════════════════════════════════════════
+         TAB 4: Donation Accounts
+         ═══════════════════════════════════════════════ --}}
+    <div x-show="tab === 'donation'" x-transition class="animate-fade-in">
+        <form wire:submit="saveDonation" class="space-y-5">
+
+            <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm">
+                <h3 class="text-headline-sm text-on-surface mb-2 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">volunteer_activism</span>
+                    ຊ່ອງທາງການບໍລິຈາກ / Donation Accounts
+                </h3>
+                <p class="text-xs text-on-surface-variant mb-6">ຕັ້ງຄ່າບັນຊີທະນາຄານ ແລະ QR Code ສຳລັບ 4 ສະກຸນເງີນ</p>
+
+                @php
+                    $currencies = [
+                        ['key' => 'kip',  'label_lo' => 'ກີບ',  'label_en' => 'Lao Kip (LAK)',      'flag' => '🇱🇦', 'bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'icon_color' => 'text-emerald-600'],
+                        ['key' => 'baht', 'label_lo' => 'ບາດ',  'label_en' => 'Thai Baht (THB)',    'flag' => '🇹🇭', 'bg' => 'bg-blue-50',    'border' => 'border-blue-200',    'icon_color' => 'text-blue-600'],
+                        ['key' => 'usd',  'label_lo' => 'ໂດລາ', 'label_en' => 'US Dollar (USD)',    'flag' => '🇺🇸', 'bg' => 'bg-indigo-50',  'border' => 'border-indigo-200',  'icon_color' => 'text-indigo-600'],
+                        ['key' => 'cny',  'label_lo' => 'ຢວນ',  'label_en' => 'Chinese Yuan (CNY)', 'flag' => '🇨🇳', 'bg' => 'bg-red-50',     'border' => 'border-red-200',     'icon_color' => 'text-red-600'],
+                    ];
+                @endphp
+
+                <div class="space-y-6">
+                    @foreach ($currencies as $cur)
+                        @php
+                            $k         = $cur['key'];
+                            $qrProp    = 'donate_' . $k . '_qr';
+                            $qrUrlProp = 'donate_' . $k . '_qr_url';
+                            $qrFile    = $$qrProp;
+                            $qrUrl     = $$qrUrlProp;
+                        @endphp
+                        <div class="rounded-xl border {{ $cur['border'] }} {{ $cur['bg'] }} p-5">
+                            {{-- Header --}}
+                            <div class="flex items-center gap-2 mb-4">
+                                <span class="text-2xl">{{ $cur['flag'] }}</span>
+                                <div>
+                                    <h4 class="font-bold text-on-surface text-body-lg">{{ $cur['label_lo'] }}</h4>
+                                    <p class="text-xs text-on-surface-variant">{{ $cur['label_en'] }}</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                {{-- Left: Text fields --}}
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="form-label">ຊື່ທະນາຄານ / Bank Name</label>
+                                        <input type="text"
+                                               wire:model="donate_{{ $k }}_bank_name"
+                                               placeholder="ເຊັ່ນ: BCEL, Krungsri, Krungthai..."
+                                               class="form-input bg-white" />
+                                        @error("donate_{$k}_bank_name") <p class="form-error">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="form-label">ຊື່ເຈົ້າຂອງບັນຊີ / Account Name</label>
+                                        <input type="text"
+                                               wire:model="donate_{{ $k }}_account_name"
+                                               placeholder="ຊື່ເຈົ້າຂອງບັນຊີ..."
+                                               class="form-input bg-white" />
+                                        @error("donate_{$k}_account_name") <p class="form-error">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="form-label">ເລກບັນຊີ / Account Number</label>
+                                        <input type="text"
+                                               wire:model="donate_{{ $k }}_account_no"
+                                               placeholder="000-000-000-000"
+                                               class="form-input bg-white" />
+                                        @error("donate_{$k}_account_no") <p class="form-error">{{ $message }}</p> @enderror
+                                    </div>
+                                </div>
+
+                                {{-- Right: QR Code --}}
+                                <div class="flex flex-col items-center gap-3">
+                                    {{-- QR Preview --}}
+                                    <div class="w-40 h-40 rounded-xl border-2 border-dashed border-outline-variant bg-white flex items-center justify-center overflow-hidden shadow-sm">
+                                        @if ($qrFile)
+                                            <img src="{{ $qrFile->temporaryUrl() }}" alt="QR Preview" class="w-full h-full object-contain p-1" />
+                                        @elseif ($qrUrl)
+                                            <img src="{{ Storage::url($qrUrl) }}" alt="QR Code {{ $cur['label_lo'] }}" class="w-full h-full object-contain p-1" />
+                                        @else
+                                            <div class="flex flex-col items-center text-on-surface-variant/40">
+                                                <span class="material-symbols-outlined text-5xl">qr_code_2</span>
+                                                <span class="text-xs mt-1">QR Code</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    {{-- Upload --}}
+                                    <div class="text-center">
+                                        <label class="form-label mb-1">ອັບໂຫຼດ QR Code</label>
+                                        <input type="file"
+                                               wire:model="donate_{{ $k }}_qr"
+                                               accept="image/*"
+                                               class="block text-sm text-on-surface-variant
+                                                      file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0
+                                                      file:text-xs file:font-bold file:bg-white file:text-on-surface
+                                                      hover:file:bg-surface-container cursor-pointer" />
+                                        <p class="text-xs text-on-surface-variant mt-1">JPG, PNG · ສູງສຸດ 2MB</p>
+                                        @error("donate_{$k}_qr") <p class="form-error">{{ $message }}</p> @enderror
+                                    </div>
+                                    @if ($qrUrl && !$qrFile)
+                                        <span class="text-xs text-emerald-600 flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-sm">check_circle</span>
+                                            ມີ QR Code ແລ້ວ
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                        class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
+                        wire:loading.attr="disabled" wire:loading.class="opacity-60">
+                    <span wire:loading.remove class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">save</span>
+                        ບັນທຶກ / Save
+                    </span>
+                    <span wire:loading class="flex items-center gap-2">
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        ກຳລັງບັນທຶກ...
+                    </span>
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- Custom Deletion Confirmation Modal -->

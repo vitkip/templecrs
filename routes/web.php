@@ -4,6 +4,7 @@ use App\Http\Controllers\FinanceReportController;
 use App\Http\Controllers\FrontendController;
 use App\Http\Middleware\SetLocale;
 use App\Livewire\Auth\LoginPage;
+use App\Livewire\Dashboard;
 use App\Livewire\Documents\CategoryManager as DocumentCategoryManager;
 use App\Livewire\Documents\DocumentForm;
 use App\Livewire\Documents\DocumentShow;
@@ -23,6 +24,7 @@ use App\Livewire\Personnel\PersonnelForm;
 use App\Livewire\Personnel\PersonnelShow;
 use App\Livewire\Personnel\PersonnelTable;
 use App\Livewire\Settings\SettingsPage;
+use App\Livewire\Profile\ProfilePage;
 use App\Livewire\Users\UserForm;
 use App\Livewire\Users\UserTable;
 use Illuminate\Support\Facades\Auth;
@@ -80,9 +82,7 @@ Route::post('/logout', function () {
 Route::middleware(['auth', SetLocale::class])->group(function () {
 
     // Dashboard
-    Route::get('/dashboard', function () {
-        return redirect()->route('personnel.index');
-    })->name('dashboard');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
 
     // ─── Personnel Routes ───
     Route::prefix('personnel')->name('personnel.')->group(function () {
@@ -94,6 +94,9 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
 
     // ─── Settings ───
     Route::get('/settings', SettingsPage::class)->name('settings');
+
+    // ─── Profile ───
+    Route::get('/profile', ProfilePage::class)->name('profile');
 
     // ─── User Management ───
     Route::prefix('users')->name('users.')->group(function () {

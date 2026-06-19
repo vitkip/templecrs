@@ -211,15 +211,13 @@ PILLARS — ປະຫວັດ / ຄູ່ມື / ສິດໜ້າທີ່
 
 
 {{-- ════════════════════════════════════════════════════
-DONATION — Temple offering section
+DONATION — 4 currency accounts
 ════════════════════════════════════════════════════ --}}
 @php
-    $bankName    = \App\Models\Setting::get('donate_bank_name', '');
-    $accountName = \App\Models\Setting::get('donate_account_name', '');
-    $accountNo   = \App\Models\Setting::get('donate_account_no', '');
+    $hasAnyDonation = collect($donationAccounts)->contains(fn($a) => $a['bank_name'] || $a['account_no']);
 @endphp
 
-@if($bankName || $accountName || $accountNo)
+@if($hasAnyDonation)
 
 {{-- Cream → crimson wave --}}
 <div aria-hidden="true" style="background:#FFFBEB; line-height:0;">
@@ -257,9 +255,10 @@ DONATION — Temple offering section
     <div class="absolute inset-0 pointer-events-none" aria-hidden="true"
          style="background:radial-gradient(ellipse at 50% 50%, rgba(232,184,75,0.07) 0%, transparent 70%);"></div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-16">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
 
-        <div class="text-center mb-10">
+        {{-- Heading --}}
+        <div class="text-center mb-12">
             <span class="material-symbols-outlined block mx-auto mb-4"
                   style="font-size:38px; color:#E8B84B; filter:drop-shadow(0 0 14px rgba(232,184,75,0.35));">volunteer_activism</span>
             <h2 class="font-bold mb-3"
@@ -271,43 +270,86 @@ DONATION — Temple offering section
             </p>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            @foreach([
-                ['label' => __('messages.donate_bank_name'),    'value' => $bankName,    'key' => 'bank'],
-                ['label' => __('messages.donate_account_name'), 'value' => $accountName, 'key' => 'name'],
-                ['label' => __('messages.donate_account_no'),   'value' => $accountNo,   'key' => 'no'],
-            ] as $item)
-            @if($item['value'])
-            <div class="relative group rounded-xl p-5"
-                 style="background:rgba(0,0,0,0.22); border:1px solid rgba(232,184,75,0.13);{{ $item['key'] !== 'bank' ? 'cursor:pointer;' : '' }}"
-                 @if($item['key'] !== 'bank')
-                 @click="navigator.clipboard.writeText('{{ $item['value'] }}'); copied='{{ $item['key'] }}'; setTimeout(()=>copied=null,2000);"
-                 title="{{ __('messages.donate_copy_hint') }}"
-                 @endif>
-                <div style="color:rgba(232,184,75,0.45); font-size:10px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:8px;">
-                    {{ $item['label'] }}
+        {{-- 4 Currency Cards --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+            @foreach($donationAccounts as $acc)
+            @if($acc['bank_name'] || $acc['account_no'])
+            <div class="rounded-2xl overflow-hidden flex flex-col"
+                 style="background:rgba(0,0,0,0.28); border:1px solid rgba(232,184,75,0.16);">
+
+                {{-- Card Header --}}
+                <div class="px-5 pt-5 pb-4 flex items-center gap-3"
+                     style="border-bottom:1px solid rgba(232,184,75,0.1);">
+                    <span style="font-size:1.8rem; line-height:1;">{{ $acc['flag'] }}</span>
+                    <div>
+                        <div class="font-bold" style="color:#F5E6B8; font-size:1.05rem; line-height:1.2;">{{ $acc['label_lo'] }}</div>
+                        <div style="color:rgba(232,184,75,0.45); font-size:10px; font-weight:600; letter-spacing:0.12em;">{{ $acc['label_en'] }}</div>
+                    </div>
                 </div>
-                <div class="flex items-center justify-between gap-2">
-                    <span class="font-bold tracking-wide" style="color:#F5E6B8; font-size:1rem;">{{ $item['value'] }}</span>
-                    @if($item['key'] !== 'bank')
-                    <span class="material-symbols-outlined flex-shrink-0 transition-colors"
-                          style="font-size:17px;"
-                          :style="copied === '{{ $item['key'] }}' ? 'color:#E8B84B' : 'color:rgba(232,184,75,0.35)'"
-                          x-text="copied === '{{ $item['key'] }}' ? 'check_circle' : 'content_copy'"></span>
-                    @endif
-                </div>
-                @if($item['key'] !== 'bank')
-                <div x-show="copied === '{{ $item['key'] }}'"
-                     x-transition.opacity
-                     class="absolute -top-8 left-1/2 -translate-x-1/2 text-xs rounded-full px-3 py-1 whitespace-nowrap pointer-events-none"
-                     style="background:#E8B84B; color:#2C1A04; font-weight:600; display:none;">
-                    {{ __('messages.donate_copied') }}
+
+                {{-- QR Code --}}
+                @if($acc['qr_url'])
+                <div class="flex justify-center px-5 pt-5">
+                    <div class="rounded-xl overflow-hidden"
+                         style="background:#fff; padding:8px; width:140px; height:140px; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 16px rgba(0,0,0,0.4);">
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($acc['qr_url']) }}"
+                             alt="QR {{ $acc['label_lo'] }}"
+                             style="width:100%; height:100%; object-fit:contain;" />
+                    </div>
                 </div>
                 @endif
+
+                {{-- Account Info --}}
+                <div class="px-5 py-4 flex flex-col gap-3 flex-1">
+                    @if($acc['bank_name'])
+                    <div>
+                        <div style="color:rgba(232,184,75,0.45); font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:3px;">
+                            {{ __('messages.donate_bank_name') }}
+                        </div>
+                        <div style="color:#F5E6B8; font-size:0.92rem; font-weight:600;">{{ $acc['bank_name'] }}</div>
+                    </div>
+                    @endif
+
+                    @if($acc['account_name'])
+                    <div>
+                        <div style="color:rgba(232,184,75,0.45); font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:3px;">
+                            {{ __('messages.donate_account_name') }}
+                        </div>
+                        <div style="color:#F5E6B8; font-size:0.92rem; font-weight:600;">{{ $acc['account_name'] }}</div>
+                    </div>
+                    @endif
+
+                    @if($acc['account_no'])
+                    @php $copyKey = 'no_' . $acc['key']; @endphp
+                    <div class="relative mt-auto">
+                        <div style="color:rgba(232,184,75,0.45); font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:3px;">
+                            {{ __('messages.donate_account_no') }}
+                        </div>
+                        <button type="button"
+                                class="w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left transition-colors"
+                                style="background:rgba(232,184,75,0.07); border:1px solid rgba(232,184,75,0.15); cursor:pointer;"
+                                @click="navigator.clipboard.writeText('{{ $acc['account_no'] }}'); copied='{{ $copyKey }}'; setTimeout(()=>copied=null,2000);"
+                                title="{{ __('messages.donate_copy_hint') }}">
+                            <span class="font-bold tracking-wider tabular-nums" style="color:#E8B84B; font-size:0.95rem;">{{ $acc['account_no'] }}</span>
+                            <span class="material-symbols-outlined flex-shrink-0 transition-colors"
+                                  style="font-size:16px;"
+                                  :style="copied === '{{ $copyKey }}' ? 'color:#E8B84B' : 'color:rgba(232,184,75,0.4)'"
+                                  x-text="copied === '{{ $copyKey }}' ? 'check_circle' : 'content_copy'"></span>
+                        </button>
+                        <div x-show="copied === '{{ $copyKey }}'"
+                             x-transition.opacity
+                             class="absolute -top-7 left-1/2 -translate-x-1/2 text-xs rounded-full px-3 py-1 whitespace-nowrap pointer-events-none"
+                             style="background:#E8B84B; color:#2C1A04; font-weight:600; display:none;">
+                            {{ __('messages.donate_copied') }}
+                        </div>
+                    </div>
+                    @endif
+                </div>
             </div>
             @endif
             @endforeach
         </div>
+
     </div>
 </div>
 

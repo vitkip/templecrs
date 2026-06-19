@@ -164,6 +164,13 @@ class FrontendController extends Controller
         $statsDocumentsCount = Cache::remember('stats_documents_count', 1800, fn() => Document::active()->count());
         $statsNewsCount      = Cache::remember('stats_news_count', 600, fn() => News::published()->count());
 
+        $donationAccounts = Cache::remember('donation_accounts', 3600, fn() => [
+            ['key' => 'kip',  'flag' => '🇱🇦', 'label_lo' => 'ກີບ',  'label_en' => 'Lao Kip (LAK)',      'bank_name' => Setting::get('donate_kip_bank_name',  ''), 'account_name' => Setting::get('donate_kip_account_name',  ''), 'account_no' => Setting::get('donate_kip_account_no',  ''), 'qr_url' => Setting::get('donate_kip_qr_url')],
+            ['key' => 'baht', 'flag' => '🇹🇭', 'label_lo' => 'ບາດ',  'label_en' => 'Thai Baht (THB)',    'bank_name' => Setting::get('donate_baht_bank_name', ''), 'account_name' => Setting::get('donate_baht_account_name', ''), 'account_no' => Setting::get('donate_baht_account_no', ''), 'qr_url' => Setting::get('donate_baht_qr_url')],
+            ['key' => 'usd',  'flag' => '🇺🇸', 'label_lo' => 'ໂດລາ', 'label_en' => 'US Dollar (USD)',    'bank_name' => Setting::get('donate_usd_bank_name',  ''), 'account_name' => Setting::get('donate_usd_account_name',  ''), 'account_no' => Setting::get('donate_usd_account_no',  ''), 'qr_url' => Setting::get('donate_usd_qr_url')],
+            ['key' => 'cny',  'flag' => '🇨🇳', 'label_lo' => 'ຢວນ',  'label_en' => 'Chinese Yuan (CNY)', 'bank_name' => Setting::get('donate_cny_bank_name',  ''), 'account_name' => Setting::get('donate_cny_account_name',  ''), 'account_no' => Setting::get('donate_cny_account_no',  ''), 'qr_url' => Setting::get('donate_cny_qr_url')],
+        ]);
+
         return view('frontend.about', compact(
             'orgName',
             'orgNameEn',
@@ -171,6 +178,7 @@ class FrontendController extends Controller
             'statsPersonnelCount',
             'statsDocumentsCount',
             'statsNewsCount',
+            'donationAccounts',
         ));
     }
 
