@@ -29,6 +29,11 @@ class NewsTable extends Component
     public string $sortDir = 'desc';
     public int $perPage    = 15;
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageNews(), 403);
+    }
+
     public function updatedSearch(): void         { $this->resetPage(); }
     public function updatedStatusFilter(): void   { $this->resetPage(); }
     public function updatedFeaturedFilter(): void { $this->resetPage(); }

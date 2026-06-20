@@ -11,6 +11,8 @@ class PersonnelShow extends Component
 
     public function mount(int $id): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManagePersonnel(), 403);
+
         $this->personnel = Personnel::with('department')->findOrFail($id);
     }
 

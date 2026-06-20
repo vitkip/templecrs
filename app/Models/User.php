@@ -63,10 +63,19 @@ class User extends Authenticatable
 
     /* ── Helpers ────────────────────────────────────── */
 
-    public function isSuperAdmin(): bool { return $this->role === 'super_admin'; }
-    public function isAdmin(): bool      { return in_array($this->role, ['super_admin', 'admin']); }
-    public function isManager(): bool    { return $this->role === 'manager'; }
-    public function isStaff(): bool      { return $this->role === 'staff'; }
+    public function isSuperAdmin(): bool       { return $this->role === 'super_admin'; }
+    public function isAdmin(): bool            { return in_array($this->role, ['super_admin', 'admin']); }
+    public function isManager(): bool          { return $this->role === 'manager'; }
+    public function isStaff(): bool            { return $this->role === 'staff'; }
+
+    /* ── Permission Helpers ─────────────────────────── */
+
+    public function canManagePersonnel(): bool { return in_array($this->role, ['super_admin', 'admin']); }
+    public function canManageDocuments(): bool { return in_array($this->role, ['super_admin', 'admin', 'staff']); }
+    public function canManageNews(): bool      { return in_array($this->role, ['super_admin', 'admin', 'staff']); }
+    public function canManageFinance(): bool   { return in_array($this->role, ['super_admin', 'manager']); }
+    public function canManageSlides(): bool    { return $this->role === 'super_admin'; }
+    public function canManageUsers(): bool     { return $this->role === 'super_admin'; }
 
     /* ── Scopes ─────────────────────────────────────── */
 

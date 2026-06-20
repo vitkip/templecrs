@@ -40,6 +40,11 @@ class CategoryManager extends Component
         'pink','rose','red','orange','yellow','amber','slate',
     ];
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+    }
+
     protected function rules(): array
     {
         return [

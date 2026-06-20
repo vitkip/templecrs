@@ -24,12 +24,16 @@ class Dashboard extends Component
             $data['personnel_monks']    = Personnel::where('gender', 'monk')->where('is_active', true)->count();
             $data['personnel_lay']      = Personnel::whereIn('gender', ['male', 'female'])->where('is_active', true)->count();
             $data['recent_personnel']   = Personnel::where('is_active', true)->latest()->limit(5)->get();
+        }
 
+        if ($user->canManageNews()) {
             $data['news_total']         = News::count();
             $data['news_published']     = News::where('is_active', true)->whereNotNull('published_at')->where('published_at', '<=', now())->count();
             $data['news_draft']         = News::count() - $data['news_published'];
             $data['recent_news']        = News::where('is_active', true)->whereNotNull('published_at')->latest('published_at')->limit(5)->get();
+        }
 
+        if ($user->canManageDocuments()) {
             $data['docs_total']         = Document::count();
             $data['docs_active']        = Document::where('is_active', true)->count();
             $data['docs_downloads']     = Document::sum('download_count');
@@ -41,7 +45,7 @@ class Dashboard extends Component
             $data['departments_total']  = Department::count();
         }
 
-        if ($user->isSuperAdmin() || $user->isManager()) {
+        if ($user->canManageFinance()) {
             $year  = $now->year;
             $month = $now->month;
 

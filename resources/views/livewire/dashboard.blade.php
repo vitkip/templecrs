@@ -218,8 +218,115 @@
 
     @endif
 
+    {{-- ══════════════════════ STAFF SECTION (docs + news only) ══════════════════════ --}}
+    @if (auth()->user()->isStaff())
+
+        <div class="grid grid-cols-2 gap-4">
+
+            {{-- News --}}
+            <a href="{{ route('news.index') }}"
+               class="group bg-white rounded-2xl p-5 shadow-sm border border-outline-variant hover:shadow-md hover:border-primary/30 transition-all duration-200">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-secondary text-xl">newspaper</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        {{ $news_published ?? 0 }} {{ __('messages.published') }}
+                    </span>
+                </div>
+                <p class="text-3xl font-bold text-on-surface">{{ number_format($news_total ?? 0) }}</p>
+                <p class="text-label-sm text-on-surface-variant mt-0.5">{{ __('messages.news') }}</p>
+            </a>
+
+            {{-- Documents --}}
+            <a href="{{ route('documents.index') }}"
+               class="group bg-white rounded-2xl p-5 shadow-sm border border-outline-variant hover:shadow-md hover:border-primary/30 transition-all duration-200">
+                <div class="flex items-start justify-between mb-3">
+                    <div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-tertiary text-xl">description</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-tertiary bg-tertiary/10 px-2 py-0.5 rounded-full">
+                        {{ $docs_active ?? 0 }} {{ __('messages.active') }}
+                    </span>
+                </div>
+                <p class="text-3xl font-bold text-on-surface">{{ number_format($docs_total ?? 0) }}</p>
+                <p class="text-label-sm text-on-surface-variant mt-0.5">{{ __('messages.documents') }}</p>
+                <div class="flex items-center gap-3 mt-3 pt-3 border-t border-outline-variant">
+                    <span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">download</span>
+                        {{ number_format($docs_downloads ?? 0) }} {{ __('messages.downloads') }}
+                    </span>
+                </div>
+            </a>
+
+        </div>
+
+        {{-- Staff recent items --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            {{-- Recent News --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-outline-variant overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">
+                    <h3 class="text-label-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary text-base">newspaper</span>
+                        {{ __('messages.news') }}
+                    </h3>
+                    <a href="{{ route('news.index') }}" class="text-[11px] text-primary hover:underline">{{ __('messages.view_all') }}</a>
+                </div>
+                <ul class="divide-y divide-outline-variant">
+                    @forelse ($recent_news ?? [] as $n)
+                        <li>
+                            <a href="{{ route('news.show', $n->id) }}"
+                               class="flex items-start gap-3 px-5 py-3 hover:bg-surface-container transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 mt-0.5">
+                                    <span class="material-symbols-outlined text-secondary text-sm">article</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-label-sm font-semibold text-on-surface truncate">{{ $n->title }}</p>
+                                    <p class="text-[11px] text-on-surface-variant">{{ $n->published_at?->format('d/m/Y') }}</p>
+                                </div>
+                            </a>
+                        </li>
+                    @empty
+                        <li class="px-5 py-6 text-center text-on-surface-variant text-label-sm">{{ __('messages.no_data') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            {{-- Recent Documents --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-outline-variant overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-outline-variant">
+                    <h3 class="text-label-lg font-bold text-on-surface flex items-center gap-2">
+                        <span class="material-symbols-outlined text-tertiary text-base">description</span>
+                        {{ __('messages.documents') }}
+                    </h3>
+                    <a href="{{ route('documents.index') }}" class="text-[11px] text-primary hover:underline">{{ __('messages.view_all') }}</a>
+                </div>
+                <ul class="divide-y divide-outline-variant">
+                    @forelse ($recent_docs ?? [] as $d)
+                        <li>
+                            <a href="{{ route('documents.show', $d->id) }}"
+                               class="flex items-center gap-3 px-5 py-3 hover:bg-surface-container transition-colors">
+                                <div class="w-8 h-8 rounded-lg bg-tertiary/10 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-tertiary text-sm">{{ $d->icon }}</span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-label-sm font-semibold text-on-surface truncate">{{ $d->title_lo ?? $d->title_en }}</p>
+                                </div>
+                            </a>
+                        </li>
+                    @empty
+                        <li class="px-5 py-6 text-center text-on-surface-variant text-label-sm">{{ __('messages.no_data') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+
+        </div>
+
+    @endif
+
     {{-- ══════════════════════ FINANCE SECTION (superadmin + manager) ══════════════════════ --}}
-    @if (auth()->user()->isSuperAdmin() || auth()->user()->isManager())
+    @if (auth()->user()->canManageFinance())
 
         <div class="space-y-6">
 
@@ -334,18 +441,22 @@
                     <span class="material-symbols-outlined text-base">person_add</span>
                     {{ __('messages.new_entry') }}
                 </a>
+            @endif
+            @if (auth()->user()->canManageNews())
                 <a href="{{ route('news.create') }}"
                    class="flex items-center gap-2 px-4 py-2 bg-secondary text-white rounded-xl text-label-sm font-bold hover:opacity-90 transition-all btn-press shadow-sm">
                     <span class="material-symbols-outlined text-base">add_circle</span>
                     {{ __('messages.news_add') }}
                 </a>
+            @endif
+            @if (auth()->user()->canManageDocuments())
                 <a href="{{ route('documents.create') }}"
                    class="flex items-center gap-2 px-4 py-2 bg-tertiary text-white rounded-xl text-label-sm font-bold hover:opacity-90 transition-all btn-press shadow-sm">
                     <span class="material-symbols-outlined text-base">upload_file</span>
                     {{ __('messages.upload_document') }}
                 </a>
             @endif
-            @if (auth()->user()->isSuperAdmin() || auth()->user()->isManager())
+            @if (auth()->user()->canManageFinance())
                 <a href="{{ route('finance.transactions.create') }}"
                    class="flex items-center gap-2 px-4 py-2 bg-success text-black rounded-xl text-label-sm font-bold hover:opacity-90 transition-all btn-press shadow-sm">
                     <span class="material-symbols-outlined text-base">add_card</span>
@@ -370,7 +481,7 @@
 </div>
 
 {{-- Finance Chart Script --}}
-@if (auth()->user()->isSuperAdmin() || auth()->user()->isManager())
+@if (auth()->user()->canManageFinance())
 @push('scripts')
 <script>
     (function () {

@@ -24,7 +24,7 @@ class HeroSlideTable extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
     }
 
     public function updatedSearch(): void       { $this->resetPage(); }
@@ -49,14 +49,14 @@ class HeroSlideTable extends Component
 
     public function toggleActive(int $id): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
 
         app(HeroSlideService::class)->toggleActive($id);
     }
 
     public function deleteSlide(int $id): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
 
         app(HeroSlideService::class)->delete($id);
         session()->flash('message', 'ລຶບສະໄລ້ສຳເລັດ / Slide deleted.');

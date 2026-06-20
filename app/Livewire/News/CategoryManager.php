@@ -34,6 +34,11 @@ class CategoryManager extends Component
         'photo_camera','movie','music_note','theater_comedy','palette',
     ];
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageNews(), 403);
+    }
+
     protected function rules(): array
     {
         $slugUnique = $this->editingId

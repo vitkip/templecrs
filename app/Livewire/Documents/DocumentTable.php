@@ -30,6 +30,11 @@ class DocumentTable extends Component
     public string $sortDir = 'desc';
     public int $perPage    = 15;
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageDocuments(), 403);
+    }
+
     public function updatedSearch(): void      { $this->resetPage(); }
     public function updatedCategory(): void    { $this->resetPage(); }
     public function updatedDepartmentFilter(): void { $this->resetPage(); }

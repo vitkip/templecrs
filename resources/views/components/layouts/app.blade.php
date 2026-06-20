@@ -125,15 +125,15 @@
                 @endif
             </a>
 
-            {{-- Section: ເນື້ອຫາ — admin + superadmin (personnel/docs/news) or manager (finance) --}}
-            @if (auth()->user()->isAdmin() || auth()->user()->isManager())
+            {{-- Section: ເນື້ອຫາ — any role with content access --}}
+            @if (auth()->user()->isAdmin() || auth()->user()->isManager() || auth()->user()->isStaff())
                 <div class="pt-4 pb-1 px-3">
                     <p class="text-[9px] font-bold uppercase tracking-widest text-white/25">ເນື້ອຫາ</p>
                 </div>
             @endif
 
             {{-- Personnel — superadmin + admin --}}
-            @if (auth()->user()->isAdmin())
+            @if (auth()->user()->canManagePersonnel())
                 @php $isPersonnel = request()->routeIs('personnel.*'); @endphp
                 <a href="{{ route('personnel.index') }}"
                    @click="sidebarOpen = false"
@@ -147,8 +147,8 @@
                 </a>
             @endif
 
-            {{-- Documents — superadmin + admin --}}
-            @if (auth()->user()->isAdmin())
+            {{-- Documents — superadmin + admin + staff --}}
+            @if (auth()->user()->canManageDocuments())
                 @php $isDocs = request()->routeIs('documents.*'); @endphp
                 <a href="{{ route('documents.index') }}"
                    @click="sidebarOpen = false"
@@ -162,8 +162,8 @@
                 </a>
             @endif
 
-            {{-- News — superadmin + admin --}}
-            @if (auth()->user()->isAdmin())
+            {{-- News — superadmin + admin + staff --}}
+            @if (auth()->user()->canManageNews())
                 @php $isNews = request()->routeIs('news.*'); @endphp
                 <a href="{{ route('news.index') }}"
                    @click="sidebarOpen = false"
@@ -190,7 +190,7 @@
             @endif
 
             {{-- Finance — superadmin + manager --}}
-            @if (auth()->user()->isSuperAdmin() || auth()->user()->isManager())
+            @if (auth()->user()->canManageFinance())
                 @php $isFinance = request()->routeIs('finance.*'); @endphp
                 <a href="{{ route('finance.index') }}"
                    @click="sidebarOpen = false"
@@ -204,13 +204,13 @@
                 </a>
             @endif
 
-            {{-- Section: ຈັດການລະບົບ — superadmin + admin --}}
-            @if (auth()->user()->isAdmin())
+            {{-- Section: ຈັດການລະບົບ — superadmin only --}}
+            @if (auth()->user()->isSuperAdmin())
                 <div class="pt-4 pb-1 px-3">
                     <p class="text-[9px] font-bold uppercase tracking-widest text-white/25">ຈັດການລະບົບ</p>
                 </div>
 
-                {{-- Hero Slides — superadmin + admin --}}
+                {{-- Hero Slides — superadmin only --}}
                 @php $isHeroSlides = request()->routeIs('hero-slides.*'); @endphp
                 <a href="{{ route('hero-slides.index') }}"
                    @click="sidebarOpen = false"
@@ -224,8 +224,7 @@
                 </a>
 
                 {{-- Departments — superadmin only --}}
-                @if (auth()->user()->isSuperAdmin())
-                    @php $isDepts = request()->routeIs('settings') && request()->input('tab', '') === 'departments'; @endphp
+                @php $isDepts = request()->routeIs('settings') && request()->input('tab', '') === 'departments'; @endphp
                     <a href="{{ route('settings') }}?tab=departments"
                        @click="sidebarOpen = false"
                        class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
@@ -256,7 +255,6 @@
                         <span class="text-label-md">{{ __('messages.reports') }}</span>
                         <span class="ml-auto text-[9px] font-bold bg-white/10 text-white/40 px-1.5 py-0.5 rounded-full uppercase">Soon</span>
                     </div>
-                @endif
             @endif
 
             {{-- Divider --}}
@@ -288,18 +286,20 @@
                 </span>
             </a>
 
-            {{-- Settings --}}
-            @php $isSettings = request()->routeIs('settings') && !request()->input('tab'); @endphp
-            <a href="{{ route('settings') }}"
-               @click="sidebarOpen = false"
-               class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                      {{ $isSettings ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
-                <span class="material-symbols-outlined text-xl shrink-0 {{ $isSettings ? 'filled' : '' }}">settings</span>
-                <span class="text-label-md">{{ __('messages.settings') }}</span>
-                @if ($isSettings)
-                    <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
-                @endif
-            </a>
+            {{-- Settings — superadmin only --}}
+            @if (auth()->user()->isSuperAdmin())
+                @php $isSettings = request()->routeIs('settings') && !request()->input('tab'); @endphp
+                <a href="{{ route('settings') }}"
+                   @click="sidebarOpen = false"
+                   class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          {{ $isSettings ? 'bg-white/15 text-tertiary-fixed-dim font-bold border-l-4 border-tertiary-fixed-dim sidebar-active-glow' : 'text-secondary-fixed-dim hover:bg-white/8 hover:text-white' }}">
+                    <span class="material-symbols-outlined text-xl shrink-0 {{ $isSettings ? 'filled' : '' }}">settings</span>
+                    <span class="text-label-md">{{ __('messages.settings') }}</span>
+                    @if ($isSettings)
+                        <span class="ml-auto w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+                    @endif
+                </a>
+            @endif
         </div>
     </aside>
 
@@ -460,6 +460,10 @@
                     $bottomNav[] = ['href' => route('personnel.create'), 'icon' => 'person_add',  'label' => 'ເພີ່ມ',   'active' => false, 'primary' => true, 'show' => true];
                     $bottomNav[] = ['href' => route('news.index'),       'icon' => 'newspaper',   'label' => 'ຂ່າວ',    'active' => request()->routeIs('news.*'), 'show' => true];
                     $bottomNav[] = ['href' => route('documents.index'),  'icon' => 'description', 'label' => 'ເອກະສານ', 'active' => request()->routeIs('documents.*'), 'show' => true];
+                } elseif ($user->isStaff()) {
+                    $bottomNav[] = ['href' => route('news.index'),      'icon' => 'newspaper',   'label' => 'ຂ່າວ',    'active' => request()->routeIs('news.*'), 'show' => true];
+                    $bottomNav[] = ['href' => route('documents.create'),'icon' => 'upload_file', 'label' => 'ອັບໂຫລດ', 'active' => false, 'primary' => true, 'show' => true];
+                    $bottomNav[] = ['href' => route('documents.index'), 'icon' => 'description', 'label' => 'ເອກະສານ', 'active' => request()->routeIs('documents.*'), 'show' => true];
                 } elseif ($user->isManager()) {
                     $bottomNav[] = ['href' => route('finance.index'), 'icon' => 'account_balance_wallet', 'label' => 'ການເງິນ', 'active' => request()->routeIs('finance.*'), 'show' => true];
                 }

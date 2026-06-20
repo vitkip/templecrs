@@ -11,6 +11,8 @@ class FinanceReportController extends Controller
 {
     public function pdf(Request $request): \Illuminate\Http\Response
     {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+
         $period      = $request->input('period', 'month');
         $reportYear  = (int) $request->input('reportYear', now()->year);
         $reportMonth = (int) $request->input('reportMonth', now()->month);

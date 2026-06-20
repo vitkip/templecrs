@@ -7,6 +7,11 @@ use Livewire\Component;
 
 class FinancePage extends Component
 {
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+    }
+
     public function render()
     {
         $now   = now();

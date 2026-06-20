@@ -31,6 +31,11 @@ class CategoryManager extends Component
         'church','spa','water_drop','volunteer_activism','favorite','handshake',
     ];
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageDocuments(), 403);
+    }
+
     protected function rules(): array
     {
         $slugUnique = $this->editingId

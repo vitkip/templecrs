@@ -43,6 +43,8 @@ class DocumentForm extends Component
 
     public function mount(?int $id = null): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManageDocuments(), 403);
+
         if ($id) {
             $this->editMode   = true;
             $this->documentId = $id;

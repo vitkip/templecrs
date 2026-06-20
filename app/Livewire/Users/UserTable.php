@@ -23,7 +23,7 @@ class UserTable extends Component
 
     public function mount(): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
     }
 
     public function updatedSearch(): void    { $this->resetPage(); }
@@ -44,7 +44,7 @@ class UserTable extends Component
 
     public function toggleActive(int $id): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
 
         $user = User::findOrFail($id);
 
@@ -59,7 +59,7 @@ class UserTable extends Component
 
     public function deleteUser(int $id): void
     {
-        abort_unless(auth()->check() && auth()->user()->isAdmin(), 403);
+        abort_unless(auth()->check() && auth()->user()->isSuperAdmin(), 403);
 
         $user = User::findOrFail($id);
 

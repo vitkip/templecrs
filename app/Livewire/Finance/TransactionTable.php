@@ -33,6 +33,11 @@ class TransactionTable extends Component
 
     public ?int $confirmDeleteId = null;
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+    }
+
     public function updatedSearch(): void       { $this->resetPage(); }
     public function updatedTypeFilter(): void   { $this->resetPage(); }
     public function updatedCategoryFilter(): void { $this->resetPage(); }

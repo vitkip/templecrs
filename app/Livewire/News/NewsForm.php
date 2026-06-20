@@ -44,6 +44,8 @@ class NewsForm extends Component
 
     public function mount(?int $id = null): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManageNews(), 403);
+
         if ($id) {
             $this->editMode = true;
             $this->newsId   = $id;

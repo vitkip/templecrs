@@ -26,6 +26,8 @@ class FinanceReport extends Component
 
     public function mount(): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+
         if (!$this->reportYear) $this->reportYear   = now()->year;
         if (!$this->reportMonth) $this->reportMonth = now()->month;
     }

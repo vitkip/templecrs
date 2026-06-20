@@ -19,6 +19,11 @@ class PersonnelTable extends Component
     #[Url]
     public string $statusFilter = 'active';
 
+    public function mount(): void
+    {
+        abort_unless(auth()->check() && auth()->user()->canManagePersonnel(), 403);
+    }
+
     public function clearFilters(): void
     {
         $this->gender = '';

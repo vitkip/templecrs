@@ -58,6 +58,8 @@ class TransactionForm extends Component
 
     public function mount(int $id = null): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+
         $this->transactionId    = $id;
         $this->transaction_date = now()->format('Y-m-d');
 

@@ -59,11 +59,11 @@
     }
 
     /* ══ ພາກສ່ວນອົງການຈັດຕັ້ງ ແລະ ເລກທີ ══ */
-    .org-row { 
-        width: 100%; 
-        border-collapse: collapse; 
+    .org-row {
+        width: 100%;
+        border-collapse: collapse;
         margin-top: 5px;
-        margin-bottom: 10px; 
+        margin-bottom: 10px;
     }
     .org-left, .org-right {
         width: 45%;
@@ -172,6 +172,8 @@
     .cat-sub-table th, .cat-sub-table td {
         border: 0.5px solid #000000;
         padding: 6px 8px;
+        vertical-align: middle;
+        text-align: left;
     }
     .cat-sub-table th {
         background-color: #f2f2f2;
@@ -272,11 +274,11 @@
         bottom: 0;
         left: 0;
         right: 0;
-        border-top: 0.5px solid #000000;
+        border-top: 1.5px solid #000000;
         padding-top: 4px;
         font-size: 8.5pt;
-        text-align: center;
-        line-height: 1.5;
+        text-align: left;
+        line-height: 1;
     }
     .page-number:before {
         content: "ໜ້າທີ " counter(page);
@@ -324,8 +326,8 @@
                 <div style="width:60px;height:60px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:56px;font-size:22pt;color:#000;">☸</div>
             @endif
         </td>
-        <td class="org-right" style="padding-top: 45pt;">
-            <div class="ref-line">ເລກທີ:....../ກສປ</div>
+        <td class="org-right" style="padding-top: 45pt;>
+            <div class="ref-line">ເລກທີ:......../ກສປ</div>
             <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ $currentDay }} ເດືອນ {{ $currentMonth }} ປີ {{ $currentYear }}</div>
         </td>
     </tr>
