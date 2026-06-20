@@ -173,7 +173,7 @@
 
                 {{-- Name --}}
                 <h1 class="font-bold text-white"
-                    style="font-size: clamp(28px, 5vw, 46px); line-height:1.1; letter-spacing:-0.02em; max-width:680px;">
+                    style="font-size: clamp(28px, 5vw, 40px); line-height:1.1; letter-spacing:-0.02em; max-width:690px;">
                     {{ $name }}
                 </h1>
 
@@ -416,7 +416,7 @@
                         <div class="rounded-2xl p-4 ps-reveal ps-reveal-4"
                             style="background:white; border:1px solid rgba(0,0,0,0.07);">
                             <p class="font-bold uppercase tracking-widest mb-3"
-                                style="font-size:9px; color:rgba(124,77,15,0.48); letter-spacing:0.16em;">ພະແນກ / ກົມ</p>
+                                style="font-size:9px; color:rgba(124,77,15,0.48); letter-spacing:0.16em;">ພະແນກ</p>
                             <div class="flex items-center gap-2.5">
                                 <span class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                                     style="background:rgba(124,77,15,0.08);">
@@ -434,7 +434,7 @@
                         <div class="rounded-2xl p-4 ps-reveal ps-reveal-5"
                             style="background:white; border:1px solid rgba(0,0,0,0.07);">
                             <p class="font-bold uppercase tracking-widest mb-3"
-                                style="font-size:9px; color:rgba(124,77,15,0.48); letter-spacing:0.16em;">ທີ່ຢູ່ເກີດ</p>
+                                style="font-size:9px; color:rgba(124,77,15,0.48); letter-spacing:0.16em;">ທີ່ເກີດ</p>
                             <div class="space-y-2.5">
                                 @if ($village)
                                     <div class="flex items-start gap-2.5">

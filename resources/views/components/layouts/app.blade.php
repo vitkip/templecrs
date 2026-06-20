@@ -44,6 +44,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <link rel="stylesheet" href="//cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     @stack('head')
 </head>
@@ -484,6 +486,9 @@
     </nav>
 
     @livewireScripts
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="//cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
     @stack('scripts')
 </body>
 </html>

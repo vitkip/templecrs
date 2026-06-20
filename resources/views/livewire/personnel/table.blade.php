@@ -14,7 +14,6 @@
 
     <!-- Stats Overview -->
     <div class="grid grid-cols-12 gap-6 mb-8 animate-fade-in">
-        <!-- Total Personnel -->
         <div class="col-span-12 lg:col-span-4 glass-card p-6 rounded-xl border border-outline-variant flex items-center gap-6">
             <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <span class="material-symbols-outlined text-4xl filled">group</span>
@@ -25,7 +24,6 @@
             </div>
         </div>
 
-        <!-- Monks & Novices -->
         <div class="col-span-12 lg:col-span-3 glass-card p-6 rounded-xl border border-outline-variant flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-badge-monk/10 flex items-center justify-center text-badge-monk">
                 <span class="material-symbols-outlined text-2xl">temple_buddhist</span>
@@ -36,7 +34,6 @@
             </div>
         </div>
 
-        <!-- Laypersons -->
         <div class="col-span-12 lg:col-span-3 glass-card p-6 rounded-xl border border-outline-variant flex items-center gap-4">
             <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
                 <span class="material-symbols-outlined text-2xl">person</span>
@@ -47,7 +44,6 @@
             </div>
         </div>
 
-        <!-- Active Ratio -->
         <div class="col-span-12 lg:col-span-2 glass-card p-6 rounded-xl border border-outline-variant flex flex-col justify-center">
             <p class="text-label-md text-on-surface-variant">Active Ratio</p>
             <h3 class="text-headline-sm text-primary">{{ $stats['active_ratio'] }}%</h3>
@@ -57,10 +53,9 @@
         </div>
     </div>
 
-    <!-- Filters Bar -->
+    <!-- Filters Bar (Livewire server-side filters) -->
     <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant mb-6 flex flex-wrap items-center gap-4 animate-fade-in">
         <div class="flex-1 flex gap-4 min-w-[300px]">
-            <!-- Department Filter -->
             <div class="flex-1">
                 <label class="block text-[10px] font-bold text-on-surface-variant mb-1 uppercase">
                     DEPARTMENT / ພາກສ່ວນ
@@ -76,7 +71,6 @@
                 </select>
             </div>
 
-            <!-- Type / Gender Filter -->
             <div class="w-48">
                 <label class="block text-[10px] font-bold text-on-surface-variant mb-1 uppercase">
                     TYPE / ປະເພດ
@@ -90,7 +84,6 @@
                 </select>
             </div>
 
-            <!-- Status Filter -->
             <div class="w-40">
                 <label class="block text-[10px] font-bold text-on-surface-variant mb-1 uppercase">
                     STATUS / ສະຖານະ
@@ -104,7 +97,6 @@
             </div>
         </div>
 
-        <!-- Clear Filters -->
         <button wire:click="clearFilters"
                 class="px-4 py-2 border border-outline-variant rounded-lg text-body-md font-bold text-on-surface-variant hover:bg-surface-container transition-all flex items-center gap-2 btn-press">
             <span class="material-symbols-outlined text-sm">filter_list</span>
@@ -112,29 +104,13 @@
         </button>
     </div>
 
-    <!-- Search Bar -->
-    <div class="mb-6 animate-fade-in">
-        <div class="relative max-w-md">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-            <input type="text"
-                   wire:model.live.debounce.300ms="search"
-                   class="w-full pl-10 pr-4 py-2.5 bg-white border border-outline-variant rounded-lg text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                   placeholder="ຄົ້ນຫາຊື່ ຫຼື ຕຳແໜ່ງ... / Search name or position..." />
-        </div>
-    </div>
-
-    <!-- Data Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden animate-fade-in">
-        <table class="w-full border-collapse text-left">
+    <!-- Data Table (DataTables handles search / sort / pagination / responsive) -->
+    <div class="animate-fade-in w-full overflow-x-auto">
+        <table id="personnel-table" class="w-full border-collapse text-left">
             <thead>
                 <tr class="bg-secondary text-white text-label-md">
                     <th class="p-3 w-16">Photo</th>
-                    <th class="p-3 cursor-pointer hover:bg-white/10 transition-colors" wire:click="sortBy('name_lo')">
-                        Name / ຊື່
-                        @if ($sortBy === 'name_lo')
-                            <span class="material-symbols-outlined text-xs align-middle">{{ $sortDir === 'asc' ? 'arrow_upward' : 'arrow_downward' }}</span>
-                        @endif
-                    </th>
+                    <th class="p-3">Name / ຊື່</th>
                     <th class="p-3">Position / ຕຳແໜ່ງ</th>
                     <th class="p-3">Type / ປະເພດ</th>
                     <th class="p-3">Department / ພາກສ່ວນ</th>
@@ -143,10 +119,10 @@
                 </tr>
             </thead>
             <tbody class="text-table-data">
-                @forelse ($personnel as $person)
-                    <tr class="border-b border-outline-variant table-row-hover h-[64px] {{ $person->isMonk() ? 'monk-accent' : '' }}"
+                @foreach ($personnel as $person)
+                    <tr class="border-b border-outline-variant table-row-hover {{ $person->isMonk() ? 'monk-accent' : '' }}"
                         wire:key="person-{{ $person->id }}">
-                        <!-- Photo -->
+
                         <td class="p-3">
                             @if ($person->photo_url)
                                 <img src="{{ Storage::url($person->photo_url) }}"
@@ -159,7 +135,6 @@
                             @endif
                         </td>
 
-                        <!-- Name (Bilingual) -->
                         <td class="p-3">
                             <div class="flex flex-col">
                                 <a href="{{ route('personnel.show', $person->id) }}"
@@ -172,7 +147,6 @@
                             </div>
                         </td>
 
-                        <!-- Position (Bilingual) -->
                         <td class="p-3">
                             <div class="flex flex-col">
                                 <span class="font-bold">{{ $person->position_lo }}</span>
@@ -182,7 +156,6 @@
                             </div>
                         </td>
 
-                        <!-- Gender Badge -->
                         <td class="p-3">
                             @php $badge = $person->gender_badge; @endphp
                             <span class="{{ $badge['class'] }} px-2 py-0.5 rounded text-[10px] font-bold uppercase">
@@ -190,12 +163,12 @@
                             </span>
                         </td>
 
-                        <!-- Department -->
                         <td class="p-3 text-on-surface-variant">
-                            {{ $person->department ? (app()->getLocale() === 'lo' ? $person->department->name_lo : ($person->department->name_en ?? $person->department->name_lo)) : '—' }}
+                            {{ $person->department
+                                ? (app()->getLocale() === 'lo' ? $person->department->name_lo : ($person->department->name_en ?? $person->department->name_lo))
+                                : '—' }}
                         </td>
 
-                        <!-- Active Toggle -->
                         <td class="p-3">
                             <div class="flex justify-center">
                                 <label class="toggle-switch">
@@ -207,7 +180,6 @@
                             </div>
                         </td>
 
-                        <!-- Actions -->
                         <td class="p-3 text-right">
                             <a href="{{ route('personnel.edit', $person->id) }}"
                                class="p-1 hover:text-primary transition-colors inline-block">
@@ -221,32 +193,12 @@
                             </button>
                         </td>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="7" class="p-12 text-center text-on-surface-variant">
-                            <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">group_off</span>
-                            <p class="text-lg">{{ __('messages.no_personnel') }}</p>
-                            <a href="{{ route('personnel.create') }}" class="text-primary hover:underline mt-2 inline-block">
-                                {{ __('messages.add_first_personnel') }}
-                            </a>
-                        </td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
-
-        <!-- Pagination -->
-        @if ($personnel->hasPages())
-            <div class="p-4 flex justify-between items-center bg-surface-container-low border-t border-outline-variant">
-                <p class="text-label-md text-on-surface-variant">
-                    Showing {{ $personnel->firstItem() }} to {{ $personnel->lastItem() }} of {{ number_format($personnel->total()) }} results
-                </p>
-                {{ $personnel->links() }}
-            </div>
-        @endif
     </div>
 
-    <!-- Custom Deletion Confirmation Modal -->
+    <!-- Delete Confirmation Modal -->
     <div x-show="showDeleteModal"
          class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
          x-transition:enter="transition ease-out duration-300"
@@ -257,7 +209,7 @@
          x-transition:leave-end="opacity-0 scale-95"
          style="display: none;"
          x-cloak>
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-outline-variant transform transition-all"
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-outline-variant"
              @click.away="showDeleteModal = false">
             <div class="flex items-center gap-3 text-error mb-4">
                 <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error">
@@ -265,7 +217,7 @@
                 </div>
                 <h3 class="text-headline-sm font-bold text-on-surface">ຢືນຢັນການລຶບ / Confirm Delete</h3>
             </div>
-            
+
             <div class="space-y-3 mb-6">
                 <p class="text-body-md text-on-surface-variant leading-relaxed">
                     ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບຂໍ້ມູນຄະນະກັມມາທິການນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດກັບຄືນໄດ້.
@@ -293,3 +245,64 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+(function () {
+    let dt = null;
+
+    function initDT() {
+        const el = document.getElementById('personnel-table');
+        if (!el) return;
+
+        if (dt) {
+            dt.destroy();
+            dt = null;
+        }
+
+        dt = new DataTable('#personnel-table', {
+            responsive: true,
+            pageLength: 15,
+            lengthMenu: [10, 15, 25, 50, 100],
+            autoWidth:  false,
+            columnDefs: [
+                // ບໍ່ sortable: Photo, Status, Actions
+                { orderable: false, targets: [0, 5, 6] },
+                // Priority: Name + Actions ສະແດງສະເໝີ
+                { responsivePriority: 1,     targets: [1, 6] },
+                // Status ສຳຄັນ
+                { responsivePriority: 2,     targets: [5] },
+                // Position
+                { responsivePriority: 3,     targets: [2] },
+                // Type
+                { responsivePriority: 4,     targets: [3] },
+                // Department
+                { responsivePriority: 5,     targets: [4] },
+                // Photo ເຊື່ອງກ່ອນໃນໜ້າຈໍນ້ອຍ
+                { responsivePriority: 10001, targets: [0] },
+            ],
+            order: [[1, 'asc']],
+            language: {
+                search:            'ຄົ້ນຫາ:',
+                searchPlaceholder: 'ຄົ້ນຫາຊື່, ຕຳແໜ່ງ...',
+                lengthMenu:        'ສະແດງ _MENU_ ລາຍການ',
+                info:              'ສະແດງ _START_ ຫາ _END_ ຈາກ _TOTAL_ ລາຍການ',
+                infoEmpty:         'ສະແດງ 0 ລາຍການ',
+                infoFiltered:      '(ກັ່ນຕອງຈາກ _MAX_ ລາຍການ)',
+                zeroRecords:       'ບໍ່ພົບຂໍ້ມູນທີ່ຄົ້ນຫາ',
+                emptyTable:        'ບໍ່ມີຂໍ້ມູນ',
+                paginate: {
+                    first:    '«',
+                    last:     '»',
+                    next:     '›',
+                    previous: '‹'
+                }
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', initDT);
+    document.addEventListener('livewire:updated',  initDT);
+})();
+</script>
+@endpush
