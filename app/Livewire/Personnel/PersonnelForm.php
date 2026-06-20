@@ -55,7 +55,8 @@ class PersonnelForm extends Component
     public ?string $current_temple_en = null;
     public ?string $date_of_ordination = null;
     public ?int $pansa = null;
-    public ?int $pansaAutoCalc = null; // calculated value shown as hint
+    public ?int $pansaAutoCalc = null;
+    public ?int $pansaLastYear = null; // last Vassa year counted in the calculation
 
     // Contact
     public ?string $email = null;
@@ -176,8 +177,8 @@ class PersonnelForm extends Component
             'education_lo' => 'nullable|string|max:300',
             'education_en' => 'nullable|string|max:300',
             'date_of_birth' => 'nullable|date|before:today',
-            'term_start' => 'nullable|digits:4',
-            'term_end'   => 'nullable|digits:4',
+            'term_start' => 'nullable|integer|between:1901,2155',
+            'term_end'   => 'nullable|integer|between:1901,2155|gte:term_start',
             'sort_order' => 'nullable|integer|min:0',
             'is_active'  => 'boolean',
         ];
@@ -198,9 +199,12 @@ class PersonnelForm extends Component
     protected function messages(): array
     {
         return [
-            'name_lo.required'     => 'ກະລຸນາໃສ່ຊື່ເຕັມ (ພາສາລາວ)',
-            'position_lo.required' => 'ກະລຸນາໃສ່ຕຳແໜ່ງ (ພາສາລາວ)',
-            'gender.required'      => 'ກະລຸນາເລືອກປະເພດບຸກຄົນ',
+            'name_lo.required'        => 'ກະລຸນາໃສ່ຊື່ເຕັມ (ພາສາລາວ)',
+            'position_lo.required'    => 'ກະລຸນາໃສ່ຕຳແໜ່ງ (ພາສາລາວ)',
+            'gender.required'         => 'ກະລຸນາເລືອກປະເພດບຸກຄົນ',
+            'term_start.between'      => 'ປີເລີ່ມຕົ້ນຕ້ອງຢູ່ລະຫວ່າງ 1901 ຫາ 2155',
+            'term_end.between'        => 'ປີສິ້ນສຸດຕ້ອງຢູ່ລະຫວ່າງ 1901 ຫາ 2155',
+            'term_end.gte'            => 'ປີສິ້ນສຸດຕ້ອງຫຼາຍກວ່າ ຫຼື ເທົ່າກັບ ປີເລີ່ມຕົ້ນ',
         ];
     }
 
@@ -248,6 +252,7 @@ class PersonnelForm extends Component
             $this->date_of_ordination = null;
             $this->pansa              = null;
             $this->pansaAutoCalc      = null;
+            $this->pansaLastYear      = null;
         }
     }
 
@@ -256,10 +261,12 @@ class PersonnelForm extends Component
      */
     public function updatedDateOfOrdination(): void
     {
+        $this->pansaLastYear = null;
         $this->pansaAutoCalc = $this->calculatePansa();
-        // Auto-fill pansa if not manually set yet
         if ($this->pansaAutoCalc !== null) {
             $this->pansa = $this->pansaAutoCalc;
+        } elseif (!$this->date_of_ordination) {
+            $this->pansa = null;
         }
     }
 
@@ -267,10 +274,8 @@ class PersonnelForm extends Component
      * Calculate pansa (Vassa seniority) from ordination date.
      *
      * Rules (Theravada / Lao tradition):
-     *  - Khao Phansa ≈ day after Asalha Puja  (~August 1)
-     *  - Ok Phansa   ≈ full moon 11th month   (~October 16)
-     *  - Ordained BEFORE Khao Phansa → first Pansa done at Ok Phansa of same year
-     *  - Ordained AFTER  Khao Phansa → first Pansa done at Ok Phansa of next year
+     *  - Ordained ON or BEFORE Khao Phansa → first Pansa completes at Ok Phansa same year
+     *  - Ordained AFTER Khao Phansa → first Pansa completes at Ok Phansa next year
      */
     private function calculatePansa(): ?int
     {
@@ -283,27 +288,65 @@ class PersonnelForm extends Component
             $today      = \Carbon\Carbon::today();
 
             if ($ordination->isAfter($today)) {
-                return 0;
+                return null;
             }
 
-            // Approximate day-of-year thresholds
-            $khaoPhansaDoy = 213; // ~August 1
-            $okPhansaDoy   = 289; // ~October 16
+            // Lookup table: actual Khao Phansa & Ok Phansa dates (MM-DD) per year
+            $vassaDates = [
+                2010 => ['khao' => '07-27', 'ok' => '10-23'],
+                2011 => ['khao' => '07-16', 'ok' => '10-12'],
+                2012 => ['khao' => '08-03', 'ok' => '10-30'],
+                2013 => ['khao' => '07-23', 'ok' => '10-19'],
+                2014 => ['khao' => '07-12', 'ok' => '10-08'],
+                2015 => ['khao' => '07-31', 'ok' => '10-27'],
+                2016 => ['khao' => '07-19', 'ok' => '10-16'],
+                2017 => ['khao' => '07-09', 'ok' => '10-05'],
+                2018 => ['khao' => '07-28', 'ok' => '10-24'],
+                2019 => ['khao' => '07-17', 'ok' => '10-13'],
+                2020 => ['khao' => '07-06', 'ok' => '10-01'],
+                2021 => ['khao' => '07-26', 'ok' => '10-21'],
+                2022 => ['khao' => '07-14', 'ok' => '10-10'],
+                2023 => ['khao' => '08-02', 'ok' => '10-29'],
+                2024 => ['khao' => '07-21', 'ok' => '10-17'],
+                2025 => ['khao' => '07-10', 'ok' => '10-07'],
+                2026 => ['khao' => '07-29', 'ok' => '10-26'],
+                2027 => ['khao' => '07-19', 'ok' => '10-15'],
+                2028 => ['khao' => '08-06', 'ok' => '11-02'],
+                2029 => ['khao' => '07-26', 'ok' => '10-22'],
+                2030 => ['khao' => '07-15', 'ok' => '10-11'],
+            ];
+
+            $getKhaoPhansa = function (int $year) use ($vassaDates): \Carbon\Carbon {
+                if (isset($vassaDates[$year])) {
+                    return \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$vassaDates[$year]['khao']}")->startOfDay();
+                }
+                // Fallback: approximate Aug 1
+                return \Carbon\Carbon::create($year, 8, 1)->startOfDay();
+            };
+
+            $getOkPhansa = function (int $year) use ($vassaDates): \Carbon\Carbon {
+                if (isset($vassaDates[$year])) {
+                    return \Carbon\Carbon::createFromFormat('Y-m-d', "{$year}-{$vassaDates[$year]['ok']}")->startOfDay();
+                }
+                // Fallback: approximate Oct 16
+                return \Carbon\Carbon::create($year, 10, 16)->startOfDay();
+            };
 
             // Year in which monk's FIRST Vassa ends (first Pansa earned)
             $firstVassaEndYear = $ordination->year;
-            if ($ordination->dayOfYear > $khaoPhansaDoy) {
+            if ($ordination->isAfter($getKhaoPhansa($ordination->year))) {
                 // Ordained after Khao Phansa → first Pansa next year
                 $firstVassaEndYear++;
             }
 
             // Most recent completed Vassa year as of today
             $lastVassaEndYear = $today->year;
-            if ($today->dayOfYear < $okPhansaDoy) {
+            if ($today->isBefore($getOkPhansa($today->year))) {
                 // Ok Phansa not yet reached → current year's Vassa not done
                 $lastVassaEndYear--;
             }
 
+            $this->pansaLastYear = $lastVassaEndYear;
             return max(0, $lastVassaEndYear - $firstVassaEndYear + 1);
         } catch (\Exception) {
             return null;
@@ -368,8 +411,8 @@ class PersonnelForm extends Component
             'education_lo' => $this->education_lo,
             'education_en' => $this->education_en,
             'date_of_birth' => $this->date_of_birth ?: null,
-            'term_start' => $this->term_start,
-            'term_end' => $this->term_end,
+            'term_start' => $this->term_start ? (int) $this->term_start : null,
+            'term_end'   => $this->term_end   ? (int) $this->term_end   : null,
             'sort_order' => $this->sort_order,
             'is_active' => $this->is_active,
         ];

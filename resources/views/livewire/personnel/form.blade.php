@@ -295,12 +295,12 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <div>
                     <label class="form-label">ປີເລີ່ມຕົ້ນ / Term Start</label>
-                    <input type="number" wire:model="term_start" placeholder="2024" min="1900" max="2100"
+                    <input type="number" wire:model="term_start" placeholder="2024" min="1901" max="2155"
                         class="form-input" />
                 </div>
                 <div>
                     <label class="form-label">ປີສິ້ນສຸດ / Term End</label>
-                    <input type="number" wire:model="term_end" placeholder="2028" min="1900" max="2100"
+                    <input type="number" wire:model="term_end" placeholder="2028" min="1901" max="2155"
                         class="form-input" />
                 </div>
             </div>
@@ -371,9 +371,9 @@
                                 </p>
                                 <p class="text-amber-700 mt-0.5">
                                     @if ($pansaAutoCalc === 0)
-                                        ຍັງບໍ່ຄົບພັນສາທຳອິດ (ນ້ອຍກວ່າ 1 ພັນສາ)
+                                        ຍັງບໍ່ຄົບພັນສາທຳອິດ (ອອກພັນສາຍັງບໍ່ທັນຮອດ)
                                     @else
-                                        ນັບຈາກ ເຂົ້າພັນສາ ຫາ ອອກພັນສາ ປີ {{ \Carbon\Carbon::today()->year }}
+                                        ນັບຈາກ ເຂົ້າພັນສາ ຫາ ອອກພັນສາ ປີ {{ $pansaLastYear ?? \Carbon\Carbon::today()->year - 1 }}
                                     @endif
                                 </p>
                                 <p class="text-amber-600/70 mt-0.5">
