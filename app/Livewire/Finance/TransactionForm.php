@@ -15,6 +15,7 @@ class TransactionForm extends Component
     public ?int $transactionId = null;
 
     public string $type              = 'income';
+    public string $currency          = 'LAK';
     public string $category_id       = '';
     public string $amount            = '';
     public string $description       = '';
@@ -28,8 +29,9 @@ class TransactionForm extends Component
     {
         return [
             'type'             => ['required', 'in:income,expense'],
+            'currency'         => ['required', 'in:LAK,THB,USD,CNY'],
             'category_id'      => ['required', 'exists:finance_categories,id'],
-            'amount'           => ['required', 'numeric', 'min:1', 'max:999999999'],
+            'amount'           => ['required', 'numeric', 'min:0.01'],
             'description'      => ['required', 'string', 'min:3', 'max:1000'],
             'reference_number' => ['nullable', 'string', 'max:100'],
             'transaction_date' => ['required', 'date', 'before_or_equal:today'],
@@ -41,18 +43,19 @@ class TransactionForm extends Component
     protected function messages(): array
     {
         return [
-            'type.required'             => __('messages.validation_required'),
-            'category_id.required'      => __('messages.validation_required'),
-            'category_id.exists'        => __('messages.validation_invalid'),
-            'amount.required'           => __('messages.validation_required'),
-            'amount.numeric'            => __('messages.validation_numeric'),
-            'amount.min'                => __('messages.validation_min_amount'),
-            'description.required'      => __('messages.validation_required'),
-            'description.min'           => __('messages.validation_min_length'),
-            'transaction_date.required' => __('messages.validation_required'),
+            'type.required'                    => __('messages.validation_required'),
+            'currency.required'                => __('messages.validation_required'),
+            'category_id.required'             => __('messages.validation_required'),
+            'category_id.exists'               => __('messages.validation_invalid'),
+            'amount.required'                  => __('messages.validation_required'),
+            'amount.numeric'                   => __('messages.validation_numeric'),
+            'amount.min'                       => __('messages.validation_min_amount'),
+            'description.required'             => __('messages.validation_required'),
+            'description.min'                  => __('messages.validation_min_length'),
+            'transaction_date.required'        => __('messages.validation_required'),
             'transaction_date.before_or_equal' => __('messages.validation_date_not_future'),
-            'receipt.mimes'             => __('messages.validation_file_type'),
-            'receipt.max'               => __('messages.validation_file_size'),
+            'receipt.mimes'                    => __('messages.validation_file_type'),
+            'receipt.max'                      => __('messages.validation_file_size'),
         ];
     }
 
@@ -66,13 +69,17 @@ class TransactionForm extends Component
         if ($id) {
             $tx = FinanceTransaction::findOrFail($id);
             $this->type             = $tx->type;
+            $this->currency         = $tx->currency ?? 'LAK';
             $this->category_id      = (string) $tx->category_id;
-            $this->amount           = (string) $tx->amount;
             $this->description      = $tx->description;
             $this->reference_number = $tx->reference_number ?? '';
             $this->transaction_date = $tx->transaction_date->format('Y-m-d');
             $this->note             = $tx->note ?? '';
             $this->existingReceipt  = $tx->receipt_path;
+
+            // Format amount for display according to the currency's decimal convention
+            $cfg          = FinanceTransaction::CURRENCIES[$this->currency];
+            $this->amount = number_format((float) $tx->amount, $cfg['decimals'], '.', '');
         }
     }
 
@@ -81,12 +88,20 @@ class TransactionForm extends Component
         $this->category_id = '';
     }
 
+    /** Reset amount when currency changes — amounts are not comparable across currencies. */
+    public function updatedCurrency(): void
+    {
+        $this->amount = '';
+    }
+
     public function save(): void
     {
         $this->validate();
 
-        $receiptPath = $this->existingReceipt;
+        // Strip formatting before storing
+        $rawAmount = (float) str_replace(',', '', $this->amount);
 
+        $receiptPath = $this->existingReceipt;
         if ($this->receipt) {
             if ($receiptPath) {
                 Storage::disk('public')->delete($receiptPath);
@@ -96,14 +111,14 @@ class TransactionForm extends Component
 
         $data = [
             'type'             => $this->type,
+            'currency'         => $this->currency,
             'category_id'      => (int) $this->category_id,
-            'amount'           => (float) str_replace(',', '', $this->amount),
+            'amount'           => $rawAmount,
             'description'      => trim($this->description),
             'reference_number' => trim($this->reference_number) ?: null,
             'transaction_date' => $this->transaction_date,
             'receipt_path'     => $receiptPath,
             'note'             => trim($this->note) ?: null,
-            'created_by'       => $this->transactionId ? null : auth()->id(),
         ];
 
         if ($this->transactionId) {
@@ -130,9 +145,13 @@ class TransactionForm extends Component
             ->ordered()
             ->get();
 
-        $title = $this->transactionId ? __('messages.edit_transaction') : __('messages.add_transaction');
+        $currencies = FinanceTransaction::CURRENCIES;
+        $presets    = FinanceTransaction::PRESETS;
+        $title      = $this->transactionId
+            ? __('messages.edit_transaction')
+            : __('messages.add_transaction');
 
-        return view('livewire.finance.transaction-form', compact('categories'))
+        return view('livewire.finance.transaction-form', compact('categories', 'currencies', 'presets'))
             ->layout('components.layouts.app', ['title' => $title]);
     }
 }

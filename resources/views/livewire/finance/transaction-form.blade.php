@@ -23,7 +23,7 @@
                     <input type="radio" wire:model.live="type" value="income" class="sr-only peer" />
                     <div class="flex items-center gap-3 px-4 py-3 rounded-xl border-2 border-outline-variant
                                 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all">
-                        <div class="w-8 h-8 rounded-full bg-green-100 peer-checked:bg-green-200 flex items-center justify-center">
+                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
                             <span class="material-symbols-outlined text-green-600 text-base">trending_up</span>
                         </div>
                         <div>
@@ -49,7 +49,40 @@
             @error('type') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
         </div>
 
+        {{-- Currency Selector --}}
+        <div class="bg-surface-container rounded-2xl border border-outline-variant p-5">
+            <label class="block text-label-md font-bold text-on-surface mb-3">ສະກຸນເງີນ <span class="text-error">*</span></label>
+            <div class="grid grid-cols-4 gap-2">
+                @foreach ($currencies as $code => $cfg)
+                    <label class="cursor-pointer">
+                        <input type="radio" wire:model.live="currency" value="{{ $code }}" class="sr-only peer" />
+                        <div class="flex flex-col items-center gap-1 py-3 px-2 rounded-xl border-2 border-outline-variant
+                                    peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-center">
+                            <span class="text-xl font-bold {{ $currency === $code ? 'text-primary' : 'text-on-surface-variant' }}">{{ $cfg['symbol'] }}</span>
+                            <span class="text-[11px] font-bold {{ $currency === $code ? 'text-primary' : 'text-on-surface' }}">{{ $code }}</span>
+                            <span class="text-[10px] {{ $currency === $code ? 'text-primary/70' : 'text-on-surface-variant' }}">{{ $cfg['name_lo'] }}</span>
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+            @error('currency') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
+        </div>
+
         {{-- Main Fields --}}
+        @php
+            $currencyCfg    = $currencies[$currency];
+            $isLak          = $currency === 'LAK';
+            $amtDecimals    = $isLak ? 0 : 2;
+            $currentPresets = $presets[$currency] ?? $presets['LAK'];
+
+            // Build initial display value (formatted, with comma separators)
+            $amtDisplay = '';
+            if ($amount !== '' && $amount !== null) {
+                $rawNum     = (float) str_replace(',', '', $amount);
+                $amtDisplay = number_format($rawNum, $amtDecimals, '.', ',');
+            }
+        @endphp
+
         <div class="bg-surface-container rounded-2xl border border-outline-variant p-5 space-y-4">
 
             {{-- Category --}}
@@ -68,43 +101,86 @@
 
             {{-- Amount --}}
             <div x-data="{
-                display: '{{ $amount ? number_format((float) str_replace(',', '', $amount), 0, '.', ',') : '' }}',
-                fmt(n) { return n ? String(parseInt(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : ''; },
-                isPreset(val) { return this.display === this.fmt(val); },
-                setPreset(val) { this.display = this.fmt(val); $wire.set('amount', String(val)); },
-                onInput(e) {
-                    let raw = e.target.value.replace(/[^0-9]/g, '');
-                    this.display = this.fmt(raw);
-                    $nextTick(() => { e.target.value = this.display; });
-                    $wire.set('amount', raw);
-                }
-            }">
-                <label class="block text-label-md font-bold text-on-surface mb-1.5">{{ __('messages.amount') }} (ກີບ) <span class="text-error">*</span></label>
+                    display: @js($amtDisplay),
+                    isLak:   @js($isLak),
+                    dec:     @js($amtDecimals),
 
-                {{-- Quick preset amounts --}}
+                    fmt(raw) {
+                        if (raw === '' || raw === null) return '';
+                        let n = parseFloat(raw);
+                        if (isNaN(n)) return '';
+                        if (this.isLak) {
+                            return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        }
+                        let parts = n.toFixed(2).split('.');
+                        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                        return parts.join('.');
+                    },
+                    isPreset(val) {
+                        let raw = parseFloat(String(this.display).replace(/,/g, '')) || 0;
+                        return Math.abs(raw - val) < 0.001;
+                    },
+                    setPreset(val) {
+                        this.display = this.fmt(String(val));
+                        $refs.amtInput.value = this.display;
+                        $wire.set('amount', String(val));
+                    },
+                    onInput(e) {
+                        let raw = e.target.value.replace(/[^0-9.]/g, '');
+                        if (!this.isLak) {
+                            let parts = raw.split('.');
+                            if (parts.length > 2) raw = parts[0] + '.' + parts.slice(1).join('');
+                            if (parts.length === 2) raw = parts[0] + '.' + parts[1].slice(0, 2);
+                        } else {
+                            raw = raw.replace(/\./g, '');
+                        }
+                        if (raw === '' || raw === '.') {
+                            this.display = '';
+                            e.target.value = '';
+                            $wire.set('amount', '');
+                            return;
+                        }
+                        this.display = this.fmt(raw);
+                        e.target.value = this.display;
+                        $wire.set('amount', raw);
+                    }
+                }"
+                x-init="$watch('$wire.currency', () => { display = ''; $wire.set('amount', ''); $nextTick(() => { if ($refs.amtInput) $refs.amtInput.value = ''; }); })">
+
+                <label class="block text-label-md font-bold text-on-surface mb-1.5">
+                    {{ __('messages.amount') }}
+                    <span class="font-normal text-on-surface-variant">({{ $currencyCfg['symbol'] }} {{ $currencyCfg['name_lo'] }})</span>
+                    <span class="text-error">*</span>
+                </label>
+
+                {{-- Quick presets --}}
                 <div class="flex flex-wrap gap-1.5 mb-2">
-                    @foreach ([1000000, 5000000, 10000000, 50000000, 100000000] as $preset)
+                    @foreach ($currentPresets as $preset)
                         <button type="button"
                                 @click="setPreset({{ $preset }})"
                                 :class="isPreset({{ $preset }})
                                     ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
                                     : 'border-outline-variant bg-surface text-on-surface-variant hover:border-primary/40 hover:bg-primary/5 hover:text-primary'"
                                 class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all leading-none">
-                            {{ number_format($preset, 0, '.', ',') }}
+                            {{ number_format($preset, $amtDecimals, '.', ',') }}
                         </button>
                     @endforeach
                 </div>
 
-                {{-- Amount input with live comma formatting --}}
+                {{-- Amount input --}}
                 <div class="relative">
-                    <input type="text" inputmode="numeric"
-                           :value="display"
+                    <input type="text"
+                           x-ref="amtInput"
+                           :inputmode="isLak ? 'numeric' : 'decimal'"
+                           value="{{ $amtDisplay }}"
                            @input="onInput($event)"
                            @focus="$el.select()"
-                           placeholder="0"
-                           class="w-full pl-3 pr-16 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
+                           placeholder="{{ $isLak ? '0' : '0.00' }}"
+                           class="w-full pl-3 pr-14 py-2.5 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20
                                   {{ $errors->has('amount') ? 'border-error ring-2 ring-error/20' : '' }}" />
-                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant font-bold">ກີບ</span>
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-label-sm text-on-surface-variant font-bold select-none">
+                        {{ $currencyCfg['symbol'] }}
+                    </span>
                 </div>
                 @error('amount') <p class="mt-1 text-body-sm text-error">{{ $message }}</p> @enderror
             </div>
@@ -154,8 +230,7 @@
                 <div class="flex items-center gap-3 p-3 bg-surface rounded-xl border border-outline-variant mb-3">
                     <span class="material-symbols-outlined text-primary">receipt</span>
                     <span class="text-body-sm text-on-surface flex-1">{{ basename($existingReceipt) }}</span>
-                    <button type="button" wire:click="removeReceipt"
-                            class="text-error hover:text-error/80 transition-colors">
+                    <button type="button" wire:click="removeReceipt" class="text-error hover:text-error/80 transition-colors">
                         <span class="material-symbols-outlined text-base">delete</span>
                     </button>
                 </div>

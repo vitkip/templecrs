@@ -14,10 +14,40 @@ class FinanceTransaction extends Model
 
     protected $table = 'finance_transactions';
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // Currency configuration
+    // Amounts are stored in their native currency — NO conversion.
+    // Reports and totals are always separated by currency.
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Supported currencies.
+     * - symbol   : display symbol
+     * - name_lo  : Lao name shown in UI
+     * - decimals : decimal places for displaying amounts
+     */
+    public const CURRENCIES = [
+        'LAK' => ['symbol' => '₭',  'name_lo' => 'ກີບ',   'decimals' => 0],
+        'THB' => ['symbol' => '฿',  'name_lo' => 'ບາດ',   'decimals' => 2],
+        'USD' => ['symbol' => '$',  'name_lo' => 'ໂດລາ', 'decimals' => 2],
+        'CNY' => ['symbol' => '¥',  'name_lo' => 'ຢວນ',   'decimals' => 2],
+    ];
+
+    /** Quick-select preset amounts per currency for the transaction form. */
+    public const PRESETS = [
+        'LAK' => [1000000, 5000000, 10000000, 50000000, 100000000],
+        'THB' => [100, 500, 1000, 5000, 10000],
+        'USD' => [10, 50, 100, 500, 1000],
+        'CNY' => [50, 200, 500, 1000, 5000],
+    ];
+
+    // ──────────────────────────────────────────────────────────────────────────
+
     protected $fillable = [
         'category_id',
         'created_by',
         'type',
+        'currency',
         'amount',
         'description',
         'reference_number',
@@ -31,12 +61,34 @@ class FinanceTransaction extends Model
         'transaction_date' => 'date',
     ];
 
-    /* ───── Accessors ───── */
+    /* ───── Currency helpers ───── */
 
+    public function getCurrencyConfigAttribute(): array
+    {
+        return self::CURRENCIES[$this->currency ?? 'LAK'];
+    }
+
+    public function getCurrencySymbolAttribute(): string
+    {
+        return self::CURRENCIES[$this->currency ?? 'LAK']['symbol'];
+    }
+
+    public function getCurrencyNameAttribute(): string
+    {
+        return self::CURRENCIES[$this->currency ?? 'LAK']['name_lo'];
+    }
+
+    /**
+     * Format amount with its native currency name, e.g. "100.00 ໂດລາ" / "1,000,000 ກີບ"
+     */
     public function getAmountFormattedAttribute(): string
     {
-        return number_format((float) $this->amount, 0, '.', ',') . ' ກີບ';
+        $cfg = $this->currency_config;
+        return number_format((float) $this->amount, $cfg['decimals'], '.', ',')
+             . ' ' . $cfg['name_lo'];
     }
+
+    /* ───── Other accessors ───── */
 
     public function getTransactionDateFormattedAttribute(): string
     {

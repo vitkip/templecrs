@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\FinanceTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FinanceReportController extends Controller
 {
@@ -21,48 +20,72 @@ class FinanceReportController extends Controller
 
         [$from, $to] = $this->getDateRange($period, $reportYear, $reportMonth, $dateFrom, $dateTo);
 
-        $totalIncome  = FinanceTransaction::income()->dateBetween($from, $to)->sum('amount');
-        $totalExpense = FinanceTransaction::expense()->dateBetween($from, $to)->sum('amount');
-        $netBalance   = $totalIncome - $totalExpense;
+        $currencies = FinanceTransaction::CURRENCIES;
 
-        $byCategory = FinanceTransaction::with('category')
-            ->selectRaw('category_id, type, SUM(amount) as total, COUNT(*) as count')
+        // Totals grouped by currency — no cross-currency conversion
+        $totalsRaw = FinanceTransaction::selectRaw('currency, type, SUM(amount) as total')
             ->dateBetween($from, $to)
-            ->groupBy('category_id', 'type')
-            ->get()
-            ->groupBy('type');
+            ->groupBy('currency', 'type')
+            ->get();
 
-        $transactions = FinanceTransaction::with('category', 'creator')
+        $byCurrencyMap = [];
+        foreach (array_keys($currencies) as $code) {
+            $inc = $totalsRaw->where('type', 'income') ->where('currency', $code)->first();
+            $exp = $totalsRaw->where('type', 'expense')->where('currency', $code)->first();
+            if ($inc || $exp) {
+                $byCurrencyMap[$code] = [
+                    'income'  => (float) ($inc->total ?? 0),
+                    'expense' => (float) ($exp->total ?? 0),
+                    'balance' => (float) ($inc->total ?? 0) - (float) ($exp->total ?? 0),
+                ];
+            }
+        }
+
+        // Category breakdown with currency
+        $byCategoryRaw = FinanceTransaction::with('category')
+            ->selectRaw('category_id, type, currency, SUM(amount) as total, COUNT(*) as count')
+            ->dateBetween($from, $to)
+            ->groupBy('category_id', 'type', 'currency')
+            ->get();
+
+        $byCategory = [];
+        foreach (['income', 'expense'] as $t) {
+            foreach (array_keys($currencies) as $code) {
+                $rows = $byCategoryRaw->where('type', $t)->where('currency', $code);
+                if ($rows->isNotEmpty()) {
+                    $byCategory[$t][$code] = $rows->sortByDesc('total')->values();
+                }
+            }
+        }
+
+        $transactions = FinanceTransaction::with('category')
             ->dateBetween($from, $to)
             ->orderBy('transaction_date')
             ->get();
 
-        $orgName    = \App\Models\Setting::get('org_name_lo',      'ກຳມາທິການ ສາທາຣະນູປະການ ສູນກາງ ອພສ');
-        $orgAddress = \App\Models\Setting::get('org_address_lo',   'ວັດທາດຫຼວງເໜືອ ນະຄອນຫຼວງວຽງຈັນ');
-        $orgPhone   = \App\Models\Setting::get('org_phone',        '');
-        $orgEmail   = \App\Models\Setting::get('org_email',        '');
-        $orgWebsite = \App\Models\Setting::get('org_website',      '');
+        $orgName    = \App\Models\Setting::get('org_name_lo',    'ກຳມາທິການ ສາທາຣະນູປະການ ສູນກາງ ອພສ');
+        $orgAddress = \App\Models\Setting::get('org_address_lo', 'ວັດທາດຫຼວງເໜືອ ນະຄອນຫຼວງວຽງຈັນ');
+        $orgPhone   = \App\Models\Setting::get('org_phone',      '');
+        $orgEmail   = \App\Models\Setting::get('org_email',      '');
+        $orgWebsite = \App\Models\Setting::get('org_website',    '');
         $logoKey    = \App\Models\Setting::get('org_logo_url');
         $orgLogoPath = $logoKey && file_exists(storage_path('app/public/' . $logoKey))
             ? storage_path('app/public/' . $logoKey)
             : null;
 
         $pdf = Pdf::loadView('finance.report-pdf', compact(
-            'from', 'to', 'totalIncome', 'totalExpense', 'netBalance',
-            'byCategory', 'transactions', 'orgName', 'orgAddress',
-            'orgPhone', 'orgEmail', 'orgWebsite', 'orgLogoPath', 'period',
-            'reportYear', 'reportMonth'
+            'from', 'to',
+            'byCurrencyMap', 'byCategory',
+            'transactions', 'currencies',
+            'orgName', 'orgAddress', 'orgPhone', 'orgEmail', 'orgWebsite', 'orgLogoPath',
+            'period', 'reportYear', 'reportMonth'
         ))
         ->setBasePath(base_path())
         ->setPaper('a4', 'portrait');
 
-        $filename = 'finance-report-' . $from . '-to-' . $to . '.pdf';
+        if (ob_get_length()) ob_end_clean();
 
-        if (ob_get_length()) {
-            ob_end_clean();
-        }
-
-        return $pdf->stream($filename);
+        return $pdf->stream('finance-report-' . $from . '-to-' . $to . '.pdf');
     }
 
     private function getDateRange(string $period, int $year, int $month, ?string $from, ?string $to): array
