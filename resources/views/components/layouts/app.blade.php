@@ -39,14 +39,29 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" />
     @endif
 
-    <!-- Phetsarath + Noto: self-hosted via build | Material Symbols: jsDelivr CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
+    {{-- ══ Performance: preconnect + font preloads ══ --}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="dns-prefetch" href="https://cdn.datatables.net" />
+    <link rel="dns-prefetch" href="https://code.jquery.com" />
+    <link rel="preload" as="font" type="font/woff2" href="/build/assets/phetsarath-lao-400-normal-cx_UrP9X.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/build/assets/noto-sans-lao-lao-400-normal-CNKshTz3.woff2" crossorigin />
+
+    {{-- Material Symbols: pinned version + async (non-render-blocking) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css"
+          media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css" /></noscript>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    <link rel="stylesheet" href="//cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css" />
-    <link rel="stylesheet" href="//cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    {{-- DataTables CSS: async loaded (non-render-blocking) --}}
+    <link rel="stylesheet" href="//cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css"
+          media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css"
+          media="print" onload="this.media='all'" />
+    {{-- Chart.js: defer to avoid render-blocking --}}
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    @stack('styles')
     @stack('head')
 </head>
 <body class="text-body-md text-on-surface antialiased"
@@ -490,9 +505,9 @@
     </nav>
 
     @livewireScripts
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="//cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
+    <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script defer src="//cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <script defer src="//cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
     @stack('scripts')
 </body>
 </html>

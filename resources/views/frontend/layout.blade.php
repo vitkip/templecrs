@@ -42,10 +42,19 @@
         <link rel="icon" href="{{ asset('favicon.ico') }}" />
     @endif
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
+    {{-- ══ Performance: preconnect + font preloads ══ --}}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="preload" as="font" type="font/woff2" href="/build/assets/phetsarath-lao-400-normal-cx_UrP9X.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/build/assets/noto-sans-lao-lao-400-normal-CNKshTz3.woff2" crossorigin />
+
+    {{-- Material Symbols: pinned version + async (non-render-blocking) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css"
+          media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css" /></noscript>
 
     <!-- Alpine.js CDN for public frontend page interactive components -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

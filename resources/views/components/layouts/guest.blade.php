@@ -8,8 +8,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@latest/outlined.css" />
+    {{-- Material Symbols: pinned version + async (non-render-blocking) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css"
+          media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-symbols@0.44.12/outlined.css" /></noscript>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles

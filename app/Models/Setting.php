@@ -10,6 +10,20 @@ class Setting extends Model
 
     private static array $cache = [];
 
+    /**
+     * Preload all settings into the in-memory cache with a single query.
+     * Call this once per request (e.g. in AppServiceProvider::boot())
+     * to avoid N+1 queries when Setting::get() is called in Blade templates.
+     */
+    public static function preloadAll(): void
+    {
+        if (!empty(self::$cache)) {
+            return;
+        }
+
+        static::all()->each(fn($setting) => self::$cache[$setting->key] = $setting->value);
+    }
+
     public static function get(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, self::$cache)) {

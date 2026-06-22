@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Preload all settings in a single query to avoid N+1 in Blade templates
+        Setting::preloadAll();
+
         HeroSlide::observe(FrontendCacheObserver::class);
         News::observe(FrontendCacheObserver::class);
         Personnel::observe(FrontendCacheObserver::class);

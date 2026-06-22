@@ -95,10 +95,14 @@ class FrontendController extends Controller
 
     public function personnelIndex(): View
     {
-        $personnel = Personnel::active()->ordered()->with('department')->get();
-        $departments = Department::active()->ordered()
-            ->whereHas('personnel', fn($q) => $q->where('is_active', true))
-            ->get();
+        $personnel = Cache::remember('frontend_personnel_all', 3600, fn() =>
+            Personnel::active()->ordered()->with('department')->get()
+        );
+        $departments = Cache::remember('frontend_personnel_depts', 3600, fn() =>
+            Department::active()->ordered()
+                ->whereHas('personnel', fn($q) => $q->where('is_active', true))
+                ->get()
+        );
 
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
             'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
@@ -123,9 +127,11 @@ class FrontendController extends Controller
     {
         $person = Personnel::active()->with('department')->findOrFail($id);
 
-        $otherPersonnel = Personnel::active()->ordered()->with('department')
-            ->where('id', '!=', $id)
-            ->limit(4)->get();
+        $otherPersonnel = Cache::remember("frontend_personnel_related_{$id}", 3600, fn() =>
+            Personnel::active()->ordered()->with('department')
+                ->where('id', '!=', $id)
+                ->limit(4)->get()
+        );
 
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
             'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
@@ -148,10 +154,14 @@ class FrontendController extends Controller
 
     public function documentsIndex(): View
     {
-        $documents = Document::active()->ordered()->with('department')->get();
-        $departments = Department::active()->ordered()
-            ->whereHas('documents', fn($q) => $q->where('is_active', true))
-            ->get();
+        $documents = Cache::remember('frontend_documents_all', 1800, fn() =>
+            Document::active()->ordered()->with('department')->get()
+        );
+        $departments = Cache::remember('frontend_documents_depts', 1800, fn() =>
+            Department::active()->ordered()
+                ->whereHas('documents', fn($q) => $q->where('is_active', true))
+                ->get()
+        );
 
         $totalDownloads = $documents->sum('download_count');
 

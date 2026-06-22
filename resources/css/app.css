@@ -6,6 +6,10 @@
 @import '@fontsource/noto-sans-lao/400.css';
 @import '@fontsource/noto-sans-lao/700.css';
 
+/* Force font-display: swap — prevent invisible text during load (FOIT) */
+@font-face { font-family: 'Phetsarath'; font-display: swap; }
+@font-face { font-family: 'Noto Sans Lao'; font-display: swap; }
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../../vendor/livewire/livewire/src/**/*.php';

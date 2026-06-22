@@ -54,8 +54,10 @@
                      x-transition:leave-start="opacity-100"
                      x-transition:leave-end="opacity-0"
                      class="absolute inset-0 overflow-hidden">
-                    <div class="absolute inset-0 bg-cover bg-center hero-ken-burns"
-                         style="background-image: url('{{ $slide->image_url }}');"></div>
+                    <img src="{{ $slide->image_url }}" alt="{{ $slide->title ?? '' }}"
+                         loading="{{ $loop->first ? 'eager' : 'lazy' }}"
+                         fetchpriority="{{ $loop->first ? 'high' : 'auto' }}"
+                         class="absolute inset-0 w-full h-full object-cover object-center hero-ken-burns" />
                 </div>
             @endforeach
         </div>
