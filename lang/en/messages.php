@@ -273,4 +273,25 @@ return [
     'monthly_summary'   => 'Monthly Summary',
     'quick_actions'     => 'Quick Actions',
     'news_add'          => 'Add News',
+
+    // eBook (EPUB)
+    'ebook_download' => 'Download eBook',
+    'ebook_export_all' => 'All Documents',
+    'ebook_export_filtered' => 'Export Filtered',
+    'ebook_generating' => 'Generating eBook...',
+    'ebook_single' => 'eBook',
+    'ebook_no_docs' => 'No documents to generate eBook',
+
+    // Online Reader
+    'read_online'       => 'Read Online',
+    'read_pdf'          => 'View PDF',
+    'ebook_read_online' => 'Read eBook Online',
+    'reader_loading'    => 'Loading document...',
+    'reader_prev'       => 'Previous',
+    'reader_next'       => 'Next',
+    'reader_close'      => 'Close',
+    'reader_chapter'    => 'Chapter',
+    'reader_of'         => 'of',
+    'reader_download_epub' => 'Download EPUB',
+    'reader_no_pdf'     => 'This document cannot be previewed in browser.',
 ];

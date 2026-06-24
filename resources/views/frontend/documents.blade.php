@@ -31,6 +31,8 @@
             'file_name'    => $d->file_name ?? '',
             'has_file'       => (bool) $d->file_path,
             'download_url'   => $d->file_path ? route('frontend.document.download', $d->id) : null,
+            'is_pdf'         => $d->file_path && (str_contains($d->file_type ?? '', 'pdf') || str_ends_with(strtolower($d->file_name ?? ''), '.pdf')),
+            'view_url'       => $d->file_path ? route('frontend.document.view', $d->id) : null,
             'download_count' => (int) $d->download_count,
             'search_text'  => strtolower(implode(' ', array_filter([
                 $d->title_lo, $d->title_en,
@@ -101,6 +103,7 @@
             </div>
             @endif
         </div>
+
     </div>
 
     {{-- Bottom Wave --}}
@@ -146,6 +149,20 @@
             if (curr <= 4) return [1, 2, 3, 4, 5, '...', total];
             if (curr >= total - 3) return [1, '...', total-4, total-3, total-2, total-1, total];
             return [1, '...', curr-1, curr, curr+1, '...', total];
+        },
+        pdfModal: false,
+        pdfUrl: '',
+        pdfTitle: '',
+        openPdf(url, title) {
+            this.pdfUrl = url;
+            this.pdfTitle = title;
+            this.pdfModal = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closePdf() {
+            this.pdfModal = false;
+            this.pdfUrl = '';
+            document.body.style.overflow = '';
         },
         init() {
             this.$watch('search',     () => { this.currentPage = 1; });
@@ -236,7 +253,7 @@
         @endif
 
         {{-- Results count --}}
-        <div class="text-center">
+        <div class="flex items-center justify-center gap-3 flex-wrap">
             <span class="text-xs text-on-surface-variant">
                 <span x-text="Math.min((currentPage-1)*perPage+1, filtered.length)" class="font-bold text-primary"></span>–<span x-text="Math.min(currentPage*perPage, filtered.length)" class="font-bold text-primary"></span>
                 /
@@ -312,8 +329,19 @@
                         </div>
                     </div>
 
-                    {{-- Download Button --}}
-                    <div class="shrink-0 self-center">
+                    {{-- Action Buttons --}}
+                    <div class="shrink-0 self-center flex items-center gap-2">
+                        {{-- View PDF inline (PDF only) --}}
+                        <template x-if="doc.is_pdf && doc.view_url">
+                            <button @click="openPdf(doc.view_url, doc.title)"
+                                    class="flex items-center gap-1.5 px-3 py-2 bg-red-50 text-red-700 rounded-xl text-label-sm font-bold border border-red-200 hover:bg-red-100 hover:border-red-300 transition-all duration-200 shadow-sm"
+                                    :title="'{{ __('messages.read_pdf') }}'">
+                                <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                                <span class="hidden sm:inline text-xs">{{ __('messages.read_pdf') }}</span>
+                            </button>
+                        </template>
+
+                        {{-- Download Button --}}
                         <template x-if="doc.has_file && doc.download_url">
                             <a :href="doc.download_url"
                                class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-label-sm font-bold hover:bg-primary-container transition-all btn-press shadow-sm shadow-primary/20">
@@ -395,6 +423,52 @@
             {{ __('messages.clear_filters') }}
         </button>
     </div>
+
+{{-- ══════════════════════════════════════════════════════════════
+     PDF VIEWER MODAL
+══════════════════════════════════════════════════════════════ --}}
+<div x-show="pdfModal"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0"
+     @keydown.escape.window="closePdf()"
+     class="fixed inset-0 z-50 flex flex-col"
+     style="background: rgba(10,15,28,0.92); backdrop-filter: blur(4px);">
+
+    {{-- Modal toolbar --}}
+    <div class="flex items-center gap-3 px-4 py-3 shrink-0"
+         style="background: linear-gradient(135deg, #1a3a5c, #243f66); border-bottom: 1px solid rgba(212,175,55,0.2);">
+        <span class="material-symbols-outlined text-red-400 text-xl">picture_as_pdf</span>
+        <span class="flex-1 text-white font-semibold text-sm truncate" x-text="pdfTitle"></span>
+        <a :href="pdfUrl" target="_blank"
+           class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-400/30 text-amber-300 hover:bg-amber-500/30 text-xs font-bold transition-colors">
+            <span class="material-symbols-outlined text-sm">open_in_new</span>
+            <span class="hidden sm:inline">{{ app()->getLocale() === 'lo' ? 'ເປີດໃນແທັບໃໝ່' : 'Open in New Tab' }}</span>
+        </a>
+        <a :href="pdfUrl + ''" download
+           class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 text-xs font-bold transition-colors">
+            <span class="material-symbols-outlined text-sm">download</span>
+            <span class="hidden sm:inline">{{ __('messages.download') }}</span>
+        </a>
+        <button @click="closePdf()"
+                class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/10 text-white/80 hover:bg-white/20 text-xs font-bold transition-colors">
+            <span class="material-symbols-outlined text-base">close</span>
+            <span class="hidden sm:inline">{{ __('messages.reader_close') }}</span>
+        </button>
+    </div>
+
+    {{-- PDF iframe --}}
+    <div class="flex-1 overflow-hidden p-2 sm:p-4 flex flex-col">
+        <template x-if="pdfModal">
+            <iframe :src="pdfUrl"
+                    class="w-full flex-1 rounded-xl border border-white/10 shadow-2xl"
+                    title="PDF Viewer"></iframe>
+        </template>
+    </div>
+</div>
 
 </div>
 

@@ -318,7 +318,7 @@
             <!-- Temple -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                    <label class="form-label">ວັດທີ່ຢູ່ <span
+                    <label class="form-label">ທີ່ຢູ່ປະຈຸບັນ <span
                             class="text-xs text-on-surface-variant">(ລາວ)</span></label>
                     <input type="text" wire:model="current_temple_lo" placeholder="ຊື່ວັດ..." class="form-input" />
                 </div>
@@ -373,7 +373,8 @@
                                     @if ($pansaAutoCalc === 0)
                                         ຍັງບໍ່ຄົບພັນສາທຳອິດ (ອອກພັນສາຍັງບໍ່ທັນຮອດ)
                                     @else
-                                        ນັບຈາກ ເຂົ້າພັນສາ ຫາ ອອກພັນສາ ປີ {{ $pansaLastYear ?? \Carbon\Carbon::today()->year - 1 }}
+                                        ນັບຈາກ ເຂົ້າພັນສາ ຫາ ອອກພັນສາ ປີ
+                                        {{ $pansaLastYear ?? \Carbon\Carbon::today()->year - 1 }}
                                     @endif
                                 </p>
                                 <p class="text-amber-600/70 mt-0.5">

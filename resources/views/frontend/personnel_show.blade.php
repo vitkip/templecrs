@@ -322,7 +322,7 @@
                                         <span class="material-symbols-outlined shrink-0"
                                             style="font-size:16px; color:{{ $isMonk ? '#C8953A' : '#7C4D0F' }};">temple_buddhist</span>
                                         <h2 class="font-bold tracking-widest uppercase"
-                                            style="font-size:11px; color:#3D2A12; letter-spacing:0.14em;">ວັດຢູ່ປະຈຸບັນ</h2>
+                                            style="font-size:11px; color:#3D2A12; letter-spacing:0.14em;">ທີ່ຢູ່ປະຈຸບັນ</h2>
                                         <div class="flex-1 h-px"
                                             style="background:linear-gradient(to right, rgba(200,149,58,0.28), transparent);"></div>
                                     </div>

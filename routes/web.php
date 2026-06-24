@@ -45,6 +45,7 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/committee', [FrontendController::class, 'personnelIndex'])->name('frontend.personnel');
     Route::get('/committee/{id}', [FrontendController::class, 'personnelShow'])->name('frontend.personnel.show');
     Route::get('/library', [FrontendController::class, 'documentsIndex'])->name('frontend.documents');
+
     Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
     Route::get('/library/{id}/download', function (int $id) {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
@@ -56,6 +57,21 @@ Route::middleware([SetLocale::class])->group(function () {
             $document->file_name
         );
     })->name('frontend.document.download');
+
+    // Inline file viewer (PDF in browser) — no increment, view only
+    Route::get('/library/{id}/view', function (int $id) {
+        $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
+        abort_if(!$document->file_path, 404);
+        abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+        return response(
+            \Illuminate\Support\Facades\Storage::disk('local')->get($document->file_path),
+            200,
+            [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="' . basename($document->file_name) . '"'
+            ]
+        );
+    })->name('frontend.document.view');
 });
 
 // ─── Language Switcher (public — works for both frontend and admin) ───

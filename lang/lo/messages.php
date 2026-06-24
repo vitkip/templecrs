@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'app_name' => 'ລະບົບຈັດການອົງການພຣະພຸດທະສາສະໜາ',
+    'app_name' => 'ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ',
     'dashboard' => 'ໜ້າຫຼັກ',
-    'documents' => 'ເອກະສານ (DMS)',
+    'documents' => 'ເອກະສານ',
     'personnel' => 'ຄະນະກັມມາທິການ',
     'departments' => 'ພະແນກ',
     'reports' => 'ລາຍງານ',
@@ -76,7 +76,7 @@ return [
     'phone' => 'ໂທລະສັບ',
     'email' => 'ອີເມລ',
     'donation_section' => 'ຊ່ອງທາງບໍລິຈາກ',
-    'donation_subtitle' => 'ທ່ານສາມາດຮ່ວມບໍລິຈາກເພື່ອສົ່ງເສີມກິດຈະກຳທາງສາດສະໜາ',
+    'donation_subtitle' => 'ທ່ານສາມາດຮ່ວມບໍລິຈາກເພື່ອສົ່ງເສີມກິດຈະກຳທາງພຸດທະສາສະໜາ',
     'donate_bank_name' => 'ຊື່ທະນາຄານ',
     'donate_account_name' => 'ຊື່ເລກບັນຊີ',
     'donate_account_no' => 'ເລກບັນຊີ',
@@ -273,4 +273,25 @@ return [
     'monthly_summary' => 'ສະຫຼຸບປະຈຳເດືອນ',
     'quick_actions' => 'ດຳເນີນງານດ່ວນ',
     'news_add' => 'ເພີ່ມຂ່າວ',
+
+    // eBook (EPUB)
+    'ebook_download' => 'ດາວໂຫລດ eBook',
+    'ebook_export_all' => 'ລວມທຸກເອກະສານ',
+    'ebook_export_filtered' => 'ສົ່ງອອກຕາມ filter',
+    'ebook_generating' => 'ກຳລັງສ້າງ eBook...',
+    'ebook_single' => 'eBook',
+    'ebook_no_docs' => 'ບໍ່ມີເອກະສານສຳລັບສ້າງ eBook',
+
+    // Online Reader
+    'read_online' => 'ອ່ານອອນລາຍ',
+    'read_pdf' => 'ເບິ່ງ PDF',
+    'ebook_read_online' => 'ອ່ານ eBook ອອນລາຍ',
+    'reader_loading' => 'ກຳລັງໂຫລດ...',
+    'reader_prev' => 'ກ່ອນໜ້າ',
+    'reader_next' => 'ຕໍ່ໄປ',
+    'reader_close' => 'ປິດ',
+    'reader_chapter' => 'ບົດທີ',
+    'reader_of' => 'ຈາກ',
+    'reader_download_epub' => 'ດາວໂຫລດ EPUB',
+    'reader_no_pdf' => 'ເອກະສານນີ້ບໍ່ສາມາດສະແດງໃນບຼາວເຊີໄດ້.',
 ];

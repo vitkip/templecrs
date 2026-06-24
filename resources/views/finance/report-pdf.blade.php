@@ -49,11 +49,11 @@
     .org-left, .org-right { width: 45%; vertical-align: top; line-height: 1.4; }
     .org-left { text-align: left; }
     .org-right { text-align: right; }
-    .org-mid { width: 10%; vertical-align: middle; text-align: center; }
+    .org-mid { width: 14%; vertical-align: middle; text-align: center; }
     .org-parent { font-size: 10.5pt; text-align: center; }
     .org-name { font-size: 11pt; text-align: center; }
     .ref-line { font-size: 10.5pt; }
-    .seal-img { width: 60px; height: 60px; object-fit: contain; }
+    .seal-img { width: 100px; height: 100px; object-fit: contain; }
 
     /* ══ ຫົວຂໍ້ເອກະສານ ══ */
     .title-block { text-align: center; margin: 20px 0; line-height: 1.1; }
@@ -235,7 +235,7 @@
             @if ($orgLogoPath)
                 <img src="file://{{ $orgLogoPath }}" class="seal-img" />
             @else
-                <div style="width:60px;height:60px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:56px;font-size:22pt;color:#000;">☸</div>
+                <div style="width: 100px;height:100px;border:1.5px solid #000;border-radius:50%;display:inline-block;text-align:center;line-height:76px;font-size:28pt;color:#000;">☸</div>
             @endif
         </td>
         <td class="org-right" style="padding-top: 45pt;">
