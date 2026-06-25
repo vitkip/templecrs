@@ -219,6 +219,51 @@ class FrontendController extends Controller
         ));
     }
 
+    public function duties(): View
+    {
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        return view('frontend.duties', [
+            'orgName'   => $settings['org_name_lo'],
+            'orgNameEn' => $settings['org_name_en'],
+            'orgLogo'   => $settings['org_logo_url'],
+        ]);
+    }
+
+    public function guide(): View
+    {
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        return view('frontend.guide', [
+            'orgName'   => $settings['org_name_lo'],
+            'orgNameEn' => $settings['org_name_en'],
+            'orgLogo'   => $settings['org_logo_url'],
+        ]);
+    }
+
+    public function history(): View
+    {
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        return view('frontend.history', [
+            'orgName'   => $settings['org_name_lo'],
+            'orgNameEn' => $settings['org_name_en'],
+            'orgLogo'   => $settings['org_logo_url'],
+        ]);
+    }
+
     public function show(int $id): View
     {
         $newsItem = News::published()->with('category')->findOrFail($id);
