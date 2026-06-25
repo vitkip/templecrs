@@ -48,8 +48,8 @@ class FinanceReport extends Component
     {
         return match ($this->period) {
             'month'   => [
-                now()->setYear($this->reportYear)->setMonth($this->reportMonth)->startOfMonth()->format('Y-m-d'),
-                now()->setYear($this->reportYear)->setMonth($this->reportMonth)->endOfMonth()->format('Y-m-d'),
+                \Carbon\Carbon::createFromDate($this->reportYear, $this->reportMonth, 1)->startOfMonth()->format('Y-m-d'),
+                \Carbon\Carbon::createFromDate($this->reportYear, $this->reportMonth, 1)->endOfMonth()->format('Y-m-d'),
             ],
             'quarter' => $this->quarterRange(),
             'year'    => ["{$this->reportYear}-01-01", "{$this->reportYear}-12-31"],
@@ -65,8 +65,8 @@ class FinanceReport extends Component
         $start   = ($quarter - 1) * 3 + 1;
         $end     = $start + 2;
         return [
-            now()->setYear($this->reportYear)->setMonth($start)->startOfMonth()->format('Y-m-d'),
-            now()->setYear($this->reportYear)->setMonth($end)->endOfMonth()->format('Y-m-d'),
+            \Carbon\Carbon::createFromDate($this->reportYear, $start, 1)->startOfMonth()->format('Y-m-d'),
+            \Carbon\Carbon::createFromDate($this->reportYear, $end, 1)->endOfMonth()->format('Y-m-d'),
         ];
     }
 

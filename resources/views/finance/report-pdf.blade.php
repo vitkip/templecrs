@@ -240,7 +240,7 @@
         </td>
         <td class="org-right" style="padding-top: 45pt;">
             <div class="ref-line">ເລກທີ:......../ກສປ</div>
-            <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ $currentDay }} ເດືອນ {{ $currentMonth }} ປີ {{ $currentYear }}</div>
+            <div class="ref-line">ນະຄອນຫຼວງວຽງຈັນ, ວັນທີ {{ $currentDay }} {{ $currentMonth }} ປີ {{ $currentYear }}</div>
         </td>
     </tr>
 </table>

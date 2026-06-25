@@ -92,8 +92,8 @@ class FinanceReportController extends Controller
     {
         return match ($period) {
             'month'   => [
-                now()->setYear($year)->setMonth($month)->startOfMonth()->format('Y-m-d'),
-                now()->setYear($year)->setMonth($month)->endOfMonth()->format('Y-m-d'),
+                \Carbon\Carbon::createFromDate($year, $month, 1)->startOfMonth()->format('Y-m-d'),
+                \Carbon\Carbon::createFromDate($year, $month, 1)->endOfMonth()->format('Y-m-d'),
             ],
             'quarter' => $this->quarterRange($year, $month),
             'year'    => ["{$year}-01-01", "{$year}-12-31"],
@@ -108,8 +108,8 @@ class FinanceReportController extends Controller
         $start   = ($quarter - 1) * 3 + 1;
         $end     = $start + 2;
         return [
-            now()->setYear($year)->setMonth($start)->startOfMonth()->format('Y-m-d'),
-            now()->setYear($year)->setMonth($end)->endOfMonth()->format('Y-m-d'),
+            \Carbon\Carbon::createFromDate($year, $start, 1)->startOfMonth()->format('Y-m-d'),
+            \Carbon\Carbon::createFromDate($year, $end, 1)->endOfMonth()->format('Y-m-d'),
         ];
     }
 }
