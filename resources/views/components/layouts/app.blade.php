@@ -335,12 +335,9 @@
 
             {{-- Page title (mobile) / Search (desktop) --}}
             <div class="flex-1 flex items-center gap-4">
-                {{-- Search bar — hidden on small mobile, visible md+ --}}
-                <div class="relative w-full max-w-md hidden sm:block">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-base">search</span>
-                    <input type="text"
-                           class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                           placeholder="{{ __('messages.search_placeholder') }}" />
+                {{-- Global Search — hidden on small mobile, visible sm+ --}}
+                <div class="hidden sm:block flex-1 max-w-md">
+                    @livewire('global-search')
                 </div>
 
                 {{-- App name — tiny screens only --}}
