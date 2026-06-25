@@ -503,7 +503,7 @@
     ສໍານັກງານ ຕັ້ງຢູ່ທີ່ {{ $orgAddress }}
     @if ($orgPhone) ໂທ: {{ $orgPhone }}@endif
     @if ($orgEmail) ອີເມວ: {{ $orgEmail }}@endif
-    @if ($orgWebsite) website: {{ $orgWebsite }}@endif
+    @if ($orgWebsite) | {{ preg_replace('/^https?:\/\//', '', $orgWebsite) }}@endif
 </div>
 
 </body>

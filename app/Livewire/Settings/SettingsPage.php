@@ -88,7 +88,7 @@ class SettingsPage extends Component
         $this->org_address_en       = Setting::get('org_address_en', '');
         $this->org_phone            = Setting::get('org_phone', '');
         $this->org_email            = Setting::get('org_email', '');
-        $this->org_website          = Setting::get('org_website', '');
+        $this->org_website          = preg_replace('/^https?:\/\//', '', Setting::get('org_website', ''));
         $this->org_established_year = Setting::get('org_established_year', '');
         $this->existing_logo_url    = Setting::get('org_logo_url') ?: null;
     }
@@ -123,7 +123,7 @@ class SettingsPage extends Component
             'org_address_en'        => 'nullable|string|max:500',
             'org_phone'             => 'nullable|string|max:50',
             'org_email'             => 'nullable|email|max:120',
-            'org_website'           => 'nullable|url|max:300',
+            'org_website'           => 'nullable|string|max:300|regex:/^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-.\/?%&=]*)?$/',
             'org_established_year'  => 'nullable|digits:4|integer|min:1800|max:2100',
             'org_logo'              => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
@@ -146,7 +146,9 @@ class SettingsPage extends Component
             'org_address_en'       => $this->org_address_en,
             'org_phone'            => $this->org_phone,
             'org_email'            => $this->org_email,
-            'org_website'          => $this->org_website,
+            'org_website'          => $this->org_website && !preg_match('/^https?:\/\//', $this->org_website)
+                                        ? 'https://' . $this->org_website
+                                        : $this->org_website,
             'org_established_year' => $this->org_established_year,
         ], 'organization');
 

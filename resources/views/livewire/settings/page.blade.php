@@ -10,55 +10,58 @@
 
     {{-- Flash Messages --}}
     @if (session('settings_message'))
-        <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 flex items-center gap-3 animate-fade-in">
+        <div
+            class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 flex items-center gap-3 animate-fade-in">
             <span class="material-symbols-outlined text-green-600">check_circle</span>
             <span class="text-body-md">{{ session('settings_message') }}</span>
         </div>
     @endif
 
     @if (session('settings_error'))
-        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 flex items-center gap-3 animate-fade-in">
+        <div
+            class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 flex items-center gap-3 animate-fade-in">
             <span class="material-symbols-outlined text-red-500">error</span>
             <span class="text-body-md">{{ session('settings_error') }}</span>
         </div>
     @endif
 
     {{-- Tab Navigation --}}
-    <div class="flex gap-1 mb-8 bg-surface-container-low p-1 rounded-xl w-fit border border-outline-variant animate-fade-in">
-        <button type="button"
-                @click="tab = 'organization'; $wire.set('activeTab', 'organization')"
-                :class="tab === 'organization' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
-            <span class="material-symbols-outlined text-base" :class="tab === 'organization' ? 'filled' : ''">account_balance</span>
+    <div
+        class="flex gap-1 mb-8 bg-surface-container-low p-1 rounded-xl w-fit border border-outline-variant animate-fade-in">
+        <button type="button" @click="tab = 'organization'; $wire.set('activeTab', 'organization')"
+            :class="tab === 'organization' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
+            <span class="material-symbols-outlined text-base"
+                :class="tab === 'organization' ? 'filled' : ''">account_balance</span>
             ອົງການ / Organization
         </button>
-        <button type="button"
-                @click="tab = 'system'; $wire.set('activeTab', 'system')"
-                :class="tab === 'system' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
+        <button type="button" @click="tab = 'system'; $wire.set('activeTab', 'system')"
+            :class="tab === 'system' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
             <span class="material-symbols-outlined text-base" :class="tab === 'system' ? 'filled' : ''">tune</span>
             ລະບົບ / System
         </button>
-        <button type="button"
-                @click="tab = 'departments'; $wire.set('activeTab', 'departments')"
-                :class="tab === 'departments' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
-            <span class="material-symbols-outlined text-base" :class="tab === 'departments' ? 'filled' : ''">category</span>
+        <button type="button" @click="tab = 'departments'; $wire.set('activeTab', 'departments')"
+            :class="tab === 'departments' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
+            <span class="material-symbols-outlined text-base"
+                :class="tab === 'departments' ? 'filled' : ''">category</span>
             ພາກສ່ວນ / Departments
-            <span class="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $departments->count() }}</span>
+            <span
+                class="bg-primary/10 text-primary text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $departments->count() }}</span>
         </button>
-        <button type="button"
-                @click="tab = 'donation'; $wire.set('activeTab', 'donation')"
-                :class="tab === 'donation' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
-                class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
-            <span class="material-symbols-outlined text-base" :class="tab === 'donation' ? 'filled' : ''">volunteer_activism</span>
+        <button type="button" @click="tab = 'donation'; $wire.set('activeTab', 'donation')"
+            :class="tab === 'donation' ? 'bg-white text-primary shadow-sm font-bold' : 'text-on-surface-variant hover:text-on-surface'"
+            class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-body-md transition-all">
+            <span class="material-symbols-outlined text-base"
+                :class="tab === 'donation' ? 'filled' : ''">volunteer_activism</span>
             ການບໍລິຈາກ / Donation
         </button>
     </div>
 
     {{-- ═══════════════════════════════════════════════
-         TAB 1: Organization Info
-         ═══════════════════════════════════════════════ --}}
+    TAB 1: Organization Info
+    ═══════════════════════════════════════════════ --}}
     <div x-show="tab === 'organization'" x-transition class="animate-fade-in">
         <form wire:submit="saveOrganization" class="space-y-6">
 
@@ -71,19 +74,22 @@
 
                 {{-- Logo Upload --}}
                 <div class="flex items-center gap-6 mb-6 pb-6 border-b border-outline-variant">
-                    <div class="w-24 h-24 rounded-full overflow-hidden border-2 border-outline-variant flex items-center justify-center bg-surface-container-low shrink-0">
+                    <div
+                        class="w-24 h-24 rounded-full overflow-hidden border-2 border-outline-variant flex items-center justify-center bg-surface-container-low shrink-0">
                         @if ($org_logo)
-                            <img src="{{ $org_logo->temporaryUrl() }}" alt="Logo preview" class="w-full h-full object-cover" />
+                            <img src="{{ $org_logo->temporaryUrl() }}" alt="Logo preview"
+                                class="w-full h-full object-cover" />
                         @elseif ($existing_logo_url)
-                            <img src="{{ Storage::url($existing_logo_url) }}" alt="Logo" class="w-full h-full object-cover" />
+                            <img src="{{ Storage::url($existing_logo_url) }}" alt="Logo"
+                                class="w-full h-full object-cover" />
                         @else
-                            <span class="material-symbols-outlined text-4xl text-on-surface-variant/30">account_balance</span>
+                            <span
+                                class="material-symbols-outlined text-4xl text-on-surface-variant/30">account_balance</span>
                         @endif
                     </div>
                     <div>
                         <p class="form-label mb-2">ໂລໂກ້ອົງການ / Organization Logo</p>
-                        <input type="file" wire:model="org_logo" accept="image/*"
-                               class="block text-sm text-on-surface-variant
+                        <input type="file" wire:model="org_logo" accept="image/*" class="block text-sm text-on-surface-variant
                                       file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
                                       file:text-sm file:font-bold file:bg-primary/10 file:text-primary
                                       hover:file:bg-primary/20 cursor-pointer" />
@@ -95,13 +101,17 @@
                 {{-- Name --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="bilingual-required">
-                        <label class="form-label">ຊື່ອົງການ <span class="text-xs text-on-surface-variant">(ລາວ)</span> <span class="text-error">*</span></label>
-                        <input type="text" wire:model="org_name_lo" placeholder="ອົງການພຣະພຸດທະສາສະໜາ..." class="form-input" />
+                        <label class="form-label">ຊື່ອົງການ <span class="text-xs text-on-surface-variant">(ລາວ)</span>
+                            <span class="text-error">*</span></label>
+                        <input type="text" wire:model="org_name_lo" placeholder="ອົງການພຣະພຸດທະສາສະໜາ..."
+                            class="form-input" />
                         @error('org_name_lo') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Organization Name <span class="text-xs text-on-surface-variant">(English)</span></label>
-                        <input type="text" wire:model="org_name_en" placeholder="Buddhist Organization..." class="form-input" />
+                        <label class="form-label">Organization Name <span
+                                class="text-xs text-on-surface-variant">(English)</span></label>
+                        <input type="text" wire:model="org_name_en" placeholder="Buddhist Organization..."
+                            class="form-input" />
                         @error('org_name_en') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -109,13 +119,17 @@
                 {{-- Address --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="form-label">ທີ່ຢູ່ <span class="text-xs text-on-surface-variant">(ລາວ)</span></label>
-                        <textarea wire:model="org_address_lo" rows="3" placeholder="ທີ່ຢູ່..." class="form-input"></textarea>
+                        <label class="form-label">ທີ່ຢູ່ <span
+                                class="text-xs text-on-surface-variant">(ລາວ)</span></label>
+                        <textarea wire:model="org_address_lo" rows="3" placeholder="ທີ່ຢູ່..."
+                            class="form-input"></textarea>
                         @error('org_address_lo') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Address <span class="text-xs text-on-surface-variant">(English)</span></label>
-                        <textarea wire:model="org_address_en" rows="3" placeholder="Address..." class="form-input"></textarea>
+                        <label class="form-label">Address <span
+                                class="text-xs text-on-surface-variant">(English)</span></label>
+                        <textarea wire:model="org_address_en" rows="3" placeholder="Address..."
+                            class="form-input"></textarea>
                         @error('org_address_en') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -124,28 +138,34 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
                         <label class="form-label">ໂທລະສັບ / Phone</label>
-                        <div class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
-                            <span class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">phone</span>
+                        <div
+                            class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">phone</span>
                             <input type="text" wire:model="org_phone" placeholder="+856 21 xxxxxx"
-                                   class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
+                                class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
                         </div>
                         @error('org_phone') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="form-label">ອີເມວ / Email</label>
-                        <div class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
-                            <span class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">email</span>
+                        <div
+                            class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">email</span>
                             <input type="email" wire:model="org_email" placeholder="info@example.org"
-                                   class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
+                                class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
                         </div>
                         @error('org_email') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="form-label">ເວັບໄຊ / Website</label>
-                        <div class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
-                            <span class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">language</span>
-                            <input type="text" wire:model="org_website" placeholder="https://..."
-                                   class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
+                        <div
+                            class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">language</span>
+                            <input type="text" wire:model="org_website" placeholder="www.example.com"
+                                class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
                         </div>
                         @error('org_website') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
@@ -154,21 +174,27 @@
                 {{-- Established Year --}}
                 <div class="max-w-xs">
                     <label class="form-label">ປີກໍ່ຕັ້ງ / Established Year</label>
-                    <input type="number" wire:model="org_established_year" placeholder="ຕົວຢ່າງ: 1975" min="1800" max="2100" class="form-input" />
+                    <input type="number" wire:model="org_established_year" placeholder="ຕົວຢ່າງ: 1975" min="1800"
+                        max="2100" class="form-input" />
                     @error('org_established_year') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
 
             <div class="flex justify-end">
                 <button type="submit"
-                        class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
-                        wire:loading.attr="disabled" wire:loading.class="opacity-60">
+                    class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
+                    wire:loading.attr="disabled" wire:loading.class="opacity-60">
                     <span wire:loading.remove class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">save</span>
                         ບັນທຶກ / Save
                     </span>
                     <span wire:loading class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
                         ກຳລັງບັນທຶກ...
                     </span>
                 </button>
@@ -177,8 +203,8 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════
-         TAB 2: System Settings
-         ═══════════════════════════════════════════════ --}}
+    TAB 2: System Settings
+    ═══════════════════════════════════════════════ --}}
     <div x-show="tab === 'system'" x-transition class="animate-fade-in">
         <form wire:submit="saveSystem" class="space-y-6">
 
@@ -195,7 +221,8 @@
                         <div class="flex gap-3">
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" wire:model="default_locale" value="lo" class="hidden peer" />
-                                <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-primary/40">
+                                <div
+                                    class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-primary/40">
                                     <span class="text-2xl mb-1 block">🇱🇦</span>
                                     <span class="font-bold text-body-md block">ລາວ</span>
                                     <span class="text-xs text-on-surface-variant">Lao</span>
@@ -203,7 +230,8 @@
                             </label>
                             <label class="flex-1 cursor-pointer">
                                 <input type="radio" wire:model="default_locale" value="en" class="hidden peer" />
-                                <div class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-primary/40">
+                                <div
+                                    class="peer-checked:border-primary peer-checked:bg-primary/5 border-2 border-outline-variant rounded-xl p-4 text-center transition-all hover:border-primary/40">
                                     <span class="text-2xl mb-1 block">🇬🇧</span>
                                     <span class="font-bold text-body-md block">English</span>
                                     <span class="text-xs text-on-surface-variant">English</span>
@@ -226,7 +254,8 @@
                     </div>
 
                     {{-- Show English Names --}}
-                    <div class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant">
+                    <div
+                        class="flex items-center justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant">
                         <div>
                             <p class="text-body-md font-bold">ສະແດງຊື່ພາສາອັງກິດ / Show English Names</p>
                             <p class="text-xs text-on-surface-variant">ສະແດງຊື່ ແລະ ຕຳແໜ່ງທັງສອງພາສາໃນຕາຕະລາງ</p>
@@ -241,14 +270,19 @@
 
             <div class="flex justify-end">
                 <button type="submit"
-                        class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
-                        wire:loading.attr="disabled" wire:loading.class="opacity-60">
+                    class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
+                    wire:loading.attr="disabled" wire:loading.class="opacity-60">
                     <span wire:loading.remove class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">save</span>
                         ບັນທຶກ / Save
                     </span>
                     <span wire:loading class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
                         ກຳລັງບັນທຶກ...
                     </span>
                 </button>
@@ -257,8 +291,8 @@
     </div>
 
     {{-- ═══════════════════════════════════════════════
-         TAB 3: Department Management
-         ═══════════════════════════════════════════════ --}}
+    TAB 3: Department Management
+    ═══════════════════════════════════════════════ --}}
     <div x-show="tab === 'departments'" x-transition class="animate-fade-in">
 
         {{-- Department Form (inline) --}}
@@ -271,12 +305,14 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div class="bilingual-required">
-                        <label class="form-label">ຊື່ພາກສ່ວນ <span class="text-xs text-on-surface-variant">(ລາວ)</span> <span class="text-error">*</span></label>
+                        <label class="form-label">ຊື່ພາກສ່ວນ <span class="text-xs text-on-surface-variant">(ລາວ)</span>
+                            <span class="text-error">*</span></label>
                         <input type="text" wire:model="dept_name_lo" placeholder="ຊື່ພາກສ່ວນ..." class="form-input" />
                         @error('dept_name_lo') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Department Name <span class="text-xs text-on-surface-variant">(English)</span></label>
+                        <label class="form-label">Department Name <span
+                                class="text-xs text-on-surface-variant">(English)</span></label>
                         <input type="text" wire:model="dept_name_en" placeholder="Department name..." class="form-input" />
                         @error('dept_name_en') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
@@ -284,12 +320,16 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="form-label">ລາຍລະອຽດ <span class="text-xs text-on-surface-variant">(ລາວ)</span></label>
-                        <textarea wire:model="dept_description_lo" rows="2" placeholder="ລາຍລະອຽດ..." class="form-input"></textarea>
+                        <label class="form-label">ລາຍລະອຽດ <span
+                                class="text-xs text-on-surface-variant">(ລາວ)</span></label>
+                        <textarea wire:model="dept_description_lo" rows="2" placeholder="ລາຍລະອຽດ..."
+                            class="form-input"></textarea>
                     </div>
                     <div>
-                        <label class="form-label">Description <span class="text-xs text-on-surface-variant">(English)</span></label>
-                        <textarea wire:model="dept_description_en" rows="2" placeholder="Description..." class="form-input"></textarea>
+                        <label class="form-label">Description <span
+                                class="text-xs text-on-surface-variant">(English)</span></label>
+                        <textarea wire:model="dept_description_en" rows="2" placeholder="Description..."
+                            class="form-input"></textarea>
                     </div>
                 </div>
 
@@ -321,13 +361,13 @@
 
                 <div class="flex gap-3">
                     <button type="button" wire:click="saveDept"
-                            class="px-6 py-2.5 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all btn-press"
-                            wire:loading.attr="disabled">
+                        class="px-6 py-2.5 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all btn-press"
+                        wire:loading.attr="disabled">
                         <span class="material-symbols-outlined text-sm">save</span>
                         {{ $editDeptId ? 'ອັບເດດ / Update' : 'ເພີ່ມ / Add' }}
                     </button>
                     <button type="button" wire:click="cancelDeptForm"
-                            class="px-6 py-2.5 border border-outline-variant rounded-lg text-body-md font-bold text-on-surface-variant hover:bg-surface-container transition-all btn-press">
+                        class="px-6 py-2.5 border border-outline-variant rounded-lg text-body-md font-bold text-on-surface-variant hover:bg-surface-container transition-all btn-press">
                         ຍົກເລີກ / Cancel
                     </button>
                 </div>
@@ -342,7 +382,7 @@
             </div>
             @if (!$showDeptForm)
                 <button type="button" wire:click="openAddDept"
-                        class="bg-primary text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press">
+                    class="bg-primary text-white px-5 py-2.5 rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press">
                     <span class="material-symbols-outlined text-sm">add</span>
                     ເພີ່ມພາກສ່ວນ / Add Department
                 </button>
@@ -374,7 +414,8 @@
                                         <span class="text-xs text-on-surface-variant">{{ $dept->name_en }}</span>
                                     @endif
                                     @if ($dept->description_lo)
-                                        <span class="text-xs text-on-surface-variant/70 mt-0.5 line-clamp-1">{{ $dept->description_lo }}</span>
+                                        <span
+                                            class="text-xs text-on-surface-variant/70 mt-0.5 line-clamp-1">{{ $dept->description_lo }}</span>
                                     @endif
                                 </div>
                             </td>
@@ -396,23 +437,20 @@
                             <td class="p-3">
                                 <div class="flex justify-center">
                                     <label class="toggle-switch">
-                                        <input type="checkbox"
-                                               {{ $dept->is_active ? 'checked' : '' }}
-                                               wire:click="toggleDeptActive({{ $dept->id }})" />
+                                        <input type="checkbox" {{ $dept->is_active ? 'checked' : '' }}
+                                            wire:click="toggleDeptActive({{ $dept->id }})" />
                                         <span class="toggle-slider"></span>
                                     </label>
                                 </div>
                             </td>
                             <td class="p-3 text-right">
                                 <button type="button" wire:click="editDept({{ $dept->id }})"
-                                        class="p-1 hover:text-primary transition-colors inline-block"
-                                        title="ແກ້ໄຂ">
+                                    class="p-1 hover:text-primary transition-colors inline-block" title="ແກ້ໄຂ">
                                     <span class="material-symbols-outlined text-lg">edit</span>
                                 </button>
                                 <button type="button"
-                                        @click="deleteId = {{ $dept->id }}; deleteName = {{ json_encode($dept->name_lo) }}; showDeleteModal = true"
-                                        class="p-1 hover:text-error transition-colors inline-block"
-                                        title="ລຶບ">
+                                    @click="deleteId = {{ $dept->id }}; deleteName = {{ json_encode($dept->name_lo) }}; showDeleteModal = true"
+                                    class="p-1 hover:text-error transition-colors inline-block" title="ລຶບ">
                                     <span class="material-symbols-outlined text-lg">delete</span>
                                 </button>
                             </td>
@@ -423,7 +461,7 @@
                                 <span class="material-symbols-outlined text-5xl mb-4 block opacity-30">category</span>
                                 <p class="text-lg">ຍັງບໍ່ມີພາກສ່ວນ / No departments yet</p>
                                 <button type="button" wire:click="openAddDept"
-                                        class="text-primary hover:underline mt-2 inline-block text-body-md">
+                                    class="text-primary hover:underline mt-2 inline-block text-body-md">
                                     ເພີ່ມພາກສ່ວນທຳອິດ / Add first department
                                 </button>
                             </td>
@@ -435,15 +473,17 @@
 
         {{-- Stats summary --}}
         <div class="mt-4 flex gap-4 text-xs text-on-surface-variant">
-            <span>ໃຊ້ງານ: <strong class="text-green-600">{{ $departments->where('is_active', true)->count() }}</strong></span>
-            <span>ບໍ່ໃຊ້ງານ: <strong class="text-red-500">{{ $departments->where('is_active', false)->count() }}</strong></span>
+            <span>ໃຊ້ງານ: <strong
+                    class="text-green-600">{{ $departments->where('is_active', true)->count() }}</strong></span>
+            <span>ບໍ່ໃຊ້ງານ: <strong
+                    class="text-red-500">{{ $departments->where('is_active', false)->count() }}</strong></span>
             <span>ທັງໝົດ: <strong class="text-on-surface">{{ $departments->count() }}</strong></span>
         </div>
     </div>
 
     {{-- ═══════════════════════════════════════════════
-         TAB 4: Donation Accounts
-         ═══════════════════════════════════════════════ --}}
+    TAB 4: Donation Accounts
+    ═══════════════════════════════════════════════ --}}
     <div x-show="tab === 'donation'" x-transition class="animate-fade-in">
         <form wire:submit="saveDonation" class="space-y-5">
 
@@ -456,21 +496,21 @@
 
                 @php
                     $currencies = [
-                        ['key' => 'kip',  'label_lo' => 'ກີບ',  'label_en' => 'Lao Kip (LAK)',      'flag' => '🇱🇦', 'bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'icon_color' => 'text-emerald-600'],
-                        ['key' => 'baht', 'label_lo' => 'ບາດ',  'label_en' => 'Thai Baht (THB)',    'flag' => '🇹🇭', 'bg' => 'bg-blue-50',    'border' => 'border-blue-200',    'icon_color' => 'text-blue-600'],
-                        ['key' => 'usd',  'label_lo' => 'ໂດລາ', 'label_en' => 'US Dollar (USD)',    'flag' => '🇺🇸', 'bg' => 'bg-indigo-50',  'border' => 'border-indigo-200',  'icon_color' => 'text-indigo-600'],
-                        ['key' => 'cny',  'label_lo' => 'ຢວນ',  'label_en' => 'Chinese Yuan (CNY)', 'flag' => '🇨🇳', 'bg' => 'bg-red-50',     'border' => 'border-red-200',     'icon_color' => 'text-red-600'],
+                        ['key' => 'kip', 'label_lo' => 'ກີບ', 'label_en' => 'Lao Kip (LAK)', 'flag' => '🇱🇦', 'bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'icon_color' => 'text-emerald-600'],
+                        ['key' => 'baht', 'label_lo' => 'ບາດ', 'label_en' => 'Thai Baht (THB)', 'flag' => '🇹🇭', 'bg' => 'bg-blue-50', 'border' => 'border-blue-200', 'icon_color' => 'text-blue-600'],
+                        ['key' => 'usd', 'label_lo' => 'ໂດລາ', 'label_en' => 'US Dollar (USD)', 'flag' => '🇺🇸', 'bg' => 'bg-indigo-50', 'border' => 'border-indigo-200', 'icon_color' => 'text-indigo-600'],
+                        ['key' => 'cny', 'label_lo' => 'ຢວນ', 'label_en' => 'Chinese Yuan (CNY)', 'flag' => '🇨🇳', 'bg' => 'bg-red-50', 'border' => 'border-red-200', 'icon_color' => 'text-red-600'],
                     ];
                 @endphp
 
                 <div class="space-y-6">
                     @foreach ($currencies as $cur)
                         @php
-                            $k         = $cur['key'];
-                            $qrProp    = 'donate_' . $k . '_qr';
+                            $k = $cur['key'];
+                            $qrProp = 'donate_' . $k . '_qr';
                             $qrUrlProp = 'donate_' . $k . '_qr_url';
-                            $qrFile    = $$qrProp;
-                            $qrUrl     = $$qrUrlProp;
+                            $qrFile = $$qrProp;
+                            $qrUrl = $$qrUrlProp;
                         @endphp
                         <div class="rounded-xl border {{ $cur['border'] }} {{ $cur['bg'] }} p-5">
                             {{-- Header --}}
@@ -487,26 +527,21 @@
                                 <div class="space-y-3">
                                     <div>
                                         <label class="form-label">ຊື່ທະນາຄານ / Bank Name</label>
-                                        <input type="text"
-                                               wire:model="donate_{{ $k }}_bank_name"
-                                               placeholder="ເຊັ່ນ: BCEL, Krungsri, Krungthai..."
-                                               class="form-input bg-white" />
+                                        <input type="text" wire:model="donate_{{ $k }}_bank_name"
+                                            placeholder="ເຊັ່ນ: BCEL, Krungsri, Krungthai..." class="form-input bg-white" />
                                         @error("donate_{$k}_bank_name") <p class="form-error">{{ $message }}</p> @enderror
                                     </div>
                                     <div>
                                         <label class="form-label">ຊື່ເຈົ້າຂອງບັນຊີ / Account Name</label>
-                                        <input type="text"
-                                               wire:model="donate_{{ $k }}_account_name"
-                                               placeholder="ຊື່ເຈົ້າຂອງບັນຊີ..."
-                                               class="form-input bg-white" />
-                                        @error("donate_{$k}_account_name") <p class="form-error">{{ $message }}</p> @enderror
+                                        <input type="text" wire:model="donate_{{ $k }}_account_name"
+                                            placeholder="ຊື່ເຈົ້າຂອງບັນຊີ..." class="form-input bg-white" />
+                                        @error("donate_{$k}_account_name") <p class="form-error">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                     <div>
                                         <label class="form-label">ເລກບັນຊີ / Account Number</label>
-                                        <input type="text"
-                                               wire:model="donate_{{ $k }}_account_no"
-                                               placeholder="000-000-000-000"
-                                               class="form-input bg-white" />
+                                        <input type="text" wire:model="donate_{{ $k }}_account_no"
+                                            placeholder="000-000-000-000" class="form-input bg-white" />
                                         @error("donate_{$k}_account_no") <p class="form-error">{{ $message }}</p> @enderror
                                     </div>
                                 </div>
@@ -514,11 +549,14 @@
                                 {{-- Right: QR Code --}}
                                 <div class="flex flex-col items-center gap-3">
                                     {{-- QR Preview --}}
-                                    <div class="w-40 h-40 rounded-xl border-2 border-dashed border-outline-variant bg-white flex items-center justify-center overflow-hidden shadow-sm">
+                                    <div
+                                        class="w-40 h-40 rounded-xl border-2 border-dashed border-outline-variant bg-white flex items-center justify-center overflow-hidden shadow-sm">
                                         @if ($qrFile)
-                                            <img src="{{ $qrFile->temporaryUrl() }}" alt="QR Preview" class="w-full h-full object-contain p-1" />
+                                            <img src="{{ $qrFile->temporaryUrl() }}" alt="QR Preview"
+                                                class="w-full h-full object-contain p-1" />
                                         @elseif ($qrUrl)
-                                            <img src="{{ Storage::url($qrUrl) }}" alt="QR Code {{ $cur['label_lo'] }}" class="w-full h-full object-contain p-1" />
+                                            <img src="{{ Storage::url($qrUrl) }}" alt="QR Code {{ $cur['label_lo'] }}"
+                                                class="w-full h-full object-contain p-1" />
                                         @else
                                             <div class="flex flex-col items-center text-on-surface-variant/40">
                                                 <span class="material-symbols-outlined text-5xl">qr_code_2</span>
@@ -529,13 +567,10 @@
                                     {{-- Upload --}}
                                     <div class="text-center">
                                         <label class="form-label mb-1">ອັບໂຫຼດ QR Code</label>
-                                        <input type="file"
-                                               wire:model="donate_{{ $k }}_qr"
-                                               accept="image/*"
-                                               class="block text-sm text-on-surface-variant
-                                                      file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0
-                                                      file:text-xs file:font-bold file:bg-white file:text-on-surface
-                                                      hover:file:bg-surface-container cursor-pointer" />
+                                        <input type="file" wire:model="donate_{{ $k }}_qr" accept="image/*" class="block text-sm text-on-surface-variant
+                                                          file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0
+                                                          file:text-xs file:font-bold file:bg-white file:text-on-surface
+                                                          hover:file:bg-surface-container cursor-pointer" />
                                         <p class="text-xs text-on-surface-variant mt-1">JPG, PNG · ສູງສຸດ 2MB</p>
                                         @error("donate_{$k}_qr") <p class="form-error">{{ $message }}</p> @enderror
                                     </div>
@@ -554,14 +589,19 @@
 
             <div class="flex justify-end">
                 <button type="submit"
-                        class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
-                        wire:loading.attr="disabled" wire:loading.class="opacity-60">
+                    class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
+                    wire:loading.attr="disabled" wire:loading.class="opacity-60">
                     <span wire:loading.remove class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-sm">save</span>
                         ບັນທຶກ / Save
                     </span>
                     <span wire:loading class="flex items-center gap-2">
-                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                        <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
+                                fill="none"></circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
                         ກຳລັງບັນທຶກ...
                     </span>
                 </button>
@@ -571,29 +611,26 @@
 
     <!-- Custom Deletion Confirmation Modal -->
     <div x-show="showDeleteModal"
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 scale-95"
-         x-transition:enter-end="opacity-100 scale-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 scale-100"
-         x-transition:leave-end="opacity-0 scale-95"
-         style="display: none;"
-         x-cloak>
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
+        style="display: none;" x-cloak>
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-outline-variant transform transition-all"
-             @click.away="showDeleteModal = false">
+            @click.away="showDeleteModal = false">
             <div class="flex items-center gap-3 text-error mb-4">
                 <div class="w-12 h-12 rounded-full bg-error/10 flex items-center justify-center text-error">
                     <span class="material-symbols-outlined text-2xl">warning</span>
                 </div>
                 <h3 class="text-headline-sm font-bold text-on-surface">ຢືນຢັນການລຶບ / Confirm Delete</h3>
             </div>
-            
+
             <div class="space-y-3 mb-6">
                 <p class="text-body-md text-on-surface-variant leading-relaxed">
                     ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບພາກສ່ວນນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດກັບຄືນໄດ້.
                     <br>
-                    <span class="text-xs opacity-75">Are you sure you want to delete this department? This action cannot be undone.</span>
+                    <span class="text-xs opacity-75">Are you sure you want to delete this department? This action cannot
+                        be undone.</span>
                 </p>
                 <div class="bg-surface-container-low p-3 rounded-lg border border-outline-variant/50">
                     <p class="text-label-md text-on-surface-variant">ພາກສ່ວນ / Department:</p>
@@ -602,14 +639,12 @@
             </div>
 
             <div class="flex justify-end gap-3">
-                <button type="button"
-                        @click="showDeleteModal = false"
-                        class="px-4 py-2.5 rounded-lg border border-outline-variant text-label-md font-bold text-on-surface-variant hover:bg-surface-container transition-all">
+                <button type="button" @click="showDeleteModal = false"
+                    class="px-4 py-2.5 rounded-lg border border-outline-variant text-label-md font-bold text-on-surface-variant hover:bg-surface-container transition-all">
                     ຍົກເລີກ / Cancel
                 </button>
-                <button type="button"
-                        @click="$wire.deleteDept(deleteId); showDeleteModal = false"
-                        class="px-4 py-2.5 rounded-lg bg-error hover:bg-error/90 text-white font-bold text-label-md transition-all shadow-md btn-press">
+                <button type="button" @click="$wire.deleteDept(deleteId); showDeleteModal = false"
+                    class="px-4 py-2.5 rounded-lg bg-error hover:bg-error/90 text-white font-bold text-label-md transition-all shadow-md btn-press">
                     ລຶບຂໍ້ມູນ / Confirm Delete
                 </button>
             </div>
