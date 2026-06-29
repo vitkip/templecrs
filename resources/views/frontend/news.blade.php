@@ -12,7 +12,7 @@
             'cover'         => $n->cover_image_url,
             'date'          => $n->published_date_formatted,
             'is_featured'   => (bool) $n->is_featured,
-            'category_id'   => $n->news_category_id,
+            'category_id'   => $n->news_category_id !== null ? (int) $n->news_category_id : null,
             'category_name' => $n->category ? ($locale === 'lo' ? $n->category->name_lo : ($n->category->name_en ?? $n->category->name_lo)) : null,
             'category_icon' => $n->category?->icon ?? null,
             'category_color'=> $n->category?->color ?? null,

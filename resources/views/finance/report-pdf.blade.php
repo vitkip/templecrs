@@ -164,10 +164,10 @@
     .sig-section { margin-top: 30px; margin-bottom: 50px; page-break-inside: avoid; }
     .sig-table { width: 100%; border-collapse: collapse; }
     .sig-table td { vertical-align: top; }
-    .distribution-list { width: 40%; text-align: left; font-size: 9pt; line-height: 1.5; padding-right: 20px; }
+    .distribution-list { width: 40%; text-align: right; font-size: 11pt; line-height: 1.5; font-weight: bold; }
     .dist-title { font-weight: bold; text-decoration: underline; margin-bottom: 4px; }
     .dist-item { padding-left: 8px; }
-    .signature-block { width: 60%; text-align: center; }
+    .signature-block { width: 60%;  text-align: center; }
     .sig-role-label { font-size: 11pt; font-weight: bold; margin-bottom: 70px; line-height: 1.4; }
     .sig-name-val { font-size: 11pt; font-weight: bold; line-height: 1.4; }
     .sig-rank { font-size: 10pt; line-height: 1.4; margin-top: 2px; }
@@ -249,9 +249,9 @@
 <div class="title-block">
     <div class="title-main">ບົດລາຍງານສະຫຼຸບ ລາຍຮັບ-ລາຍຈ່າຍ</div>
     <div class="title-about">
-        ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ ຄະນະກໍາມະການຮັບຜິດຊອບການເງີນ-ການບັນຊີ
-        ຂໍສະຫລຸບລາຍຮັບລາຍຈ່າຍ ໃນຄັ້ງ: ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }}
-        ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }}
+        ອີງຕາມ ພາລະບົດບາດ, ສິດ ແລະ ໜ້າທີ່ ຂອງ ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ-ການບັນຊີ ຂອງກັມມາທິການສາທາລະນູປະການ ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນແຫ່ງ ສປປ ລາວ. 
+      ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ-ການບັນຊີ ຂໍນ້ອມນະມັດສະການສະເໜີລາຍງານສະຫຼຸບສັງລວມ ກ່ຽວກັບການຄຸ້ມຄອງ ແລະ ຈັດຕັ້ງປະຕິບັດແຜນງົບປະມານ <br>ໃນຄັ້ງ: ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }}
+        ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }} ເພື່ອຊີ້ແຈງສະພາບຄ່ອງທາງດ້ານການເງິນ ແລະ ຍອດເຫຼືອຄັງຕົວຈິງ ດັ່ງມີລາຍລະອຽດສັງລວມລຸ່ມນີ້:
     </div>
 </div>
 
@@ -490,7 +490,7 @@
             <td class="distribution-list"></td>
             <td class="signature-block">
                 <div class="sig-role-label">
-                    ຜູ້ລາຍງານ / ຫົວໜ້າຄະນະກໍາມະການການເງິນ<br/>
+                      ຫົວໜ້າຄະນະກຳມະການຮັບຜິດຊອບການເງີນ-ການບັນຊີ<br/>
                 </div>
             </td>
         </tr>

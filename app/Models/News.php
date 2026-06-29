@@ -30,9 +30,10 @@ class News extends Model
     ];
 
     protected $casts = [
-        'is_active'    => 'boolean',
-        'is_featured'  => 'boolean',
-        'published_at' => 'datetime',
+        'is_active'        => 'boolean',
+        'is_featured'      => 'boolean',
+        'published_at'     => 'datetime',
+        'news_category_id' => 'integer',
     ];
 
     /* ───── Accessors ───── */
