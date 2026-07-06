@@ -26,6 +26,9 @@ class DocumentTable extends Component
     #[Url]
     public string $statusFilter = '';
 
+    #[Url]
+    public string $yearFilter = '';
+
     public string $sortBy  = 'issued_date';
     public string $sortDir = 'desc';
     public int $perPage    = 15;
@@ -39,6 +42,7 @@ class DocumentTable extends Component
     public function updatedCategory(): void    { $this->resetPage(); }
     public function updatedDepartmentFilter(): void { $this->resetPage(); }
     public function updatedStatusFilter(): void { $this->resetPage(); }
+    public function updatedYearFilter(): void   { $this->resetPage(); }
 
     public function clearFilters(): void
     {
@@ -46,6 +50,7 @@ class DocumentTable extends Component
         $this->category = '';
         $this->departmentFilter = '';
         $this->statusFilter = '';
+        $this->yearFilter = '';
         $this->resetPage();
     }
 
@@ -84,18 +89,25 @@ class DocumentTable extends Component
             ->when($this->category, fn ($q) => $q->where('category', $this->category))
             ->when($this->departmentFilter, fn ($q) => $q->where('department_id', $this->departmentFilter))
             ->when($isActive !== null, fn ($q) => $q->where('is_active', $isActive))
+            ->year($this->yearFilter ?: null)
             ->orderBy($this->sortBy, $this->sortDir)
             ->paginate($this->perPage);
 
         $stats       = app(DocumentService::class)->getStatistics();
         $departments = Department::active()->ordered()->get(['id', 'name_lo', 'name_en']);
         $categories  = DocumentCategory::active()->ordered()->get();
+        $years       = Document::query()
+            ->whereNotNull('issued_date')
+            ->selectRaw('DISTINCT YEAR(issued_date) as year')
+            ->orderByDesc('year')
+            ->pluck('year');
 
         return view('livewire.documents.table', [
             'documents'   => $documents,
             'stats'       => $stats,
             'departments' => $departments,
             'categories'  => $categories,
+            'years'       => $years,
         ]);
     }
 }

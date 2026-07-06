@@ -134,4 +134,12 @@ class Document extends Model
               ->orWhere('description_en', 'like', "%{$term}%");
         });
     }
+
+    public function scopeYear(Builder $query, int|string|null $year): Builder
+    {
+        if (!$year) {
+            return $query;
+        }
+        return $query->whereYear('issued_date', $year);
+    }
 }

@@ -131,6 +131,7 @@ return [
     'document_library_subtitle' => 'Full list of official documents and files',
     'search_documents'          => 'Search title or reference number...',
     'all_categories'            => 'All Categories',
+    'all_years'                 => 'All Years',
     'doc_results_count'         => 'documents',
     'view_all_documents'        => 'View All',
     'doc_number_label'          => 'Ref. No.',

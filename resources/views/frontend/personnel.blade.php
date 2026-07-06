@@ -346,7 +346,7 @@
                                 : 'background:white; color:#3D5A47; border-color:rgba(61,90,71,0.25);'"
                         class="px-2.5 py-1 rounded-full border transition-all flex items-center gap-1"
                         style="font-size:11px;">
-                        <span x-text="prov.replace('ແຂວງ', '').replace('ນະຄອນຫຼວງ', 'ນຄຫລ').trim()"></span>
+                        <span x-text="prov.replace('ແຂວງ', '').trim()"></span>
                         <span x-text="countByProvince(prov)" :class="activeProvince === prov ? 'opacity-65' : 'opacity-50'"
                             style="font-size:9px;"></span>
                     </button>

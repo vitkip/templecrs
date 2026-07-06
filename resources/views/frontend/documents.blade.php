@@ -26,6 +26,7 @@
             'dept_id'      => (string) ($d->department_id ?? ''),
             'dept_name'    => $d->department?->name ?? '',
             'issued_date'  => $d->issued_date?->format('d/m/Y') ?? '',
+            'year'         => $d->issued_date?->format('Y') ?? '',
             'file_icon'    => $d->file_icon,
             'file_size'    => $d->file_size_formatted,
             'file_name'    => $d->file_name ?? '',
@@ -45,6 +46,7 @@
     })->values()->toArray();
 
     $categoriesUsed = $documents->pluck('category')->unique()->values()->toArray();
+    $yearsUsed = $documents->pluck('issued_date')->filter()->map(fn ($d) => $d->format('Y'))->unique()->sortDesc()->values()->toArray();
 @endphp
 
 {{-- ══════════════════════════════════════════════════════════════
@@ -122,6 +124,7 @@
         search: '',
         activeDept: 'all',
         activeCat: 'all',
+        activeYear: 'all',
         documents: @js($documentsJson),
         perPage: 10,
         currentPage: 1,
@@ -131,8 +134,9 @@
             return this.documents.filter(d => {
                 const deptOk = this.activeDept === 'all' || d.dept_id === this.activeDept;
                 const catOk  = this.activeCat  === 'all' || d.category === this.activeCat;
+                const yearOk = this.activeYear === 'all' || d.year === this.activeYear;
                 const searchOk = !q || d.search_text.includes(q);
-                return deptOk && catOk && searchOk;
+                return deptOk && catOk && yearOk && searchOk;
             });
         },
         get totalPages() {
@@ -168,6 +172,7 @@
             this.$watch('search',     () => { this.currentPage = 1; });
             this.$watch('activeDept', () => { this.currentPage = 1; });
             this.$watch('activeCat',  () => { this.currentPage = 1; });
+            this.$watch('activeYear', () => { this.currentPage = 1; });
             this.$watch('perPage',    () => { this.currentPage = 1; });
         }
      }">
@@ -188,6 +193,23 @@
                 <span class="material-symbols-outlined text-base">close</span>
             </button>
         </div>
+
+        {{-- Year Filter --}}
+        @if(count($yearsUsed) > 1)
+        <div class="flex justify-center">
+            <div class="relative w-40">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-base text-on-surface-variant/50 pointer-events-none">calendar_today</span>
+                <select x-model="activeYear"
+                        class="w-full pl-9 pr-8 py-2.5 rounded-xl border border-outline-variant bg-white text-label-sm font-semibold text-on-surface focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 shadow-sm appearance-none cursor-pointer">
+                    <option value="all">{{ __('messages.all_years') }}</option>
+                    @foreach($yearsUsed as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+                <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-xs text-on-surface-variant">expand_more</span>
+            </div>
+        </div>
+        @endif
 
         {{-- Department Filter --}}
         @if($departments->count() > 0)
@@ -417,7 +439,7 @@
         <span class="material-symbols-outlined text-7xl text-on-surface-variant/15 mb-4 block">manage_search</span>
         <p class="text-body-lg font-semibold text-on-surface-variant mb-2">{{ __('messages.no_doc_results_found') }}</p>
         <p class="text-sm text-on-surface-variant/70 mb-6">{{ __('messages.no_doc_results_hint') }}</p>
-        <button @click="search = ''; activeDept = 'all'; activeCat = 'all'"
+        <button @click="search = ''; activeDept = 'all'; activeCat = 'all'; activeYear = 'all'"
                 class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-label-md font-bold hover:bg-primary-container transition-all btn-press">
             <span class="material-symbols-outlined text-base">restart_alt</span>
             {{ __('messages.clear_filters') }}

@@ -111,6 +111,20 @@
                     <option value="inactive">ບໍ່ໃຊ້ງານ</option>
                 </select>
             </div>
+
+            {{-- Year Filter --}}
+            <div class="w-32">
+                <label class="block text-[10px] font-bold text-on-surface-variant mb-1 uppercase">
+                    YEAR / ປີ
+                </label>
+                <select wire:model.live="yearFilter"
+                        class="w-full bg-white border border-outline-variant rounded-lg p-2 text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">ທຸກປີ</option>
+                    @foreach ($years as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
         <button wire:click="clearFilters"

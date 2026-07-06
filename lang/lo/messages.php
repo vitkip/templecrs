@@ -131,6 +131,7 @@ return [
     'document_library_subtitle' => 'ລາຍການເອກະສານ ແລະ ໄຟລ໌ທາງການທັງໝົດ',
     'search_documents' => 'ຄົ້ນຫາຊື່ ຫຼື ເລກທີ...',
     'all_categories' => 'ທຸກໝວດ',
+    'all_years' => 'ທຸກປີ',
     'doc_results_count' => 'ສະບັບ',
     'view_all_documents' => 'ເບິ່ງທັງໝົດ',
     'doc_number_label' => 'ເລກທີ',
