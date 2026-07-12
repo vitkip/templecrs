@@ -176,7 +176,43 @@
             @error('file') <p class="form-error mt-2">{{ $message }}</p> @enderror
         </div>
 
-        {{-- ═══ Section 6: Settings ═══ --}}
+        {{-- ═══ Section 6: Cover Image ═══ --}}
+        <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
+            <h3 class="text-headline-sm text-on-surface mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">image</span>
+                ໜ້າປົກ / Cover Page
+            </h3>
+
+            @if ($existing_cover_image && !$cover_image)
+                <div class="mb-4 flex items-center gap-3">
+                    <img src="{{ Storage::url($existing_cover_image) }}" alt="" class="w-20 h-28 rounded-lg object-cover border border-outline-variant shadow-sm" />
+                    <p class="text-xs text-on-surface-variant">ໜ້າປົກປັດຈຸບັນ — ເລືອກຮູບໃໝ່ເພື່ອປ່ຽນ</p>
+                </div>
+            @endif
+
+            @if ($cover_image)
+                <div class="mb-4 flex items-center gap-3">
+                    <img src="{{ $cover_image->temporaryUrl() }}" alt="" class="w-20 h-28 rounded-lg object-cover border border-outline-variant shadow-sm" />
+                    <div>
+                        <p class="text-body-md font-bold text-green-800">{{ $cover_image->getClientOriginalName() }}</p>
+                        <p class="text-xs text-green-700">{{ number_format($cover_image->getSize() / 1024, 1) }} KB — ພ້ອມອັບໂຫລດ</p>
+                    </div>
+                </div>
+            @endif
+
+            <input type="file"
+                   wire:model="cover_image"
+                   accept=".jpg,.jpeg,.png,.webp"
+                   class="form-input" />
+            <p class="text-xs text-on-surface-variant mt-1">JPG, PNG, WEBP · ສູງສຸດ 10MB</p>
+            <div wire:loading wire:target="cover_image" class="mt-2 text-sm text-primary flex items-center gap-2">
+                <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                ກຳລັງອ່ານໄຟລ໌...
+            </div>
+            @error('cover_image') <p class="form-error mt-2">{{ $message }}</p> @enderror
+        </div>
+
+        {{-- ═══ Section 7: Settings ═══ --}}
         <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
             <h3 class="text-headline-sm text-on-surface mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-primary">tune</span>

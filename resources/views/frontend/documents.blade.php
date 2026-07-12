@@ -28,6 +28,7 @@
             'issued_date'  => $d->issued_date?->format('d/m/Y') ?? '',
             'year'         => $d->issued_date?->format('Y') ?? '',
             'file_icon'    => $d->file_icon,
+            'cover_url'    => $d->cover_image_url,
             'file_size'    => $d->file_size_formatted,
             'file_name'    => $d->file_name ?? '',
             'has_file'       => (bool) $d->file_path,
@@ -296,11 +297,17 @@
 
                 <div class="flex items-start gap-4 p-4 sm:p-5">
 
-                    {{-- File Type Icon --}}
-                    <div class="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center bg-surface-container-low border border-outline-variant/40">
-                        <span class="material-symbols-outlined text-xl text-on-surface-variant/60"
-                              x-text="doc.file_icon"></span>
-                    </div>
+                    {{-- Cover Image / File Type Icon --}}
+                    <template x-if="doc.cover_url">
+                        <img :src="doc.cover_url" alt="" loading="lazy"
+                             class="shrink-0 w-11 h-14 rounded-lg object-cover border border-outline-variant/40 shadow-sm" />
+                    </template>
+                    <template x-if="!doc.cover_url">
+                        <div class="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center bg-surface-container-low border border-outline-variant/40">
+                            <span class="material-symbols-outlined text-xl text-on-surface-variant/60"
+                                  x-text="doc.file_icon"></span>
+                        </div>
+                    </template>
 
                     {{-- Main Info --}}
                     <div class="flex-1 min-w-0">

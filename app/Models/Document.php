@@ -25,6 +25,7 @@ class Document extends Model
         'file_name',
         'file_type',
         'file_size',
+        'cover_image',
         'issued_date',
         'sort_order',
         'is_active',
@@ -95,6 +96,11 @@ class Document extends Model
     public function getFileUrlAttribute(): ?string
     {
         return $this->file_path ? route('documents.download', $this->id) : null;
+    }
+
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        return $this->cover_image ? Storage::url($this->cover_image) : null;
     }
 
     /* ───── Relationships ───── */

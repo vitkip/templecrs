@@ -36,6 +36,9 @@ class FrontendCacheService
     public static function clearDocuments(): void
     {
         Cache::forget(self::KEY_DOCUMENTS);
+        Cache::forget('frontend_documents_all');
+        Cache::forget('frontend_documents_depts');
+        Cache::forget('stats_documents_count');
     }
 
     public static function clearSettings(): void
@@ -51,7 +54,7 @@ class FrontendCacheService
         Cache::forget(self::KEY_NEWS_ALL);
         Cache::forget(self::KEY_NEWS_CATEGORIES);
         Cache::forget(self::KEY_PERSONNEL);
-        Cache::forget(self::KEY_DOCUMENTS);
+        self::clearDocuments();
         Cache::forget(self::KEY_SETTINGS);
     }
 }

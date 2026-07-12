@@ -8,18 +8,25 @@ use Illuminate\Support\Facades\Storage;
 
 class DocumentService
 {
-    public function create(array $data, ?UploadedFile $file = null): Document
+    public function create(array $data, ?UploadedFile $file = null, ?UploadedFile $coverImage = null): Document
     {
         if ($file) {
             $data = array_merge($data, $this->storeFile($file));
         }
 
+        if ($coverImage) {
+            $data['cover_image'] = $coverImage->store('documents/covers', 'public');
+        }
+
         $data['uploaded_by'] = auth()->id();
 
-        return Document::create($data);
+        $document = Document::create($data);
+        FrontendCacheService::clearDocuments();
+
+        return $document;
     }
 
-    public function update(int $id, array $data, ?UploadedFile $file = null): Document
+    public function update(int $id, array $data, ?UploadedFile $file = null, ?UploadedFile $coverImage = null): Document
     {
         $document = Document::findOrFail($id);
 
@@ -31,7 +38,15 @@ class DocumentService
             $data = array_merge($data, $this->storeFile($file));
         }
 
+        if ($coverImage) {
+            if ($document->cover_image) {
+                Storage::disk('public')->delete($document->cover_image);
+            }
+            $data['cover_image'] = $coverImage->store('documents/covers', 'public');
+        }
+
         $document->update($data);
+        FrontendCacheService::clearDocuments();
 
         return $document->fresh();
     }
@@ -44,13 +59,19 @@ class DocumentService
             Storage::disk('local')->delete($document->file_path);
         }
 
+        if ($document->cover_image) {
+            Storage::disk('public')->delete($document->cover_image);
+        }
+
         $document->delete();
+        FrontendCacheService::clearDocuments();
     }
 
     public function toggleActive(int $id): void
     {
         $document = Document::findOrFail($id);
         $document->update(['is_active' => !$document->is_active]);
+        FrontendCacheService::clearDocuments();
     }
 
     private function storeFile(UploadedFile $file): array

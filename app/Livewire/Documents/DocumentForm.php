@@ -37,6 +37,10 @@ class DocumentForm extends Component
     public ?string $existing_file_name = null;
     public ?string $existing_file_path = null;
 
+    // Cover Image
+    public $cover_image = null;
+    public ?string $existing_cover_image = null;
+
     // Display
     public int $sort_order  = 0;
     public bool $is_active  = true;
@@ -68,6 +72,7 @@ class DocumentForm extends Component
         $this->is_active       = $doc->is_active ?? true;
         $this->existing_file_name = $doc->file_name;
         $this->existing_file_path = $doc->file_path;
+        $this->existing_cover_image = $doc->cover_image;
     }
 
     protected function rules(): array
@@ -82,6 +87,7 @@ class DocumentForm extends Component
             'department_id'  => 'nullable|exists:departments,id',
             'issued_date'    => 'nullable|date',
             'file'           => ($this->editMode ? 'nullable' : 'required') . '|file|mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png,webp|max:512000',
+            'cover_image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'sort_order'     => 'nullable|integer|min:0',
             'is_active'      => 'boolean',
         ];
@@ -95,6 +101,8 @@ class DocumentForm extends Component
             'file.required'     => 'ກະລຸນາເລືອກໄຟລ໌ເອກະສານ',
             'file.max'          => 'ໄຟລ໌ຕ້ອງບໍ່ເກີນ 500MB',
             'file.mimes'        => 'ຮູບແບບໄຟລ໌ທີ່ຮອງຮັບ: PDF, Word, Excel, JPG, PNG',
+            'cover_image.image' => 'ກະລຸນາເລືອກໄຟລ໌ຮູບພາບສຳລັບໜ້າປົກ',
+            'cover_image.max'   => 'ຮູບໜ້າປົກຕ້ອງບໍ່ເກີນ 10MB',
         ];
     }
 
@@ -118,10 +126,10 @@ class DocumentForm extends Component
         ];
 
         if ($this->editMode) {
-            $service->update($this->documentId, $data, $this->file);
+            $service->update($this->documentId, $data, $this->file, $this->cover_image);
             session()->flash('message', 'ແກ້ໄຂເອກະສານສຳເລັດ / Document updated.');
         } else {
-            $service->create($data, $this->file);
+            $service->create($data, $this->file, $this->cover_image);
             session()->flash('message', 'ອັບໂຫລດເອກະສານສຳເລັດ / Document uploaded.');
         }
 

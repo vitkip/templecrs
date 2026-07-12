@@ -110,6 +110,17 @@
         {{-- Sidebar Info --}}
         <div class="col-span-12 lg:col-span-4 space-y-6">
 
+            {{-- Cover Page --}}
+            @if ($document->cover_image_url)
+                <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
+                    <h3 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-4">ໜ້າປົກ / Cover Page</h3>
+                    <img src="{{ $document->cover_image_url }}"
+                         alt="{{ $document->title_lo }}"
+                         loading="lazy"
+                         class="w-full rounded-lg border border-outline-variant shadow-sm object-cover aspect-[3/4]" />
+                </div>
+            @endif
+
             {{-- Document Details --}}
             <div class="bg-white rounded-xl border border-outline-variant p-6 shadow-sm animate-fade-in">
                 <h3 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-4">ຂໍ້ມູນເອກະສານ</h3>

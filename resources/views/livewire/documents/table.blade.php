@@ -208,14 +208,19 @@
 
                         {{-- Title --}}
                         <td class="p-3">
-                            <div class="flex flex-col">
-                                <a href="{{ route('documents.show', $doc->id) }}"
-                                   class="font-bold text-on-surface hover:text-primary transition-colors">
-                                    {{ $doc->title_lo }}
-                                </a>
-                                @if ($doc->title_en)
-                                    <span class="text-on-surface-variant opacity-70 text-xs">{{ $doc->title_en }}</span>
+                            <div class="flex items-center gap-3">
+                                @if ($doc->cover_image_url)
+                                    <img src="{{ $doc->cover_image_url }}" alt="" class="w-8 h-11 rounded object-cover border border-outline-variant shrink-0" />
                                 @endif
+                                <div class="flex flex-col">
+                                    <a href="{{ route('documents.show', $doc->id) }}"
+                                       class="font-bold text-on-surface hover:text-primary transition-colors">
+                                        {{ $doc->title_lo }}
+                                    </a>
+                                    @if ($doc->title_en)
+                                        <span class="text-on-surface-variant opacity-70 text-xs">{{ $doc->title_en }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </td>
 
