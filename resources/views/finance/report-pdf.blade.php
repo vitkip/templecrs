@@ -130,6 +130,7 @@
     /* ══ ຕາຕະລາງລາຍການລະອຽດ ══ */
     table.dtbl {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
         margin-bottom: 6px;
         font-size: 9.5pt;
@@ -141,6 +142,9 @@
         border: 0.5px solid #000000;
         padding: 5px 7px;
         vertical-align: middle;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        word-break: break-word;
     }
     table.dtbl thead th {
         background: #f2f2f2;
@@ -444,12 +448,11 @@
         <table class="dtbl">
             <thead>
                 <tr>
-                    <th style="width:11%;">ວັນທີ</th>
-                    <th style="width:11%;" class="c">ປະເພດ</th>
+                    <th style="width:14%;">ວັນທີ</th>
+                    <th style="width:10%;" class="c">ປະເພດ</th>
                     <th style="width:17%;">ໝວດໝູ່</th>
-                    <th>ລາຍລະອຽດ</th>
+                    <th style="width:39%;">ລາຍລະອຽດ</th>
                     <th style="width:20%;" class="r">ຈໍານວນ ({{ $cfg['name_lo'] }})</th>
-                    <th style="width:12%;">ອ້າງອີງ</th>
                 </tr>
             </thead>
             <tbody>
@@ -464,7 +467,6 @@
                     <td class="r" style="font-weight:bold;">
                         {{ $tx->is_income ? '+' : '-' }}{{ number_format((float)$tx->amount, $cfg['decimals'], '.', ',') }}
                     </td>
-                    <td>{{ $tx->reference_number ?? '—' }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -476,7 +478,6 @@
                     <td class="r">
                         {{ $netBal >= 0 ? '+' : '' }}{{ number_format(abs($netBal), $cfg['decimals'], '.', ',') }} {{ $cfg['name_lo'] }}
                     </td>
-                    <td></td>
                 </tr>
             </tfoot>
         </table>
