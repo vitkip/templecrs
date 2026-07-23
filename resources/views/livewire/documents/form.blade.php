@@ -153,25 +153,37 @@
                 </div>
             @endif
 
-            <div x-data="{ dragging: false }"
-                 @dragover.prevent="dragging = true"
-                 @dragleave.prevent="dragging = false"
-                 @drop.prevent="dragging = false; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'))"
-                 :class="dragging ? 'border-primary bg-primary/5' : 'border-outline-variant bg-surface-container-lowest'"
-                 class="border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer"
-                 @click="$refs.fileInput.click()">
-                <span class="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-3 block">cloud_upload</span>
-                <p class="text-body-md font-bold text-on-surface mb-1">ລາກໄຟລ໌ມາວາງ ຫຼື ຄລິກເພື່ອເລືອກ</p>
-                <p class="text-xs text-on-surface-variant">PDF, Word, Excel, JPG, PNG · ສູງສຸດ 500MB</p>
-                <input type="file"
-                       x-ref="fileInput"
-                       wire:model="file"
-                       accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
-                       class="hidden" />
-            </div>
-            <div wire:loading wire:target="file" class="mt-2 text-sm text-primary flex items-center gap-2">
-                <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                ກຳລັງອ່ານໄຟລ໌...
+            <div x-data="{ dragging: false, uploading: false, progress: 0 }"
+                 x-on:livewire-upload-start="uploading = true; progress = 0"
+                 x-on:livewire-upload-progress="progress = $event.detail.progress"
+                 x-on:livewire-upload-finish="uploading = false; progress = 100"
+                 x-on:livewire-upload-error="uploading = false; progress = 0"
+                 x-on:livewire-upload-cancel="uploading = false; progress = 0">
+                <div @dragover.prevent="dragging = true"
+                     @dragleave.prevent="dragging = false"
+                     @drop.prevent="dragging = false; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'))"
+                     :class="dragging ? 'border-primary bg-primary/5' : 'border-outline-variant bg-surface-container-lowest'"
+                     class="border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer"
+                     @click="$refs.fileInput.click()">
+                    <span class="material-symbols-outlined text-5xl text-on-surface-variant/40 mb-3 block">cloud_upload</span>
+                    <p class="text-body-md font-bold text-on-surface mb-1">ລາກໄຟລ໌ມາວາງ ຫຼື ຄລິກເພື່ອເລືອກ</p>
+                    <p class="text-xs text-on-surface-variant">PDF, Word, Excel, JPG, PNG · ສູງສຸດ 500MB</p>
+                    <input type="file"
+                           x-ref="fileInput"
+                           wire:model="file"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.webp"
+                           class="hidden" />
+                </div>
+
+                <div x-show="uploading" x-cloak class="mt-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold text-primary" x-text="progress < 100 ? 'ກຳລັງອັບໂຫລດ...' : 'ກຳລັງດຳເນີນການ...'"></span>
+                        <span class="text-xs font-bold text-primary" x-text="progress + '%'"></span>
+                    </div>
+                    <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full transition-all duration-150 ease-out" :style="`width: ${progress}%`"></div>
+                    </div>
+                </div>
             </div>
             @error('file') <p class="form-error mt-2">{{ $message }}</p> @enderror
         </div>
@@ -200,14 +212,27 @@
                 </div>
             @endif
 
-            <input type="file"
-                   wire:model="cover_image"
-                   accept=".jpg,.jpeg,.png,.webp"
-                   class="form-input" />
-            <p class="text-xs text-on-surface-variant mt-1">JPG, PNG, WEBP · ສູງສຸດ 10MB</p>
-            <div wire:loading wire:target="cover_image" class="mt-2 text-sm text-primary flex items-center gap-2">
-                <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
-                ກຳລັງອ່ານໄຟລ໌...
+            <div x-data="{ uploading: false, progress: 0 }"
+                 x-on:livewire-upload-start="uploading = true; progress = 0"
+                 x-on:livewire-upload-progress="progress = $event.detail.progress"
+                 x-on:livewire-upload-finish="uploading = false; progress = 100"
+                 x-on:livewire-upload-error="uploading = false; progress = 0"
+                 x-on:livewire-upload-cancel="uploading = false; progress = 0">
+                <input type="file"
+                       wire:model="cover_image"
+                       accept=".jpg,.jpeg,.png,.webp"
+                       class="form-input" />
+                <p class="text-xs text-on-surface-variant mt-1">JPG, PNG, WEBP · ສູງສຸດ 10MB</p>
+
+                <div x-show="uploading" x-cloak class="mt-3">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-xs font-bold text-primary" x-text="progress < 100 ? 'ກຳລັງອັບໂຫລດ...' : 'ກຳລັງດຳເນີນການ...'"></span>
+                        <span class="text-xs font-bold text-primary" x-text="progress + '%'"></span>
+                    </div>
+                    <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full transition-all duration-150 ease-out" :style="`width: ${progress}%`"></div>
+                    </div>
+                </div>
             </div>
             @error('cover_image') <p class="form-error mt-2">{{ $message }}</p> @enderror
         </div>
