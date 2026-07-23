@@ -171,12 +171,27 @@
                     </div>
                 </div>
 
-                {{-- Established Year --}}
-                <div class="max-w-xs">
-                    <label class="form-label">ປີກໍ່ຕັ້ງ / Established Year</label>
-                    <input type="number" wire:model="org_established_year" placeholder="ຕົວຢ່າງ: 1975" min="1800"
-                        max="2100" class="form-input" />
-                    @error('org_established_year') <p class="form-error">{{ $message }}</p> @enderror
+                {{-- Facebook Page + Established Year --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="form-label">Facebook Page URL</label>
+                        <div
+                            class="flex items-center border border-outline-variant rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10 transition-all overflow-hidden">
+                            <span
+                                class="material-symbols-outlined text-on-surface-variant text-[18px] pl-3 pr-2 shrink-0 select-none">thumb_up</span>
+                            <input type="text" wire:model="org_facebook_page"
+                                placeholder="https://www.facebook.com/yourpage"
+                                class="flex-1 py-2 pr-3 text-sm text-on-surface bg-transparent focus:outline-none min-w-0" />
+                        </div>
+                        <p class="text-xs text-on-surface-variant mt-1">ໃຊ້ສະແດງ Facebook Like Box ຢູ່ Footer ໜ້າເວັບ</p>
+                        @error('org_facebook_page') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="max-w-xs">
+                        <label class="form-label">ປີກໍ່ຕັ້ງ / Established Year</label>
+                        <input type="number" wire:model="org_established_year" placeholder="ຕົວຢ່າງ: 1975" min="1800"
+                            max="2100" class="form-input" />
+                        @error('org_established_year') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 

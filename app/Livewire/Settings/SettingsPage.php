@@ -25,6 +25,7 @@ class SettingsPage extends Component
     public string $org_phone = '';
     public string $org_email = '';
     public string $org_website = '';
+    public string $org_facebook_page = '';
     public string $org_established_year = '';
     public $org_logo = null;
     public ?string $existing_logo_url = null;
@@ -89,6 +90,7 @@ class SettingsPage extends Component
         $this->org_phone            = Setting::get('org_phone', '');
         $this->org_email            = Setting::get('org_email', '');
         $this->org_website          = preg_replace('/^https?:\/\//', '', Setting::get('org_website', ''));
+        $this->org_facebook_page    = Setting::get('org_facebook_page', '');
         $this->org_established_year = Setting::get('org_established_year', '');
         $this->existing_logo_url    = Setting::get('org_logo_url') ?: null;
     }
@@ -124,6 +126,7 @@ class SettingsPage extends Component
             'org_phone'             => 'nullable|string|max:50',
             'org_email'             => 'nullable|email|max:120',
             'org_website'           => 'nullable|string|max:300|regex:/^(https?:\/\/)?([\w\-]+\.)+[\w\-]+(\/[\w\-.\/?%&=]*)?$/',
+            'org_facebook_page'     => 'nullable|url|max:300|starts_with:https://www.facebook.com/,https://facebook.com/,https://fb.com/',
             'org_established_year'  => 'nullable|digits:4|integer|min:1800|max:2100',
             'org_logo'              => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
@@ -149,6 +152,7 @@ class SettingsPage extends Component
             'org_website'          => $this->org_website && !preg_match('/^https?:\/\//', $this->org_website)
                                         ? 'https://' . $this->org_website
                                         : $this->org_website,
+            'org_facebook_page'    => $this->org_facebook_page,
             'org_established_year' => $this->org_established_year,
         ], 'organization');
 

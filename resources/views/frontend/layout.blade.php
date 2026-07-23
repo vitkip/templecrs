@@ -266,7 +266,9 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14 pb-12">
+            @php $orgFacebookPage = \App\Models\Setting::get('org_facebook_page'); @endphp
+
+            <div class="grid grid-cols-1 md:grid-cols-2 {{ $orgFacebookPage ? 'lg:grid-cols-4' : 'lg:grid-cols-3' }} gap-10 lg:gap-14 pb-12">
 
                 {{-- Org Info --}}
                 <div class="space-y-4">
@@ -368,6 +370,32 @@
                         </li>
                     </ul>
                 </div>
+
+                {{-- Facebook Like Box --}}
+                @if ($orgFacebookPage)
+                    <div>
+                        <h4 class="font-bold text-[#D4AF37] uppercase mb-5 flex items-center gap-2.5" style="font-size:11px; letter-spacing:0.18em;">
+                            <span class="h-px w-5 rounded-full bg-[#D4AF37] inline-block"></span>
+                            {{ __('messages.follow_us') }}
+                        </h4>
+                        <div class="rounded-xl overflow-hidden bg-white/5 border border-white/10 p-1" style="max-width: 340px;">
+                            <div id="fb-root"></div>
+                            <div class="fb-page"
+                                 data-href="{{ $orgFacebookPage }}"
+                                 data-tabs="timeline"
+                                 data-width=""
+                                 data-height="220"
+                                 data-small-header="true"
+                                 data-adapt-container-width="true"
+                                 data-hide-cover="false"
+                                 data-show-facepile="true">
+                                <blockquote cite="{{ $orgFacebookPage }}" class="fb-xfbml-parse-ignore">
+                                    <a href="{{ $orgFacebookPage }}" target="_blank" rel="noopener noreferrer">{{ $orgName ?? 'Facebook Page' }}</a>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             {{-- Bottom bar --}}
@@ -384,6 +412,11 @@
             </div>
         </div>
     </footer>
+
+    @if ($orgFacebookPage ?? false)
+        <script async defer crossorigin="anonymous"
+                src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0"></script>
+    @endif
 
 </body>
 </html>

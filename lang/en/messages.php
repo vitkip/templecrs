@@ -98,6 +98,7 @@ return [
     'documents_subtitle'   => 'Document Management System (DMS)',
     'contact'              => 'Contact',
     'quick_links'          => 'Quick Links',
+    'follow_us'            => 'Follow Us',
     'powered_by'           => 'Powered by Buddhist EMS',
 
     // Frontend — Hero CTA

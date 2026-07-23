@@ -98,6 +98,7 @@ return [
     'documents_subtitle' => 'ລະບົບຈັດການເອກະສານ (DMS)',
     'contact' => 'ຕິດຕໍ່',
     'quick_links' => 'ລິ້ງດ່ວນ',
+    'follow_us' => 'ຕິດຕາມພວກເຮົາ',
     'powered_by' => 'Powered by:ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ',
 
     // Frontend — Hero CTA

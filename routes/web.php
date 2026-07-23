@@ -249,6 +249,52 @@ Route::middleware(['auth'])->get('/diagnose-upload', function () {
     }
 
 
+    // 7. Google Drive document storage diagnostics
+    $googleConfig = config('filesystems.disks.google');
+    $credentialsPath = $googleConfig['credentials_path'] ?? null;
+    $results['google_drive'] = [
+        'credentials_path'        => $credentialsPath,
+        'credentials_file_exists' => $credentialsPath && file_exists($credentialsPath) ? 'Yes' : 'No',
+        'credentials_file_readable' => $credentialsPath && is_readable($credentialsPath) ? 'Yes' : 'No',
+        'team_drive_id_set'       => !empty($googleConfig['team_drive_id']) ? 'Yes' : 'No',
+        'shared_folder_id_set'    => !empty($googleConfig['shared_folder_id']) ? 'Yes' : 'No',
+        'folder'                  => $googleConfig['folder'] ?? null,
+        'curl_extension_loaded'   => extension_loaded('curl') ? 'Yes' : 'No',
+    ];
+
+    try {
+        $testFileName = 'diagnose-test-' . uniqid() . '.txt';
+        \Illuminate\Support\Facades\Storage::disk('google')->put($testFileName, 'diagnostic test');
+        $exists = \Illuminate\Support\Facades\Storage::disk('google')->exists($testFileName);
+        $results['google_drive']['live_write_test'] = 'Success';
+        $results['google_drive']['live_exists_test'] = $exists ? 'Success' : 'Failed (file not found after write)';
+        if ($exists) {
+            \Illuminate\Support\Facades\Storage::disk('google')->delete($testFileName);
+        }
+    } catch (\Throwable $e) {
+        $results['google_drive']['live_write_test'] = 'Failed: ' . get_class($e) . ' — ' . $e->getMessage();
+    }
+
+    // 8. Document storage_provider breakdown + per-file existence check
+    $docsByProvider = \App\Models\Document::whereNotNull('file_path')
+        ->select('id', 'file_name', 'file_path', 'storage_provider')
+        ->get()
+        ->map(function ($doc) {
+            $disk = $doc->storage_provider === 'google_drive' ? 'google' : 'local';
+            try {
+                $exists = \Illuminate\Support\Facades\Storage::disk($disk)->exists($doc->file_path);
+            } catch (\Throwable $e) {
+                $exists = 'error: ' . $e->getMessage();
+            }
+            return [
+                'id' => $doc->id,
+                'file_name' => $doc->file_name,
+                'storage_provider' => $doc->storage_provider,
+                'exists_on_disk' => $exists,
+            ];
+        });
+    $results['documents'] = $docsByProvider;
+
     return response()->json($results, 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
