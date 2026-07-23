@@ -22,6 +22,7 @@ class Document extends Model
         'description_lo',
         'description_en',
         'file_path',
+        'storage_provider',
         'file_name',
         'file_type',
         'file_size',

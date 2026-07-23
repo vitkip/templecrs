@@ -20,6 +20,7 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/storage/app/google-drive-service-account.json
 /storage/fonts/*.ufm
 /storage/fonts/*.ufm.json
 /storage/fonts/*.afm.json

@@ -31,18 +31,20 @@ class DocumentService
         $document = Document::findOrFail($id);
 
         if ($file) {
-            // Remove old file
-            if ($document->file_path) {
-                Storage::disk('local')->delete($document->file_path);
-            }
+            $oldFilePath = $document->file_path;
+            $oldProvider = $document->storage_provider;
             $data = array_merge($data, $this->storeFile($file));
+            if ($oldFilePath) {
+                Storage::disk($oldProvider === 'google_drive' ? 'google' : 'local')->delete($oldFilePath);
+            }
         }
 
         if ($coverImage) {
-            if ($document->cover_image) {
-                Storage::disk('public')->delete($document->cover_image);
-            }
+            $oldCoverImage = $document->cover_image;
             $data['cover_image'] = $coverImage->store('documents/covers', 'public');
+            if ($oldCoverImage) {
+                Storage::disk('public')->delete($oldCoverImage);
+            }
         }
 
         $document->update($data);
@@ -56,7 +58,7 @@ class DocumentService
         $document = Document::findOrFail($id);
 
         if ($document->file_path) {
-            Storage::disk('local')->delete($document->file_path);
+            Storage::disk($document->storage_provider === 'google_drive' ? 'google' : 'local')->delete($document->file_path);
         }
 
         if ($document->cover_image) {
@@ -80,10 +82,12 @@ class DocumentService
         $mimeType = $file->getMimeType();
         $size = $file->getSize();
 
-        $path = $file->store('documents', 'local');
+        $driveFileName = uniqid() . '_' . $originalName;
+        Storage::disk('google')->put($driveFileName, fopen($file->getRealPath(), 'r'));
 
         return [
-            'file_path' => $path,
+            'file_path' => $driveFileName,
+            'storage_provider' => 'google_drive',
             'file_name' => $originalName,
             'file_type' => $mimeType,
             'file_size' => $size,

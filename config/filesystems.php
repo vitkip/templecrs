@@ -60,6 +60,15 @@ return [
             'report' => false,
         ],
 
+        'google' => [
+            'driver' => 'google',
+            'credentials_path' => env('GOOGLE_DRIVE_CREDENTIALS_PATH', storage_path('app/google-drive-service-account.json')),
+            'team_drive_id' => env('GOOGLE_DRIVE_TEAM_DRIVE_ID'),
+            'shared_folder_id' => env('GOOGLE_DRIVE_SHARED_FOLDER_ID'),
+            'folder' => env('GOOGLE_DRIVE_FOLDER', 'documents'),
+            'throw' => false,
+        ],
+
     ],
 
     /*

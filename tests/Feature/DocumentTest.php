@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\User;
 use App\Livewire\Documents\DocumentForm;
 use App\Livewire\Documents\DocumentTable;
+use App\Services\DocumentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -55,7 +56,7 @@ class DocumentTest extends TestCase
 
     public function test_can_upload_document_via_livewire_component(): void
     {
-        Storage::fake('public');
+        Storage::fake('google');
         $this->actingAs($this->admin);
 
         $fakeFile = UploadedFile::fake()->create('document-test.pdf', 100, 'application/pdf');
@@ -73,10 +74,12 @@ class DocumentTest extends TestCase
             'title_lo' => 'ເອກະສານໃໝ່',
             'category' => 'announcement',
             'file_name' => 'document-test.pdf',
+            'storage_provider' => 'google_drive',
         ]);
 
         $doc = Document::first();
-        Storage::disk('public')->assertExists($doc->file_path);
+        $this->assertNotEmpty($doc->file_path);
+        Storage::disk('google')->assertExists($doc->file_path);
     }
 
     public function test_file_is_required_for_document_creation(): void
@@ -109,14 +112,15 @@ class DocumentTest extends TestCase
 
     public function test_can_delete_document(): void
     {
-        Storage::fake('public');
+        Storage::fake('google');
         $fakeFile = UploadedFile::fake()->create('document-test.pdf', 100, 'application/pdf');
-        $path = $fakeFile->store('documents', 'public');
+        $path = $fakeFile->store('documents', 'google');
 
         $doc = Document::create([
             'title_lo' => 'ເອກະສານທົດສອບ',
             'category' => 'other',
             'file_path' => $path,
+            'storage_provider' => 'google_drive',
             'is_active' => true,
         ]);
 
@@ -129,6 +133,65 @@ class DocumentTest extends TestCase
             'id' => $doc->id,
         ]);
 
-        Storage::disk('public')->assertMissing($path);
+        Storage::disk('google')->assertMissing($path);
+    }
+
+    public function test_deleting_legacy_local_document_uses_local_disk(): void
+    {
+        Storage::fake('local');
+        $fakeFile = UploadedFile::fake()->create('legacy-test.pdf', 100, 'application/pdf');
+        $path = $fakeFile->store('documents', 'local');
+
+        $doc = Document::create([
+            'title_lo' => 'ເອກະສານເກົ່າ',
+            'category' => 'other',
+            'file_path' => $path,
+            'storage_provider' => 'local',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->admin);
+
+        Livewire::test(DocumentTable::class)
+            ->call('deleteDocument', $doc->id);
+
+        $this->assertSoftDeleted('documents', [
+            'id' => $doc->id,
+        ]);
+
+        Storage::disk('local')->assertMissing($path);
+    }
+
+    public function test_document_service_uploads_updates_and_deletes_via_google_drive(): void
+    {
+        Storage::fake('google');
+        $service = new DocumentService();
+
+        $doc = $service->create(
+            ['title_lo' => 'ເອກະສານ Drive', 'category' => 'other'],
+            UploadedFile::fake()->create('first.pdf', 50, 'application/pdf')
+        );
+
+        $this->assertSame('google_drive', $doc->storage_provider);
+        $this->assertNotEmpty($doc->file_path);
+        Storage::disk('google')->assertExists($doc->file_path);
+        $firstPath = $doc->file_path;
+
+        $doc = $service->update(
+            $doc->id,
+            ['title_lo' => 'ເອກະສານ Drive'],
+            UploadedFile::fake()->create('second.pdf', 50, 'application/pdf')
+        );
+
+        $this->assertSame('google_drive', $doc->storage_provider);
+        $this->assertNotSame($firstPath, $doc->file_path);
+        Storage::disk('google')->assertExists($doc->file_path);
+        Storage::disk('google')->assertMissing($firstPath);
+
+        $secondPath = $doc->file_path;
+        $service->delete($doc->id);
+
+        Storage::disk('google')->assertMissing($secondPath);
+        $this->assertSoftDeleted('documents', ['id' => $doc->id]);
     }
 }

@@ -53,9 +53,10 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/library/{id}/download', function (int $id) {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
         abort_if(!$document->file_path, 404);
-        abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+        $disk = $document->storage_provider === 'google_drive' ? 'google' : 'local';
+        abort_unless(\Illuminate\Support\Facades\Storage::disk($disk)->exists($document->file_path), 404);
         $document->increment('download_count');
-        return \Illuminate\Support\Facades\Storage::disk('local')->download(
+        return \Illuminate\Support\Facades\Storage::disk($disk)->download(
             $document->file_path,
             $document->file_name
         );
@@ -65,12 +66,13 @@ Route::middleware([SetLocale::class])->group(function () {
     Route::get('/library/{id}/view', function (int $id) {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
         abort_if(!$document->file_path, 404);
-        abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+        $disk = $document->storage_provider === 'google_drive' ? 'google' : 'local';
+        abort_unless(\Illuminate\Support\Facades\Storage::disk($disk)->exists($document->file_path), 404);
         return response(
-            \Illuminate\Support\Facades\Storage::disk('local')->get($document->file_path),
+            \Illuminate\Support\Facades\Storage::disk($disk)->get($document->file_path),
             200,
             [
-                'Content-Type' => 'application/pdf',
+                'Content-Type' => $document->file_type ?: 'application/pdf',
                 'Content-Disposition' => 'inline; filename="' . basename($document->file_name) . '"'
             ]
         );
@@ -133,9 +135,10 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
         Route::get('/{id}/download', function (int $id) {
             $document = \App\Models\Document::findOrFail($id);
             abort_if(!$document->file_path, 404);
-            abort_unless(\Illuminate\Support\Facades\Storage::disk('local')->exists($document->file_path), 404);
+            $disk = $document->storage_provider === 'google_drive' ? 'google' : 'local';
+            abort_unless(\Illuminate\Support\Facades\Storage::disk($disk)->exists($document->file_path), 404);
             $document->increment('download_count');
-            return \Illuminate\Support\Facades\Storage::disk('local')->download(
+            return \Illuminate\Support\Facades\Storage::disk($disk)->download(
                 $document->file_path,
                 $document->file_name
             );
