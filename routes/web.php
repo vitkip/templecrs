@@ -63,19 +63,55 @@ Route::middleware([SetLocale::class])->group(function () {
     })->name('frontend.document.download');
 
     // Inline file viewer (PDF in browser) — no increment, view only
-    Route::get('/library/{id}/view', function (int $id) {
+    Route::get('/library/{id}/view', function (\Illuminate\Http\Request $request, int $id) {
         $document = \App\Models\Document::where('is_active', true)->findOrFail($id);
         abort_if(!$document->file_path, 404);
         $disk = $document->storage_provider === 'google_drive' ? 'google' : 'local';
-        abort_unless(\Illuminate\Support\Facades\Storage::disk($disk)->exists($document->file_path), 404);
-        return response(
-            \Illuminate\Support\Facades\Storage::disk($disk)->get($document->file_path),
-            200,
-            [
-                'Content-Type' => $document->file_type ?: 'application/pdf',
-                'Content-Disposition' => 'inline; filename="' . basename($document->file_name) . '"'
-            ]
-        );
+        $storage = \Illuminate\Support\Facades\Storage::disk($disk);
+        abort_unless($storage->exists($document->file_path), 404);
+
+        // ETag/Last-Modified let the browser skip re-fetching from Google Drive
+        // entirely on repeat views (304 Not Modified) — no network round-trip to Drive.
+        $lastModified = $document->updated_at ?? now();
+        $etag = sprintf('"%s-%s"', $document->id, $lastModified->timestamp);
+
+        if ($request->headers->get('If-None-Match') === $etag) {
+            return response('', 304, [
+                'ETag' => $etag,
+                'Cache-Control' => 'private, max-age=3600',
+            ]);
+        }
+
+        $headers = [
+            'Content-Type' => $document->file_type ?: 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . basename($document->file_name) . '"',
+            'Cache-Control' => 'private, max-age=3600',
+            'ETag' => $etag,
+            'Last-Modified' => $lastModified->toRfc7231String(),
+            // Tell nginx/reverse proxies not to buffer the whole file before
+            // relaying it — keeps this a true progressive stream end-to-end.
+            'X-Accel-Buffering' => 'no',
+        ];
+        if ($document->file_size) {
+            $headers['Content-Length'] = $document->file_size;
+        }
+
+        return response()->stream(function () use ($storage, $document) {
+            $stream = $storage->readStream($document->file_path);
+            abort_if($stream === false, 502, 'Unable to read file from storage.');
+
+            // Disable output buffering so bytes reach the browser as they
+            // arrive from the storage driver, instead of only after EOF.
+            while (ob_get_level() > 0) {
+                ob_end_flush();
+            }
+
+            while (!feof($stream)) {
+                echo fread($stream, 8192);
+                flush();
+            }
+            fclose($stream);
+        }, 200, $headers);
     })->name('frontend.document.view');
 });
 

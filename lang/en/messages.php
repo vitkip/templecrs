@@ -99,6 +99,8 @@ return [
     'contact'              => 'Contact',
     'quick_links'          => 'Quick Links',
     'follow_us'            => 'Follow Us',
+    'share_page'           => 'Share This Page',
+    'share_on_facebook'    => 'Share on Facebook',
     'powered_by'           => 'Powered by Buddhist EMS',
 
     // Frontend — Hero CTA

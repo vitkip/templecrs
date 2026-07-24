@@ -99,6 +99,8 @@ return [
     'contact' => 'ຕິດຕໍ່',
     'quick_links' => 'ລິ້ງດ່ວນ',
     'follow_us' => 'ຕິດຕາມພວກເຮົາ',
+    'share_page' => 'ແບ່ງປັນໜ້ານີ້',
+    'share_on_facebook' => 'ແບ່ງປັນຜ່ານ Facebook',
     'powered_by' => 'Powered by:ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ',
 
     // Frontend — Hero CTA
