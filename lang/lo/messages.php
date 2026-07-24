@@ -101,6 +101,7 @@ return [
     'follow_us' => 'ຕິດຕາມພວກເຮົາ',
     'share_page' => 'ແບ່ງປັນໜ້ານີ້',
     'share_on_facebook' => 'ແບ່ງປັນຜ່ານ Facebook',
+    'view_facebook_page' => 'ເບິ່ງໜ້າ Facebook',
     'powered_by' => 'Powered by:ກັມມາທິການສາທາຣະນູປະການ ສູນກາງ ອພສ',
 
     // Frontend — Hero CTA

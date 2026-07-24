@@ -101,6 +101,7 @@ return [
     'follow_us'            => 'Follow Us',
     'share_page'           => 'Share This Page',
     'share_on_facebook'    => 'Share on Facebook',
+    'view_facebook_page'   => 'View Facebook Page',
     'powered_by'           => 'Powered by Buddhist EMS',
 
     // Frontend — Hero CTA

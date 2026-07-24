@@ -370,23 +370,21 @@
                         </li>
                     </ul>
                 </div>
-
-                {{-- Facebook Share Button --}}
+                {{-- Facebook Page URL --}}
                 @if ($orgFacebookPage)
                     <div>
                         <h4 class="font-bold text-[#D4AF37] uppercase mb-5 flex items-center gap-2.5" style="font-size:11px; letter-spacing:0.18em;">
                             <span class="h-px w-5 rounded-full bg-[#D4AF37] inline-block"></span>
-                            {{ __('messages.share_page') }}
+                            {{ __('messages.follow_us') }}
                         </h4>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}"
+                        <a href="{{ $orgFacebookPage }}"
                            target="_blank" rel="noopener noreferrer"
-                           onclick="window.open(this.href,'fb-share','width=580,height=470'); return false;"
                            class="inline-flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-[#1877F2]/10 hover:border-[#1877F2]/40 px-4 py-2.5 text-white/70 hover:text-white transition-all duration-200"
                            style="font-size:13px;">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#1877F2" style="width:16px; height:16px;">
                                 <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.891h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/>
                             </svg>
-                            {{ __('messages.share_on_facebook') }}
+                            {{ __('messages.view_facebook_page') }}
                         </a>
                     </div>
                 @endif
