@@ -58,7 +58,7 @@ class FinanceReportController extends Controller
             foreach (array_keys($currencies) as $code) {
                 $rows = $byCategoryRaw->where('type', $t)->where('currency', $code);
                 if ($rows->isNotEmpty()) {
-                    $byCategory[$t][$code] = $rows->sortByDesc('total')->values();
+                    $byCategory[$t][$code] = $rows->sortByDesc(fn($r) => (float) $r->total)->values();
                 }
             }
         }
