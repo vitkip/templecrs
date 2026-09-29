@@ -23,6 +23,7 @@ class News extends Model
         'content_lo',
         'content_en',
         'cover_image',
+        'gallery_images',
         'published_at',
         'is_featured',
         'sort_order',
@@ -34,6 +35,7 @@ class News extends Model
         'is_featured'      => 'boolean',
         'published_at'     => 'datetime',
         'news_category_id' => 'integer',
+        'gallery_images'   => 'array',
     ];
 
     /* ───── Accessors ───── */
@@ -62,6 +64,15 @@ class News extends Model
     public function getCoverImageUrlAttribute(): ?string
     {
         return $this->cover_image ? Storage::url($this->cover_image) : null;
+    }
+
+    public function getGalleryImageUrlsAttribute(): array
+    {
+        if (empty($this->gallery_images) || !is_array($this->gallery_images)) {
+            return [];
+        }
+
+        return array_map(fn($path) => Storage::url($path), $this->gallery_images);
     }
 
     public function getPublishedDateFormattedAttribute(): string

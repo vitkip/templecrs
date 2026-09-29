@@ -8,63 +8,142 @@
             </a>
             <div>
                 <h1 class="text-headline-sm font-bold text-on-surface">{{ __('messages.finance_report') }}</h1>
-                <p class="text-body-sm text-on-surface-variant mt-0.5">{{ $from }} → {{ $to }}</p>
+                <p class="text-body-sm text-on-surface-variant mt-0.5">
+                    {{ $from }} → {{ $to }}
+                    @if ($selectedCategory)
+                        • <span class="font-bold {{ $selectedCategory->is_income ? 'text-green-700' : 'text-red-600' }}">
+                            ສະເພາະໝວດໝູ່: {{ $selectedCategory->name }}
+                        </span>
+                    @endif
+                </p>
             </div>
         </div>
-        <a href="{{ route('finance.report.pdf', request()->query()) }}" target="_blank"
+        <a href="{{ route('finance.report.pdf', array_filter(['period' => $period, 'reportYear' => $reportYear, 'reportMonth' => $reportMonth, 'dateFrom' => $dateFrom, 'dateTo' => $dateTo, 'categoryId' => $categoryId])) }}" target="_blank"
             class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-error text-white hover:bg-error/90 transition-all font-bold text-label-md shadow-md btn-press">
             <span class="material-symbols-outlined text-base">picture_as_pdf</span>
-            {{ __('ສົງອອກຂໍ້ມູນ PDF') }}
+            {{ $selectedCategory ? 'ສົ່ງອອກ PDF ໝວດໝູ່ນີ້' : 'ສົ່ງອອກຂໍ້ມູນ PDF' }}
         </a>
     </div>
 
-    {{-- Period Selector --}}
-    <div class="bg-surface-container rounded-2xl border border-outline-variant p-4 mb-6">
+    {{-- Filter Selector Bar --}}
+    <div class="bg-surface-container rounded-2xl border border-outline-variant p-4 mb-6 shadow-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <select wire:model.live="period"
-                class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
-                <option value="month">{{ __('messages.monthly') }}</option>
-                <option value="quarter">{{ __('messages.quarterly') }}</option>
-                <option value="year">{{ __('messages.yearly') }}</option>
-                <option value="custom">{{ __('messages.custom_range') }}</option>
-            </select>
-            <select wire:model.live="reportYear"
-                class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
-                @foreach ($years as $y)
-                    <option value="{{ $y }}">{{ $y }}</option>
-                @endforeach
-            </select>
-            @if ($period === 'month')
-                <select wire:model.live="reportMonth"
+            {{-- Period Type --}}
+            <div>
+                <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ຊ່ວງເວລາ (Period)</label>
+                <select wire:model.live="period"
                     class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
-                    @foreach (range(1, 12) as $m)
-                        <option value="{{ $m }}">{{ now()->setMonth($m)->locale('lo')->translatedFormat('F') }}</option>
-                    @endforeach
+                    <option value="month">{{ __('messages.monthly') }}</option>
+                    <option value="quarter">{{ __('messages.quarterly') }}</option>
+                    <option value="year">{{ __('messages.yearly') }}</option>
+                    <option value="custom">{{ __('messages.custom_range') }}</option>
+                    <option value="all">ທັງໝົດ (All Time)</option>
                 </select>
-            @elseif ($period === 'quarter')
-                <select wire:model.live="reportMonth"
-                    class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
-                    <option value="1">{{ __('messages.q1') }}</option>
-                    <option value="4">{{ __('messages.q2') }}</option>
-                    <option value="7">{{ __('messages.q3') }}</option>
-                    <option value="10">{{ __('messages.q4') }}</option>
-                </select>
-            @endif
-            @if ($period === 'custom')
-                <div class="flex gap-2 items-center sm:col-span-2">
-                    <input wire:model.live="dateFrom" type="date"
-                        class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
-                    <span class="text-on-surface-variant text-xs">→</span>
-                    <input wire:model.live="dateTo" type="date"
-                        class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+            </div>
+
+            {{-- Year / Month / Quarter controls based on period --}}
+            @if ($period !== 'all' && $period !== 'custom')
+                <div>
+                    <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ປີ (Year)</label>
+                    <select wire:model.live="reportYear"
+                        class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        @foreach ($years as $y)
+                            <option value="{{ $y }}">{{ $y }}</option>
+                        @endforeach
+                    </select>
                 </div>
             @endif
+
+            @if ($period === 'month')
+                <div>
+                    <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ເດືອນ (Month)</label>
+                    <select wire:model.live="reportMonth"
+                        class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        @foreach (range(1, 12) as $m)
+                            <option value="{{ $m }}">{{ now()->setMonth($m)->locale('lo')->translatedFormat('F') }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @elseif ($period === 'quarter')
+                <div>
+                    <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ໄຕຣມາດ (Quarter)</label>
+                    <select wire:model.live="reportMonth"
+                        class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        <option value="1">{{ __('messages.q1') }}</option>
+                        <option value="4">{{ __('messages.q2') }}</option>
+                        <option value="7">{{ __('messages.q3') }}</option>
+                        <option value="10">{{ __('messages.q4') }}</option>
+                    </select>
+                </div>
+            @endif
+
+            @if ($period === 'custom')
+                <div class="sm:col-span-2">
+                    <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ຊ່ວງວັນທີ (Custom Range)</label>
+                    <div class="flex gap-2 items-center">
+                        <input wire:model.live="dateFrom" type="date"
+                            class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                        <span class="text-on-surface-variant text-xs">→</span>
+                        <input wire:model.live="dateTo" type="date"
+                            class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-sm focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                    </div>
+                </div>
+            @endif
+
+            {{-- Category Filter --}}
+            <div class="{{ ($period === 'all') ? 'sm:col-span-2 lg:col-span-3' : '' }}">
+                <label class="block text-[11px] font-bold text-on-surface-variant mb-1">ກັ່ນຕອງຕາມໝວດໝູ່ (Category)</label>
+                <select wire:model.live="categoryId"
+                    class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-xl text-body-md focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">-- ທຸກໝວດໝູ່ (All Categories) --</option>
+                    @if ($incomeCategories->isNotEmpty())
+                        <optgroup label="── ໝວດລາຍຮັບ ──">
+                            @foreach ($incomeCategories as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </optgroup>
+                    @endif
+                    @if ($expenseCategories->isNotEmpty())
+                        <optgroup label="── ໝວດລາຍຈ່າຍ ──">
+                            @foreach ($expenseCategories as $c)
+                                <option value="{{ $c->id }}">{{ $c->name }}</option>
+                            @endforeach
+                        </optgroup>
+                    @endif
+                </select>
+            </div>
         </div>
+
+        {{-- Active Filter Badge --}}
+        @if ($selectedCategory)
+            <div class="mt-3 pt-3 border-t border-outline-variant/60 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="text-body-sm text-on-surface-variant">ກຳລັງສະແດງລາຍງານສະເພາະ:</span>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-label-md font-bold {{ $selectedCategory->is_income ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                        <span class="material-symbols-outlined text-sm">{{ $selectedCategory->icon ?? ($selectedCategory->is_income ? 'arrow_downward' : 'arrow_upward') }}</span>
+                        {{ $selectedCategory->name }}
+                        <span class="text-xs opacity-75">({{ $selectedCategory->is_income ? 'ໝວດລາຍຮັບ' : 'ໝວດລາຍຈ່າຍ' }})</span>
+                    </span>
+                </div>
+                <button wire:click="clearCategory"
+                    class="text-body-sm text-primary hover:underline flex items-center gap-1 font-bold">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                    ສະແດງທຸກໝວດໝູ່ (Clear Filter)
+                </button>
+            </div>
+        @endif
     </div>
 
     {{-- ── Summary by Currency ────────────────────────────────────────────────── --}}
     <div class="bg-surface-container rounded-2xl border border-outline-variant p-5 mb-6">
-        <h2 class="text-title-sm font-bold text-on-surface mb-4">ສະຫຼຸບລວມ — ແຍກຕາມສະກຸນເງີນ</h2>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-title-sm font-bold text-on-surface">
+                ສະຫຼຸບລວມ — ແຍກຕາມສະກຸນເງີນ
+                @if ($selectedCategory)
+                    <span class="text-xs font-normal text-on-surface-variant ml-2">(ໝວດ: {{ $selectedCategory->name }})</span>
+                @endif
+            </h2>
+        </div>
 
         @if (empty($byCurrencyMap))
             <p class="text-body-sm text-on-surface-variant text-center py-4">ຍັງບໍ່ມີຂໍ້ມູນໃນຊ່ວງນີ້</p>
@@ -112,7 +191,12 @@
         <div class="bg-surface-container rounded-2xl border border-outline-variant p-5 mb-6"
             x-data="financeChart(@js($allChartData), @js($currencies))">
             <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-                <h2 class="text-title-sm font-bold text-on-surface">ກຣາບ ລາຍຮັບ / ລາຍຈ່າຍ</h2>
+                <h2 class="text-title-sm font-bold text-on-surface">
+                    ກຣາບ ລາຍຮັບ / ລາຍຈ່າຍ
+                    @if ($selectedCategory)
+                        <span class="text-xs font-normal text-on-surface-variant ml-1">({{ $selectedCategory->name }})</span>
+                    @endif
+                </h2>
                 <div class="flex gap-1 flex-wrap">
                     <template x-for="code in availableCodes" :key="code">
                         <button @click="selectCurrency(code)"
@@ -137,28 +221,59 @@
             @foreach (['income' => ['label' => 'ລາຍຮັບ', 'color' => 'green'], 'expense' => ['label' => 'ລາຍຈ່າຍ', 'color' => 'red']] as $type => $meta)
                 @if (!empty($byCategory[$type]))
                     <div class="bg-surface-container rounded-2xl border border-outline-variant p-5">
-                        <h3 class="text-title-sm font-bold text-{{ $meta['color'] }}-700 mb-4 flex items-center gap-2">
-                            <span
-                                class="material-symbols-outlined text-base">{{ $type === 'income' ? 'trending_up' : 'trending_down' }}</span>
-                            ໝວດ{{ $meta['label'] }}
-                        </h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-title-sm font-bold text-{{ $meta['color'] }}-700 flex items-center gap-2">
+                                <span
+                                    class="material-symbols-outlined text-base">{{ $type === 'income' ? 'trending_up' : 'trending_down' }}</span>
+                                ໝວດ{{ $meta['label'] }}
+                            </h3>
+                            @if (!$selectedCategory)
+                                <span class="text-[10px] text-on-surface-variant">ຄລິກທີ່ໝວດໝູ່ເພື່ອກັ່ນຕອງ</span>
+                            @endif
+                        </div>
                         @foreach ($byCategory[$type] as $code => $rows)
-                            @php $cfg = $currencies[$code]; @endphp
-                            <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wide mb-1.5 mt-3 first:mt-0">
-                                {{ $cfg['symbol'] }} {{ $cfg['name_lo'] }} ({{ $code }})
-                            </p>
-                            <div class="space-y-1.5">
+                            @php
+                                $cfg = $currencies[$code];
+                                $typeTotal = $overallTotals[$type][$code] ?? 0;
+                            @endphp
+                            <div class="flex items-center justify-between mb-2 mt-4 first:mt-0">
+                                <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wide">
+                                    {{ $cfg['symbol'] }} {{ $cfg['name_lo'] }} ({{ $code }})
+                                </p>
+                                @if ($typeTotal > 0)
+                                    <span class="text-[10px] text-on-surface-variant">ລວມ: {{ number_format($typeTotal, $cfg['decimals'], '.', ',') }}</span>
+                                @endif
+                            </div>
+                            <div class="space-y-2">
                                 @foreach ($rows as $row)
-                                    <div class="flex items-center justify-between gap-2 text-body-sm">
-                                        <div class="flex items-center gap-2 min-w-0">
-                                            <span
-                                                class="material-symbols-outlined text-sm text-on-surface-variant shrink-0">{{ $row->category->icon ?? 'category' }}</span>
-                                            <span class="text-on-surface truncate">{{ $row->category->name ?? '—' }}</span>
-                                            <span class="text-[10px] text-on-surface-variant shrink-0">({{ $row->count }})</span>
+                                    @php
+                                        $catPct = $typeTotal > 0 ? round(((float)$row->total / $typeTotal) * 100, 1) : 0;
+                                        $isThisActive = $categoryId == $row->category_id;
+                                    @endphp
+                                    <div wire:click="$set('categoryId', {{ $isThisActive ? 'null' : $row->category_id }})"
+                                        class="p-2.5 rounded-xl border transition-all cursor-pointer {{ $isThisActive ? 'bg-primary/5 border-primary shadow-xs' : 'bg-surface border-outline-variant/60 hover:border-primary/50 hover:bg-surface-container-high/40' }}"
+                                        title="{{ $isThisActive ? 'ຄລິກເພື່ອຍົກເລີກການເລືອກ' : 'ຄລິກເພື່ອເບິ່ງລາຍງານສະເພາະໝວດນີ້' }}">
+                                        <div class="flex items-center justify-between gap-2 text-body-sm">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <span
+                                                    class="material-symbols-outlined text-base text-on-surface-variant shrink-0">{{ $row->category->icon ?? 'category' }}</span>
+                                                <span class="text-on-surface font-semibold truncate">{{ $row->category->name ?? '—' }}</span>
+                                                <span class="text-[11px] text-on-surface-variant shrink-0">({{ $row->count }} ລາຍການ)</span>
+                                            </div>
+                                            <div class="flex items-center gap-2 shrink-0">
+                                                <span class="text-[11px] font-bold px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant">
+                                                    {{ $catPct }}%
+                                                </span>
+                                                <span class="font-bold text-{{ $meta['color'] }}-700">
+                                                    {{ number_format((float) $row->total, $cfg['decimals'], '.', ',') }}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span class="font-bold text-{{ $meta['color'] }}-700 shrink-0">
-                                            {{ number_format((float) $row->total, $cfg['decimals'], '.', ',') }}
-                                        </span>
+                                        {{-- Progress Bar --}}
+                                        <div class="w-full bg-outline-variant/30 rounded-full h-1.5 mt-2 overflow-hidden">
+                                            <div class="h-1.5 rounded-full {{ $type === 'income' ? 'bg-green-600' : 'bg-red-600' }}"
+                                                style="width: {{ min($catPct, 100) }}%"></div>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>
@@ -171,8 +286,20 @@
 
     {{-- ── Transaction List ───────────────────────────────────────────────────── --}}
     <div class="bg-surface-container rounded-2xl border border-outline-variant overflow-hidden">
-        <div class="p-4 border-b border-outline-variant">
-            <h2 class="text-title-sm font-bold text-on-surface">ລາຍການທໍາລະດ ({{ $transactions->count() }} ລາຍການ)</h2>
+        <div class="p-4 border-b border-outline-variant flex items-center justify-between">
+            <h2 class="text-title-sm font-bold text-on-surface">
+                ລາຍການທຸລະກຳ ({{ $transactions->count() }} ລາຍການ)
+                @if ($selectedCategory)
+                    <span class="text-body-xs font-normal text-on-surface-variant ml-1">
+                        — ສະເພາະ: {{ $selectedCategory->name }}
+                    </span>
+                @endif
+            </h2>
+            @if ($selectedCategory)
+                <button wire:click="clearCategory" class="text-body-xs text-primary font-bold hover:underline">
+                    ສະແດງທຸກໝວດໝູ່
+                </button>
+            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-body-sm">

@@ -10,10 +10,20 @@ use Illuminate\Support\Facades\Storage;
 
 class NewsService
 {
-    public function create(array $data, ?UploadedFile $coverImage = null): News
+    public function create(array $data, ?UploadedFile $coverImage = null, array $galleryImages = []): News
     {
         if ($coverImage) {
             $data['cover_image'] = $coverImage->store('news/covers', 'public');
+        }
+
+        $galleryPaths = [];
+        foreach ($galleryImages as $img) {
+            if ($img instanceof UploadedFile) {
+                $galleryPaths[] = $img->store('news/gallery', 'public');
+            }
+        }
+        if (!empty($galleryPaths)) {
+            $data['gallery_images'] = $galleryPaths;
         }
 
         $data['author_id'] = auth()->id();
@@ -23,8 +33,14 @@ class NewsService
         return $news;
     }
 
-    public function update(int $id, array $data, ?UploadedFile $coverImage = null): News
-    {
+    public function update(
+        int $id,
+        array $data,
+        ?UploadedFile $coverImage = null,
+        array $newGalleryImages = [],
+        array $keptGalleryImages = [],
+        array $removedGalleryImages = []
+    ): News {
         $news = News::findOrFail($id);
 
         if ($coverImage) {
@@ -33,6 +49,22 @@ class NewsService
             }
             $data['cover_image'] = $coverImage->store('news/covers', 'public');
         }
+
+        // Delete files that user explicitly removed
+        foreach ($removedGalleryImages as $oldPath) {
+            Storage::disk('public')->delete($oldPath);
+        }
+
+        // Store new gallery images
+        $newPaths = [];
+        foreach ($newGalleryImages as $img) {
+            if ($img instanceof UploadedFile) {
+                $newPaths[] = $img->store('news/gallery', 'public');
+            }
+        }
+
+        // Combine kept existing images with newly stored images (max 5)
+        $data['gallery_images'] = array_values(array_slice(array_merge($keptGalleryImages, $newPaths), 0, 5));
 
         $news->update($data);
         $this->clearFrontendCache($id);
@@ -45,6 +77,12 @@ class NewsService
 
         if ($news->cover_image) {
             Storage::disk('public')->delete($news->cover_image);
+        }
+
+        if (!empty($news->gallery_images) && is_array($news->gallery_images)) {
+            foreach ($news->gallery_images as $path) {
+                Storage::disk('public')->delete($path);
+            }
         }
 
         $news->delete();

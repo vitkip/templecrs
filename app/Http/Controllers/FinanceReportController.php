@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -17,14 +18,17 @@ class FinanceReportController extends Controller
         $reportMonth = (int) $request->input('reportMonth', now()->month);
         $dateFrom    = $request->input('dateFrom') ?: null;
         $dateTo      = $request->input('dateTo')   ?: null;
+        $categoryId  = $request->input('categoryId') ? (int) $request->input('categoryId') : null;
 
         [$from, $to] = $this->getDateRange($period, $reportYear, $reportMonth, $dateFrom, $dateTo);
 
+        $selectedCategory = $categoryId ? FinanceCategory::find($categoryId) : null;
         $currencies = FinanceTransaction::CURRENCIES;
 
-        // Totals grouped by currency — no cross-currency conversion
+        // Totals grouped by currency — filtered by category if specified
         $totalsRaw = FinanceTransaction::selectRaw('currency, type, SUM(amount) as total')
             ->dateBetween($from, $to)
+            ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
             ->groupBy('currency', 'type')
             ->get();
 
@@ -45,6 +49,7 @@ class FinanceReportController extends Controller
         $byCategoryRaw = FinanceTransaction::with('category')
             ->selectRaw('category_id, type, currency, SUM(amount) as total, COUNT(*) as count')
             ->dateBetween($from, $to)
+            ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
             ->groupBy('category_id', 'type', 'currency')
             ->get();
 
@@ -60,6 +65,7 @@ class FinanceReportController extends Controller
 
         $transactions = FinanceTransaction::with('category')
             ->dateBetween($from, $to)
+            ->when($categoryId, fn($q) => $q->where('category_id', $categoryId))
             ->orderBy('transaction_date')
             ->get();
 
@@ -78,14 +84,18 @@ class FinanceReportController extends Controller
             'byCurrencyMap', 'byCategory',
             'transactions', 'currencies',
             'orgName', 'orgAddress', 'orgPhone', 'orgEmail', 'orgWebsite', 'orgLogoPath',
-            'period', 'reportYear', 'reportMonth'
+            'period', 'reportYear', 'reportMonth', 'selectedCategory', 'categoryId'
         ))
         ->setBasePath(base_path())
         ->setPaper('a4', 'portrait');
 
         if (ob_get_length()) ob_end_clean();
 
-        return $pdf->stream('finance-report-' . $from . '-to-' . $to . '.pdf');
+        $filename = $selectedCategory
+            ? 'finance-report-category-' . $selectedCategory->id . '-' . $from . '-to-' . $to . '.pdf'
+            : 'finance-report-' . $from . '-to-' . $to . '.pdf';
+
+        return $pdf->stream($filename);
     }
 
     private function getDateRange(string $period, int $year, int $month, ?string $from, ?string $to): array
@@ -98,6 +108,10 @@ class FinanceReportController extends Controller
             'quarter' => $this->quarterRange($year, $month),
             'year'    => ["{$year}-01-01", "{$year}-12-31"],
             'custom'  => [$from ?: now()->startOfMonth()->format('Y-m-d'), $to ?: now()->format('Y-m-d')],
+            'all'     => [
+                FinanceTransaction::min('transaction_date') ?? '2020-01-01',
+                FinanceTransaction::max('transaction_date') ?? now()->format('Y-m-d'),
+            ],
             default   => [now()->startOfMonth()->format('Y-m-d'), now()->format('Y-m-d')],
         };
     }

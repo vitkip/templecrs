@@ -34,6 +34,12 @@ class NewsForm extends Component
     public $cover_image = null;
     public ?string $existing_cover_image = null;
 
+    // Gallery Images (Up to 5 images)
+    public $gallery_uploads = [];
+    public array $new_gallery_images = [];
+    public array $existing_gallery_images = [];
+    public array $removed_gallery_images = [];
+
     // Publishing
     public ?string $published_at = null;
     public bool $is_featured     = false;
@@ -69,6 +75,7 @@ class NewsForm extends Component
         $this->sort_order     = $news->sort_order ?? 0;
         $this->is_active      = $news->is_active ?? true;
         $this->existing_cover_image = $news->cover_image;
+        $this->existing_gallery_images = is_array($news->gallery_images) ? $news->gallery_images : [];
     }
 
     protected function rules(): array
@@ -82,6 +89,7 @@ class NewsForm extends Component
             'content_lo'   => 'nullable|string',
             'content_en'   => 'nullable|string',
             'cover_image'  => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+            'gallery_uploads.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'published_at' => 'nullable|date',
             'is_featured'  => 'boolean',
             'sort_order'   => 'nullable|integer|min:0',
@@ -92,15 +100,69 @@ class NewsForm extends Component
     protected function messages(): array
     {
         return [
-            'title_lo.required'  => 'ກະລຸນາໃສ່ຫົວຂໍ້ຂ່າວ (ພາສາລາວ)',
-            'cover_image.max'    => 'ຮູບປົກຕ້ອງບໍ່ເກີນ 10MB',
-            'cover_image.image'  => 'ກະລຸນາເລືອກໄຟລ໌ຮູບພາບ',
+            'title_lo.required'       => 'ກະລຸນາໃສ່ຫົວຂໍ້ຂ່າວ (ພາສາລາວ)',
+            'cover_image.max'         => 'ຮູບປົກຕ້ອງບໍ່ເກີນ 10MB',
+            'cover_image.image'       => 'ກະລຸນາເລືອກໄຟລ໌ຮູບພາບ',
+            'gallery_uploads.*.image' => 'ກະລຸນາເລືອກໄຟລ໌ຮູບພາບທີ່ຖືກຕ້ອງ',
+            'gallery_uploads.*.mimes' => 'ຮູບປະກອບຕ້ອງເປັນໄຟລ໌ jpg, jpeg, png, webp',
+            'gallery_uploads.*.max'   => 'ຮູບປະກອບແຕ່ລະຮູບຕ້ອງບໍ່ເກີນ 10MB',
         ];
+    }
+
+    public function updatedGalleryUploads(): void
+    {
+        $this->validateOnly('gallery_uploads.*');
+
+        $currentTotal = count($this->existing_gallery_images) + count($this->new_gallery_images);
+        $slotsAvailable = max(0, 5 - $currentTotal);
+
+        if ($slotsAvailable <= 0) {
+            $this->addError('gallery_uploads', 'ສາມາດເພີ່ມຮູບພາບປະກອບໄດ້ສູງສຸດ 5 ຮູບເທົ່ານັ້ນ');
+            $this->gallery_uploads = [];
+            return;
+        }
+
+        $added = 0;
+        foreach ($this->gallery_uploads as $file) {
+            if ($added < $slotsAvailable) {
+                $this->new_gallery_images[] = $file;
+                $added++;
+            }
+        }
+
+        if (count($this->gallery_uploads) > $slotsAvailable) {
+            $this->addError('gallery_uploads', 'ສາມາດເພີ່ມຮູບໄດ້ອີກພຽງ ' . $slotsAvailable . ' ຮູບ ເພື່ອບໍ່ໃຫ້ເກີນກຳນົດ 5 ຮູບ');
+        }
+
+        $this->gallery_uploads = [];
+    }
+
+    public function removeNewGalleryImage(int $index): void
+    {
+        if (isset($this->new_gallery_images[$index])) {
+            array_splice($this->new_gallery_images, $index, 1);
+            $this->resetErrorBag('gallery_uploads');
+        }
+    }
+
+    public function removeExistingGalleryImage(int $index): void
+    {
+        if (isset($this->existing_gallery_images[$index])) {
+            $this->removed_gallery_images[] = $this->existing_gallery_images[$index];
+            array_splice($this->existing_gallery_images, $index, 1);
+            $this->resetErrorBag('gallery_uploads');
+        }
     }
 
     public function save(): void
     {
         $this->validate();
+
+        $totalImages = count($this->existing_gallery_images) + count($this->new_gallery_images);
+        if ($totalImages > 5) {
+            $this->addError('gallery_uploads', 'ສາມາດໃສ່ຮູບພາບປະກອບໄດ້ສູງສຸດ 5 ຮູບ');
+            return;
+        }
 
         $service = app(NewsService::class);
 
@@ -119,10 +181,17 @@ class NewsForm extends Component
         ];
 
         if ($this->editMode) {
-            $service->update($this->newsId, $data, $this->cover_image);
+            $service->update(
+                $this->newsId,
+                $data,
+                $this->cover_image,
+                $this->new_gallery_images,
+                $this->existing_gallery_images,
+                $this->removed_gallery_images
+            );
             session()->flash('message', 'ແກ້ໄຂຂ່າວສຳເລັດ / News updated.');
         } else {
-            $service->create($data, $this->cover_image);
+            $service->create($data, $this->cover_image, $this->new_gallery_images);
             session()->flash('message', 'ເພີ່ມຂ່າວສຳເລັດ / News created.');
         }
 

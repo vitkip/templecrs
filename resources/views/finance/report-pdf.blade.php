@@ -255,11 +255,21 @@
 {{-- ══ ຫົວຂໍ້ບົດລາຍງານ ══ --}}
 <div class="title-block">
     <div class="title-main">ບົດລາຍງານສະຫຼຸບ ລາຍຮັບ-ລາຍຈ່າຍ</div>
+    @if (!empty($selectedCategory))
+        <div style="font-size: 13pt; font-weight: bold; margin-top: 4px; color: #1e3a8a;">
+            (ສະເພາະໝວດໝູ່: {{ $selectedCategory->name }} — {{ $selectedCategory->is_income ? 'ໝວດລາຍຮັບ' : 'ໝວດລາຍຈ່າຍ' }})
+        </div>
+    @endif
 </div>
 <div class="title-about">
     <p style="margin-left: 50px;">ອີງຕາມ ພາລະບົດບາດ, ສິດ ແລະ ໜ້າທີ່ ຂອງ ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ-ການບັນຊີ ຂອງກັມມາທິການ </p>
 ສາທາລະນູປະການ ສູນກາງອົງການພຸດທະສາສະໜາສຳພັນແຫ່ງ ສປປ ລາວ;
-    ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ-ການບັນຊີ ຂໍນ້ອມນະມັດສະການສະເໜີລາຍງານສະຫຼຸບສັງລວມ ກ່ຽວກັບການຄຸ້ມຄອງ ແລະ ຈັດຕັ້ງປະຕິບັດແຜນງົບປະມານ
+    ຄະນະກໍາມະການຮັບຜິດຊອບການເງິນ-ການບັນຊີ ຂໍນ້ອມນະມັດສະການສະເໜີລາຍງານສະຫຼຸບສັງລວມ ກ່ຽວກັບການຄຸ້ມຄອງ ແລະ ຈັດຕັ້ງປະຕິບັດ
+    @if (!empty($selectedCategory))
+        ລາຍການເຄື່ອນໄຫວສະເພາະ <strong>ໝວດໝູ່: {{ $selectedCategory->name }}</strong>
+    @else
+        ແຜນງົບປະມານ
+    @endif
     ໃນຄັ້ງ: <br>ວັນທີ {{ $fromDay }} {{ $fromMonth }} {{ $fromYear }} ຫາ ວັນທີ {{ $toDay }} {{ $toMonth }} {{ $toYear }} ເພື່ອຊີ້ແຈງສະພາບຄ່ອງທາງດ້ານການເງິນ ແລະ ຍອດເຫຼືອຄັງຕົວຈິງ 
      </p>
      <p style="text-align:center; font-weight: bold;">ດັ່ງມີລາຍລະອຽດສັງລວມລຸ່ມນີ້:</p>
@@ -310,7 +320,13 @@
 @endif
 
 {{-- ══ II. ສະຫຼຸບຕາມໝວດໝູ່ (ແຍກຕາມສະກຸນເງີນ) ══ --}}
-<div class="sec-title">II. ສະຫຼຸບຕາມໝວດໝູ່ ລາຍຮັບ-ລາຍຈ່າຍ</div>
+<div class="sec-title">
+    @if (!empty($selectedCategory))
+        II. ລາຍລະອຽດໝວດໝູ່: {{ $selectedCategory->name }} ({{ $selectedCategory->is_income ? 'ໝວດລາຍຮັບ' : 'ໝວດລາຍຈ່າຍ' }})
+    @else
+        II. ສະຫຼຸບຕາມໝວດໝູ່ ລາຍຮັບ-ລາຍຈ່າຍ
+    @endif
+</div>
 
 @php
     $hasCategoryData = false;
@@ -343,12 +359,13 @@
                         <table class="cat-sub-table">
                             <thead>
                                 <tr>
-                                    <th colspan="3" style="text-align:center;">ໝວດໝູ່ລາຍຮັບ (Income)</th>
+                                    <th colspan="4" style="text-align:center;">ໝວດໝູ່ລາຍຮັບ (Income)</th>
                                 </tr>
                                 <tr>
                                     <th>ຊື່ໝວດໝູ່</th>
-                                    <th style="text-align:center; width:16%;">ຈຳນວນ</th>
-                                    <th style="text-align:right; width:38%;">ມູນຄ່າ ({{ $cfg['name_lo'] }})</th>
+                                    <th style="text-align:center; width:14%;">ຈຳນວນ</th>
+                                    <th style="text-align:right; width:34%;">ມູນຄ່າ ({{ $cfg['name_lo'] }})</th>
+                                    <th style="text-align:right; width:16%;">ອັດຕາສ່ວນ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -359,14 +376,18 @@
                                             <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }}</td>
                                             <td style="text-align:center;">{{ $row->count }}</td>
                                             <td style="text-align:right;">{{ number_format((float)$row->total, $cfg['decimals'], '.', ',') }}</td>
+                                            <td style="text-align:right; color:#166534; font-weight:bold;">
+                                                {{ $incTotal > 0 ? number_format(($row->total / $incTotal) * 100, 1) . '%' : '0%' }}
+                                            </td>
                                         </tr>
                                     @endforeach
                                     <tr style="font-weight:bold; background:#f9fafb;">
                                         <td colspan="2">ລວມລາຍຮັບ</td>
                                         <td style="text-align:right;">{{ number_format((float)$incTotal, $cfg['decimals'], '.', ',') }}</td>
+                                        <td style="text-align:right;">100%</td>
                                     </tr>
                                 @else
-                                    <tr><td colspan="3" class="empty-note">ບໍ່ມີ</td></tr>
+                                    <tr><td colspan="4" class="empty-note">ບໍ່ມີ</td></tr>
                                 @endif
                             </tbody>
                         </table>
@@ -375,12 +396,13 @@
                         <table class="cat-sub-table">
                             <thead>
                                 <tr>
-                                    <th colspan="3" style="text-align:center;">ໝວດໝູ່ລາຍຈ່າຍ (Expense)</th>
+                                    <th colspan="4" style="text-align:center;">ໝວດໝູ່ລາຍຈ່າຍ (Expense)</th>
                                 </tr>
                                 <tr>
                                     <th>ຊື່ໝວດໝູ່</th>
-                                    <th style="text-align:center; width:16%;">ຈຳນວນ</th>
-                                    <th style="text-align:right; width:38%;">ມູນຄ່າ ({{ $cfg['name_lo'] }})</th>
+                                    <th style="text-align:center; width:14%;">ຈຳນວນ</th>
+                                    <th style="text-align:right; width:34%;">ມູນຄ່າ ({{ $cfg['name_lo'] }})</th>
+                                    <th style="text-align:right; width:16%;">ອັດຕາສ່ວນ</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -391,14 +413,18 @@
                                             <td>{{ $row->category->name ?? 'ບໍ່ມີຊື່' }}</td>
                                             <td style="text-align:center;">{{ $row->count }}</td>
                                             <td style="text-align:right;">{{ number_format((float)$row->total, $cfg['decimals'], '.', ',') }}</td>
+                                            <td style="text-align:right; color:#991b1b; font-weight:bold;">
+                                                {{ $expTotal > 0 ? number_format(($row->total / $expTotal) * 100, 1) . '%' : '0%' }}
+                                            </td>
                                         </tr>
                                     @endforeach
                                     <tr style="font-weight:bold; background:#f9fafb;">
                                         <td colspan="2">ລວມລາຍຈ່າຍ</td>
                                         <td style="text-align:right;">{{ number_format((float)$expTotal, $cfg['decimals'], '.', ',') }}</td>
+                                        <td style="text-align:right;">100%</td>
                                     </tr>
                                 @else
-                                    <tr><td colspan="3" class="empty-note">ບໍ່ມີ</td></tr>
+                                    <tr><td colspan="4" class="empty-note">ບໍ່ມີ</td></tr>
                                 @endif
                             </tbody>
                         </table>

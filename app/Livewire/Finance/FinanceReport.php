@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Finance;
 
+use App\Models\FinanceCategory;
 use App\Models\FinanceTransaction;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -9,7 +10,7 @@ use Livewire\Component;
 class FinanceReport extends Component
 {
     #[Url]
-    public string $period = 'month';  // month | quarter | year | custom
+    public string $period = 'month';  // month | quarter | year | custom | all
 
     #[Url]
     public int $reportYear = 0;
@@ -23,12 +24,19 @@ class FinanceReport extends Component
     #[Url]
     public string $dateTo = '';
 
+    #[Url]
+    public ?int $categoryId = null;
+
     public function mount(): void
     {
         abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
 
         if (!$this->reportYear)  $this->reportYear  = now()->year;
         if (!$this->reportMonth) $this->reportMonth = now()->month;
+
+        if (request()->has('categoryId') && request()->query('categoryId')) {
+            $this->categoryId = (int) request()->query('categoryId');
+        }
     }
 
     public function updatedPeriod(): void
@@ -44,6 +52,18 @@ class FinanceReport extends Component
         }
     }
 
+    public function updatedCategoryId($value): void
+    {
+        if ($value === '' || $value === 0 || $value === '0') {
+            $this->categoryId = null;
+        }
+    }
+
+    public function clearCategory(): void
+    {
+        $this->categoryId = null;
+    }
+
     private function getDateRange(): array
     {
         return match ($this->period) {
@@ -53,8 +73,14 @@ class FinanceReport extends Component
             ],
             'quarter' => $this->quarterRange(),
             'year'    => ["{$this->reportYear}-01-01", "{$this->reportYear}-12-31"],
-            'custom'  => [$this->dateFrom ?: now()->startOfMonth()->format('Y-m-d'),
-                          $this->dateTo   ?: now()->format('Y-m-d')],
+            'custom'  => [
+                $this->dateFrom ?: now()->startOfMonth()->format('Y-m-d'),
+                $this->dateTo   ?: now()->format('Y-m-d')
+            ],
+            'all'     => [
+                FinanceTransaction::min('transaction_date') ?? '2020-01-01',
+                FinanceTransaction::max('transaction_date') ?? now()->format('Y-m-d'),
+            ],
             default   => [now()->startOfMonth()->format('Y-m-d'), now()->format('Y-m-d')],
         };
     }
@@ -74,9 +100,12 @@ class FinanceReport extends Component
     {
         [$from, $to] = $this->getDateRange();
 
-        // ── Totals by currency (no cross-currency conversion) ─────────────────
+        $selectedCategory = $this->categoryId ? FinanceCategory::find($this->categoryId) : null;
+
+        // ── Totals by currency (filtered by category if selected) ────────────
         $totalsRaw = FinanceTransaction::selectRaw('currency, type, SUM(amount) as total')
             ->dateBetween($from, $to)
+            ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
             ->groupBy('currency', 'type')
             ->get();
 
@@ -95,10 +124,22 @@ class FinanceReport extends Component
             }
         }
 
+        // ── Overall Totals (unfiltered by category) for calculating percentage ──
+        $allTotalsRaw = FinanceTransaction::selectRaw('currency, type, SUM(amount) as total')
+            ->dateBetween($from, $to)
+            ->groupBy('currency', 'type')
+            ->get();
+        $overallTotals = [];
+        foreach (array_keys($currencies) as $code) {
+            $overallTotals['income'][$code] = (float) ($allTotalsRaw->where('type', 'income')->where('currency', $code)->first()->total ?? 0);
+            $overallTotals['expense'][$code] = (float) ($allTotalsRaw->where('type', 'expense')->where('currency', $code)->first()->total ?? 0);
+        }
+
         // ── Category breakdown, grouped by type → currency → category ─────────
         $byCategoryRaw = FinanceTransaction::with('category')
             ->selectRaw('category_id, type, currency, SUM(amount) as total, COUNT(*) as count')
             ->dateBetween($from, $to)
+            ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
             ->groupBy('category_id', 'type', 'currency')
             ->get();
 
@@ -124,6 +165,7 @@ class FinanceReport extends Component
                 SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) as expense
             ")->dateBetween($from, $to)
               ->where('currency', $code)
+              ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
               ->groupByRaw('YEAR(transaction_date), MONTH(transaction_date)')
               ->orderByRaw('YEAR(transaction_date), MONTH(transaction_date)')
               ->get();
@@ -140,17 +182,37 @@ class FinanceReport extends Component
         // ── Transaction list ──────────────────────────────────────────────────
         $transactions = FinanceTransaction::with('category', 'creator')
             ->dateBetween($from, $to)
+            ->when($this->categoryId, fn($q) => $q->where('category_id', $this->categoryId))
             ->orderBy('transaction_date')
             ->orderByDesc('created_at')
             ->get();
 
         $years = range(now()->year, max(now()->year - 5, 2020));
 
-        return view('livewire.finance.finance-report', compact(
-            'from', 'to',
-            'byCurrencyMap', 'byCategory',
-            'allChartData',
-            'transactions', 'currencies', 'years'
-        ))->layout('components.layouts.app', ['title' => __('messages.finance_report')]);
+        // Categories list for the selector
+        $allCategories = FinanceCategory::ordered()->get();
+        $incomeCategories = $allCategories->where('type', 'income');
+        $expenseCategories = $allCategories->where('type', 'expense');
+
+        return view('livewire.finance.finance-report', [
+            'from' => $from,
+            'to' => $to,
+            'period' => $this->period,
+            'reportYear' => $this->reportYear,
+            'reportMonth' => $this->reportMonth,
+            'dateFrom' => $this->dateFrom,
+            'dateTo' => $this->dateTo,
+            'categoryId' => $this->categoryId,
+            'byCurrencyMap' => $byCurrencyMap,
+            'byCategory' => $byCategory,
+            'overallTotals' => $overallTotals,
+            'allChartData' => $allChartData,
+            'transactions' => $transactions,
+            'currencies' => $currencies,
+            'years' => $years,
+            'selectedCategory' => $selectedCategory,
+            'incomeCategories' => $incomeCategories,
+            'expenseCategories' => $expenseCategories,
+        ])->layout('components.layouts.app', ['title' => __('messages.finance_report')]);
     }
 }
