@@ -246,7 +246,15 @@
     </div>
 </div>
 
+@push('styles')
+    <link rel="stylesheet" href="//cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/responsive/3.0.4/css/responsive.dataTables.min.css" />
+@endpush
+
 @push('scripts')
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="//cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+<script src="//cdn.datatables.net/responsive/3.0.4/js/dataTables.responsive.min.js"></script>
 <script>
 (function () {
     let dt = null;

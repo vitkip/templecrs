@@ -10,16 +10,22 @@ use Illuminate\Support\Facades\Storage;
 
 class NewsService
 {
+    public function __construct(
+        protected ?ImageOptimizerService $optimizer = null
+    ) {
+        $this->optimizer = $optimizer ?? app(ImageOptimizerService::class);
+    }
+
     public function create(array $data, ?UploadedFile $coverImage = null, array $galleryImages = []): News
     {
         if ($coverImage) {
-            $data['cover_image'] = $coverImage->store('news/covers', 'public');
+            $data['cover_image'] = $this->optimizer->optimizeAndStore($coverImage, 'news/covers', 1400, null, 82);
         }
 
         $galleryPaths = [];
         foreach ($galleryImages as $img) {
             if ($img instanceof UploadedFile) {
-                $galleryPaths[] = $img->store('news/gallery', 'public');
+                $galleryPaths[] = $this->optimizer->optimizeAndStore($img, 'news/gallery', 1400, null, 82);
             }
         }
         if (!empty($galleryPaths)) {
@@ -47,7 +53,7 @@ class NewsService
             if ($news->cover_image) {
                 Storage::disk('public')->delete($news->cover_image);
             }
-            $data['cover_image'] = $coverImage->store('news/covers', 'public');
+            $data['cover_image'] = $this->optimizer->optimizeAndStore($coverImage, 'news/covers', 1400, null, 82);
         }
 
         // Delete files that user explicitly removed
@@ -59,7 +65,7 @@ class NewsService
         $newPaths = [];
         foreach ($newGalleryImages as $img) {
             if ($img instanceof UploadedFile) {
-                $newPaths[] = $img->store('news/gallery', 'public');
+                $newPaths[] = $this->optimizer->optimizeAndStore($img, 'news/gallery', 1400, null, 82);
             }
         }
 

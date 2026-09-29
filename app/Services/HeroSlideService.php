@@ -8,9 +8,15 @@ use Illuminate\Support\Facades\Storage;
 
 class HeroSlideService
 {
+    public function __construct(
+        protected ?ImageOptimizerService $optimizer = null
+    ) {
+        $this->optimizer = $optimizer ?? app(ImageOptimizerService::class);
+    }
+
     public function create(array $data, UploadedFile $image): HeroSlide
     {
-        $data['image_path'] = $image->store('hero-slides', 'public');
+        $data['image_path'] = $this->optimizer->optimizeAndStore($image, 'hero-slides', 1920, null, 84);
 
         return HeroSlide::create($data);
     }
@@ -24,7 +30,7 @@ class HeroSlideService
             if ($slide->image_path) {
                 Storage::disk('public')->delete($slide->image_path);
             }
-            $data['image_path'] = $image->store('hero-slides', 'public');
+            $data['image_path'] = $this->optimizer->optimizeAndStore($image, 'hero-slides', 1920, null, 84);
         }
 
         $slide->update($data);

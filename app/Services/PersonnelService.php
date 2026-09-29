@@ -11,8 +11,11 @@ use Illuminate\Support\Facades\Storage;
 class PersonnelService
 {
     public function __construct(
-        protected PersonnelRepository $repository
-    ) {}
+        protected PersonnelRepository $repository,
+        protected ?ImageOptimizerService $optimizer = null
+    ) {
+        $this->optimizer = $optimizer ?? app(ImageOptimizerService::class);
+    }
 
     /**
      * Get paginated personnel list with filters.
@@ -144,7 +147,7 @@ class PersonnelService
      */
     private function uploadPhoto(UploadedFile $photo): string
     {
-        return $photo->store('personnel/photos', 'public');
+        return $this->optimizer->optimizeAndStore($photo, 'personnel/photos', 600, null, 85);
     }
 
     /**
