@@ -10,11 +10,15 @@ use Illuminate\Support\Facades\Storage;
 
 class PersonnelService
 {
+    protected ?ImageOptimizerService $optimizer = null;
+
     public function __construct(
-        protected PersonnelRepository $repository,
-        protected ?ImageOptimizerService $optimizer = null
-    ) {
-        $this->optimizer = $optimizer ?? app(ImageOptimizerService::class);
+        protected PersonnelRepository $repository
+    ) {}
+
+    protected function getOptimizer(): ImageOptimizerService
+    {
+        return $this->optimizer ??= app(ImageOptimizerService::class);
     }
 
     /**
@@ -147,7 +151,7 @@ class PersonnelService
      */
     private function uploadPhoto(UploadedFile $photo): string
     {
-        return $this->optimizer->optimizeAndStore($photo, 'personnel/photos', 600, null, 85);
+        return $this->getOptimizer()->optimizeAndStore($photo, 'personnel/photos', 600, null, 85);
     }
 
     /**
