@@ -167,11 +167,11 @@ PILLARS — ປະຫວັດ / ຄູ່ມື / ສິດໜ້າທີ່
                 'label' => __('messages.about_history_link'),
             ],
             [
-                'icon'  => 'menu_book',
-                'title' => __('messages.about_manual_title'),
-                'body'  => __('messages.about_manual_body'),
-                'link'  => route('frontend.guide'),
-                'label' => __('messages.about_manual_link'),
+                'icon'  => 'account_tree',
+                'title' => __('messages.about_structure_title'),
+                'body'  => __('messages.about_structure_body'),
+                'link'  => route('frontend.structure'),
+                'label' => __('messages.about_structure_link'),
             ],
             [
                 'icon'  => 'assignment_ind',
@@ -180,28 +180,35 @@ PILLARS — ປະຫວັດ / ຄູ່ມື / ສິດໜ້າທີ່
                 'link'  => route('frontend.duties'),
                 'label' => __('messages.about_duties_link'),
             ],
+            [
+                'icon'  => 'menu_book',
+                'title' => __('messages.about_manual_title'),
+                'body'  => __('messages.about_manual_body'),
+                'link'  => route('frontend.guide'),
+                'label' => __('messages.about_manual_link'),
+            ],
         ];
     @endphp
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @foreach($pillars as $pillar)
         <div class="pillar-card relative flex flex-col rounded-2xl overflow-hidden"
              style="background:#F7EFD8; border:1px solid rgba(200,146,26,0.18); box-shadow:0 4px 24px rgba(14,21,14,0.07), 0 1px 3px rgba(14,21,14,0.05);">
             {{-- Gold top accent bar --}}
             <div style="height:3px; background:linear-gradient(to right, #B87A14, #E8B84B, #B87A14);"></div>
-            <div class="flex flex-col flex-1 p-7">
+            <div class="flex flex-col flex-1 p-6">
                 <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-5 flex-shrink-0"
                      style="background:rgba(14,21,14,0.055); border:1px solid rgba(200,146,26,0.14);">
                     <span class="material-symbols-outlined" style="font-size:21px; color:#0E150E;">{{ $pillar['icon'] }}</span>
                 </div>
-                <h3 class="font-bold text-lg mb-3" style="color:#0E150E; line-height:1.3;">{{ $pillar['title'] }}</h3>
-                <p class="text-sm leading-relaxed flex-1" style="color:rgba(14,21,14,0.58);">{{ $pillar['body'] }}</p>
+                <h3 class="font-bold text-base sm:text-lg mb-2.5" style="color:#0E150E; line-height:1.3;">{{ $pillar['title'] }}</h3>
+                <p class="text-xs leading-relaxed flex-1" style="color:rgba(14,21,14,0.65);">{{ $pillar['body'] }}</p>
                 <a href="{{ $pillar['link'] }}"
-                   class="mt-6 inline-flex items-center gap-2 text-sm font-semibold group"
+                   class="mt-5 inline-flex items-center gap-1.5 text-xs font-bold group"
                    style="color:#C8921A;">
                     {{ $pillar['label'] }}
                     <span class="material-symbols-outlined transition-transform group-hover:translate-x-1"
-                          style="font-size:16px;">arrow_forward</span>
+                          style="font-size:15px;">arrow_forward</span>
                 </a>
             </div>
         </div>

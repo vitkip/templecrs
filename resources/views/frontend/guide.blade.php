@@ -363,14 +363,28 @@ details[open] .chevron { transform: rotate(180deg); }
         @endforeach
     </div>
 
-    {{-- Back link --}}
-    <div class="mt-12 text-center">
+    {{-- Navigation links --}}
+    <div class="mt-12 flex flex-wrap items-center justify-center gap-3">
         <a href="{{ route('frontend.about') }}"
-           class="inline-flex items-center gap-2 px-6 py-3 rounded-full font-semibold text-sm"
+           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs sm:text-sm"
            style="background:rgba(200,146,26,0.1); border:1px solid rgba(200,146,26,0.25); color:#9A6E10;"
            onmouseover="this.style.background='rgba(200,146,26,0.18)'" onmouseout="this.style.background='rgba(200,146,26,0.1)'">
-            <span class="material-symbols-outlined" style="font-size:17px;">arrow_back</span>
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
             {{ __('messages.guide_back') }}
+        </a>
+        <a href="{{ route('frontend.structure') }}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs sm:text-sm"
+           style="background:rgba(200,146,26,0.16); border:1px solid rgba(200,146,26,0.35); color:#78350F;"
+           onmouseover="this.style.background='rgba(200,146,26,0.25)'" onmouseout="this.style.background='rgba(200,146,26,0.16)'">
+            <span class="material-symbols-outlined text-amber-700" style="font-size:16px;">account_tree</span>
+            {{ __('messages.structure_nav') }}
+        </a>
+        <a href="{{ route('frontend.duties') }}"
+           class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-xs sm:text-sm"
+           style="background:rgba(200,146,26,0.1); border:1px solid rgba(200,146,26,0.25); color:#9A6E10;"
+           onmouseover="this.style.background='rgba(200,146,26,0.18)'" onmouseout="this.style.background='rgba(200,146,26,0.1)'">
+            <span class="material-symbols-outlined" style="font-size:16px;">assignment_ind</span>
+            {{ __('messages.about_duties_title') }}
         </a>
     </div>
 

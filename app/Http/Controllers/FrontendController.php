@@ -219,6 +219,69 @@ class FrontendController extends Controller
         ));
     }
 
+    public function structure(): View
+    {
+        $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [
+            'org_name_lo'  => Setting::get('org_name_lo', 'ອົງການພຣະພຸດທະສາສະໜາ'),
+            'org_name_en'  => Setting::get('org_name_en', 'Buddhist Organization'),
+            'org_logo_url' => Setting::get('org_logo_url'),
+        ]);
+
+        $departments = Cache::remember('frontend_structure_depts', 1800, fn() =>
+            Department::active()->ordered()
+                ->with([
+                    'head',
+                    'personnel' => fn($q) => $q->active()->orderBy('sort_order')->orderBy('name_lo')
+                ])
+                ->get()
+        );
+
+        $provincialStats = Cache::remember('frontend_structure_provincial_stats', 1800, fn() =>
+            Personnel::active()
+                ->where('affiliation_level', 'provincial')
+                ->whereNotNull('affiliation_province')
+                ->where('affiliation_province', '!=', '')
+                ->selectRaw('affiliation_province, count(*) as count')
+                ->groupBy('affiliation_province')
+                ->orderBy('affiliation_province')
+                ->get()
+        );
+
+        $centralCount = Cache::remember('frontend_structure_central_count', 1800, fn() =>
+            Personnel::active()->where('affiliation_level', 'central')->count()
+        );
+
+        $provincialCount = Cache::remember('frontend_structure_provincial_count', 1800, fn() =>
+            Personnel::active()->where('affiliation_level', 'provincial')->count()
+        );
+
+        $totalPersonnel = Cache::remember('frontend_structure_total_personnel', 1800, fn() =>
+            Personnel::active()->count()
+        );
+
+        $leadershipDept = $departments->firstWhere('id', 9);
+        $adminDept      = $departments->firstWhere('id', 8);
+        $techDept       = $departments->firstWhere('id', 10);
+        $operatingDepts = $departments->whereIn('id', [11, 17, 13, 23]);
+        $otherDepts     = $departments->whereNotIn('id', [9, 8, 10, 11, 17, 13, 23]);
+
+        return view('frontend.structure', [
+            'orgName'         => $settings['org_name_lo'],
+            'orgNameEn'       => $settings['org_name_en'],
+            'orgLogo'         => $settings['org_logo_url'],
+            'departments'     => $departments,
+            'leadershipDept'  => $leadershipDept,
+            'adminDept'       => $adminDept,
+            'techDept'        => $techDept,
+            'operatingDepts'  => $operatingDepts,
+            'otherDepts'      => $otherDepts,
+            'provincialStats' => $provincialStats,
+            'centralCount'    => $centralCount,
+            'provincialCount' => $provincialCount,
+            'totalPersonnel'  => $totalPersonnel,
+        ]);
+    }
+
     public function duties(): View
     {
         $settings = Cache::remember(FrontendCacheService::KEY_SETTINGS, 86400, fn() => [

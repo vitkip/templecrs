@@ -111,9 +111,13 @@
                         $navInactive     = 'px-4 py-2 rounded-lg text-label-md text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all';
                         $isHomePage      = request()->routeIs('frontend.index');
                         $isNewsPage      = request()->routeIs('frontend.news', 'frontend.news.show');
-                        $isPersonnelPage = request()->routeIs('frontend.personnel');
+                        $isPersonnelPage = request()->routeIs('frontend.personnel', 'frontend.personnel.show');
                         $isDocumentsPage = request()->routeIs('frontend.documents');
-                        $isAboutPage     = request()->routeIs('frontend.about');
+                        $isAboutPage     = request()->routeIs('frontend.about', 'frontend.structure', 'frontend.history', 'frontend.duties', 'frontend.guide');
+                        $isStructurePage = request()->routeIs('frontend.structure');
+                        $isHistoryPage   = request()->routeIs('frontend.history');
+                        $isDutiesPage    = request()->routeIs('frontend.duties');
+                        $isGuidePage     = request()->routeIs('frontend.guide');
                     @endphp
 
                     <a href="{{ route('frontend.index') }}"
@@ -154,10 +158,90 @@
                        @endif>
                         {{ __('messages.news') }}
                     </a>
-                    <a href="{{ route('frontend.about') }}"
-                       class="{{ $isAboutPage ? $navActive : $navInactive }}">
-                        {{ __('messages.about_nav') }}
-                    </a>
+
+                    {{-- About Dropdown Menu --}}
+                    <div class="relative" x-data="{ aboutOpen: false }" @mouseenter="aboutOpen = true" @mouseleave="aboutOpen = false">
+                        <a href="{{ route('frontend.about') }}"
+                           class="flex items-center gap-1 {{ $isAboutPage ? $navActive : $navInactive }}">
+                            <span>{{ __('messages.about_nav') }}</span>
+                            <span class="material-symbols-outlined text-base transition-transform duration-200"
+                                  :class="aboutOpen ? 'rotate-180 text-primary' : 'text-on-surface-variant/70'">expand_more</span>
+                        </a>
+
+                        {{-- Dropdown Card --}}
+                        <div x-show="aboutOpen"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 translate-y-2 scale-95"
+                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                             x-transition:leave-end="opacity-0 translate-y-2 scale-95"
+                             class="absolute left-0 mt-1 w-64 rounded-2xl bg-white shadow-xl border border-outline-variant/60 py-2 z-50 overflow-hidden"
+                             style="display:none; box-shadow: 0 18px 40px -6px rgba(44, 26, 8, 0.16), 0 0 0 1px rgba(200, 146, 26, 0.14);">
+
+                            {{-- ໂຄງຮ່າງການຈັດຕັ້ງ (Primary Submenu) --}}
+                            <a href="{{ route('frontend.structure') }}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-xs text-on-surface hover:bg-amber-500/10 hover:text-amber-800 transition-colors {{ $isStructurePage ? 'bg-amber-500/15 font-bold text-amber-900' : '' }}">
+                                <span class="w-8 h-8 rounded-lg bg-amber-500/15 text-amber-700 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-base">account_tree</span>
+                                </span>
+                                <div>
+                                    <div class="font-bold leading-tight">{{ __('messages.structure_nav') }}</div>
+                                    <div class="text-[10px] text-on-surface-variant font-normal">ຜັງໂຄງຮ່າງ ແລະ ສາຍການຈັດຕັ້ງ</div>
+                                </div>
+                            </a>
+
+                            {{-- ປະຫວັດອົງການ --}}
+                            <a href="{{ route('frontend.history') }}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-xs text-on-surface hover:bg-emerald-500/10 hover:text-emerald-800 transition-colors {{ $isHistoryPage ? 'bg-emerald-500/15 font-bold text-emerald-900' : '' }}">
+                                <span class="w-8 h-8 rounded-lg bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-base">history_edu</span>
+                                </span>
+                                <div>
+                                    <div class="font-bold leading-tight">{{ __('messages.about_history_title') }}</div>
+                                    <div class="text-[10px] text-on-surface-variant font-normal">ຄວາມເປັນມາ ແລະ ການພັດທະນາ</div>
+                                </div>
+                            </a>
+
+                            {{-- ສິດໜ້າທີ່ ວຽກງານ --}}
+                            <a href="{{ route('frontend.duties') }}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-xs text-on-surface hover:bg-blue-500/10 hover:text-blue-800 transition-colors {{ $isDutiesPage ? 'bg-blue-500/15 font-bold text-blue-900' : '' }}">
+                                <span class="w-8 h-8 rounded-lg bg-blue-500/15 text-blue-700 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-base">assignment_ind</span>
+                                </span>
+                                <div>
+                                    <div class="font-bold leading-tight">{{ __('messages.about_duties_title') }}</div>
+                                    <div class="text-[10px] text-on-surface-variant font-normal">ພາລະບົດບາດ, ສິດ ແລະ ໜ້າທີ່</div>
+                                </div>
+                            </a>
+
+                            {{-- ຄູ່ມື ແລະ ລະບຽບການ --}}
+                            <a href="{{ route('frontend.guide') }}"
+                               class="flex items-center gap-3 px-4 py-2.5 text-xs text-on-surface hover:bg-amber-600/10 hover:text-amber-900 transition-colors {{ $isGuidePage ? 'bg-amber-600/15 font-bold text-amber-900' : '' }}">
+                                <span class="w-8 h-8 rounded-lg bg-amber-600/15 text-amber-800 flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-base">menu_book</span>
+                                </span>
+                                <div>
+                                    <div class="font-bold leading-tight">{{ __('messages.about_manual_title') }}</div>
+                                    <div class="text-[10px] text-on-surface-variant font-normal">ຂໍ້ກຳນົດ ແລະ ຄູ່ມືການດຳເນີນງານ</div>
+                                </div>
+                            </a>
+
+                            <div class="my-1 border-t border-outline-variant/40"></div>
+
+                            {{-- ພາບລວມ / Overview --}}
+                            <a href="{{ route('frontend.about') }}"
+                               class="flex items-center gap-3 px-4 py-2 text-xs text-on-surface hover:bg-primary/5 hover:text-primary transition-colors {{ request()->routeIs('frontend.about') ? 'text-primary font-bold bg-primary/10' : '' }}">
+                                <span class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                    <span class="material-symbols-outlined text-base">info</span>
+                                </span>
+                                <div>
+                                    <div class="font-bold leading-tight">{{ __('messages.about_nav') }} (ພາບລວມ)</div>
+                                    <div class="text-[10px] text-on-surface-variant font-normal">ສະຫຼຸບຂໍ້ມູນອົງການ ແລະ ຊ່ອງທາງບໍລິຈາກ</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                     <div class="h-6 w-px bg-outline-variant mx-2"></div>
 
                     {{-- Language Toggle --}}
@@ -212,8 +296,46 @@
                    @if($isNewsPage) class="{{ $mobileActive }}"
                    @elseif($isHomePage) :class="activeSection === 'news' ? '{{ $mobileActive }}' : '{{ $mobileInactive }}'"
                    @else class="{{ $mobileInactive }}" @endif>{{ __('messages.news') }}</a>
-                <a href="{{ route('frontend.about') }}" @click="mobileMenu = false"
-                   class="{{ $isAboutPage ? $mobileActive : $mobileInactive }}">{{ __('messages.about_nav') }}</a>
+
+                {{-- Mobile About Submenu Accordion --}}
+                <div x-data="{ aboutOpen: {{ $isAboutPage ? 'true' : 'false' }} }">
+                    <div class="flex items-center justify-between {{ $isAboutPage ? $mobileActive : $mobileInactive }}">
+                        <a href="{{ route('frontend.about') }}" @click="mobileMenu = false" class="flex-1">
+                            {{ __('messages.about_nav') }}
+                        </a>
+                        <button type="button" @click.stop="aboutOpen = !aboutOpen" class="p-1 hover:bg-black/5 rounded">
+                            <span class="material-symbols-outlined text-base transition-transform duration-200"
+                                  :class="aboutOpen ? 'rotate-180' : ''">expand_more</span>
+                        </button>
+                    </div>
+                    <div x-show="aboutOpen" x-transition class="pl-4 pr-2 py-1 space-y-1">
+                        <a href="{{ route('frontend.structure') }}" @click="mobileMenu = false"
+                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs {{ $isStructurePage ? 'text-amber-900 font-bold bg-amber-500/15' : 'text-on-surface-variant hover:bg-primary/5' }}">
+                            <span class="material-symbols-outlined text-sm text-amber-600">account_tree</span>
+                            <span class="font-bold">{{ __('messages.structure_nav') }}</span>
+                        </a>
+                        <a href="{{ route('frontend.history') }}" @click="mobileMenu = false"
+                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs {{ $isHistoryPage ? 'text-emerald-900 font-bold bg-emerald-500/15' : 'text-on-surface-variant hover:bg-primary/5' }}">
+                            <span class="material-symbols-outlined text-sm text-emerald-600">history_edu</span>
+                            <span>{{ __('messages.about_history_title') }}</span>
+                        </a>
+                        <a href="{{ route('frontend.duties') }}" @click="mobileMenu = false"
+                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs {{ $isDutiesPage ? 'text-blue-900 font-bold bg-blue-500/15' : 'text-on-surface-variant hover:bg-primary/5' }}">
+                            <span class="material-symbols-outlined text-sm text-blue-600">assignment_ind</span>
+                            <span>{{ __('messages.about_duties_title') }}</span>
+                        </a>
+                        <a href="{{ route('frontend.guide') }}" @click="mobileMenu = false"
+                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs {{ $isGuidePage ? 'text-amber-900 font-bold bg-amber-600/15' : 'text-on-surface-variant hover:bg-primary/5' }}">
+                            <span class="material-symbols-outlined text-sm text-amber-700">menu_book</span>
+                            <span>{{ __('messages.about_manual_title') }}</span>
+                        </a>
+                        <a href="{{ route('frontend.about') }}" @click="mobileMenu = false"
+                           class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs {{ request()->routeIs('frontend.about') ? 'text-primary font-bold bg-primary/10' : 'text-on-surface-variant hover:bg-primary/5' }}">
+                            <span class="material-symbols-outlined text-sm text-primary">info</span>
+                            <span>{{ __('messages.about_nav') }} (ພາບລວມ)</span>
+                        </a>
+                    </div>
+                </div>
                 <div class="pt-2 border-t border-outline-variant space-y-1">
                     {{-- Language Toggle --}}
                     <a href="{{ route('locale.switch', ['locale' => app()->getLocale() === 'lo' ? 'en' : 'lo']) }}"
@@ -334,6 +456,32 @@
                                 </span>
                                 <span class="relative">
                                     {{ __('messages.documents_nav') }}
+                                    <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('frontend.structure') }}"
+                               class="group flex items-center gap-3 text-white/50 hover:text-[#D4AF37] transition-colors duration-200"
+                               style="font-size:13px;">
+                                <span class="w-6 h-6 rounded border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 transition-all duration-200">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">account_tree</span>
+                                </span>
+                                <span class="relative">
+                                    {{ __('messages.structure_nav') }}
+                                    <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
+                                </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('frontend.about') }}"
+                               class="group flex items-center gap-3 text-white/50 hover:text-[#D4AF37] transition-colors duration-200"
+                               style="font-size:13px;">
+                                <span class="w-6 h-6 rounded border border-white/10 bg-white/5 group-hover:border-[#D4AF37]/40 group-hover:bg-[#D4AF37]/10 flex items-center justify-center flex-shrink-0 transition-all duration-200">
+                                    <span class="material-symbols-outlined" style="font-size:13px;">info</span>
+                                </span>
+                                <span class="relative">
+                                    {{ __('messages.about_nav') }}
                                     <span class="absolute -bottom-px left-0 h-px w-0 bg-[#D4AF37]/60 group-hover:w-full transition-all duration-300 rounded-full"></span>
                                 </span>
                             </a>

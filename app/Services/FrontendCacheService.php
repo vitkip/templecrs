@@ -31,6 +31,12 @@ class FrontendCacheService
     public static function clearPersonnel(): void
     {
         Cache::forget(self::KEY_PERSONNEL);
+        Cache::forget('frontend_structure_depts');
+        Cache::forget('frontend_structure_provincial_stats');
+        Cache::forget('frontend_structure_central_count');
+        Cache::forget('frontend_structure_provincial_count');
+        Cache::forget('frontend_structure_total_personnel');
+        Cache::forget('stats_personnel_count');
     }
 
     public static function clearDocuments(): void
