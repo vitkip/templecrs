@@ -637,7 +637,7 @@
                                     {{ __('messages.structure_department_head') }}
                                 </div>
                                 <h4 class="text-base sm:text-lg font-bold text-on-surface">
-                                    {{ $head->title_lo ? $head->title_lo . ' ' : '' }}{{ $head->name_lo }}
+                                    {{ $head->name_lo }}
                                 </h4>
                                 <p class="text-xs text-amber-800 font-semibold mt-0.5">
                                     {{ $head->position_lo }}
