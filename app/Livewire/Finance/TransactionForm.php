@@ -59,7 +59,7 @@ class TransactionForm extends Component
         ];
     }
 
-    public function mount(int $id = null): void
+    public function mount(?int $id = null): void
     {
         abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
 
@@ -103,10 +103,21 @@ class TransactionForm extends Component
 
         $receiptPath = $this->existingReceipt;
         if ($this->receipt) {
-            if ($receiptPath) {
+            if ($this->transactionId) {
+                $oldTx = FinanceTransaction::find($this->transactionId);
+                if ($oldTx && $oldTx->receipt_path) {
+                    Storage::disk('public')->delete($oldTx->receipt_path);
+                }
+            } elseif ($receiptPath) {
                 Storage::disk('public')->delete($receiptPath);
             }
             $receiptPath = $this->receipt->store('finance/receipts', 'public');
+        } elseif (!$this->existingReceipt && $this->transactionId) {
+            $oldTx = FinanceTransaction::find($this->transactionId);
+            if ($oldTx && $oldTx->receipt_path) {
+                Storage::disk('public')->delete($oldTx->receipt_path);
+            }
+            $receiptPath = null;
         }
 
         $data = [
@@ -136,6 +147,43 @@ class TransactionForm extends Component
     public function removeReceipt(): void
     {
         $this->existingReceipt = null;
+    }
+
+    public function cancelNewReceipt(): void
+    {
+        $this->receipt = null;
+    }
+
+    public function downloadReceipt()
+    {
+        if ($this->existingReceipt && Storage::disk('public')->exists($this->existingReceipt)) {
+            $ext = pathinfo($this->existingReceipt, PATHINFO_EXTENSION);
+            $cleanRef = $this->reference_number ? preg_replace('/[^a-zA-Z0-9_-]/', '_', $this->reference_number) . '-' : '';
+            $name = 'receipt-' . $cleanRef . ($this->transactionId ?? 'file') . ($ext ? '.' . $ext : '');
+            return Storage::disk('public')->download($this->existingReceipt, $name);
+        }
+    }
+
+    public function getReceiptIsImageProperty(): bool
+    {
+        if (!$this->existingReceipt) {
+            return false;
+        }
+        $ext = strtolower(pathinfo($this->existingReceipt, PATHINFO_EXTENSION));
+        return in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+    }
+
+    public function getReceiptIsPdfProperty(): bool
+    {
+        if (!$this->existingReceipt) {
+            return false;
+        }
+        return strtolower(pathinfo($this->existingReceipt, PATHINFO_EXTENSION)) === 'pdf';
+    }
+
+    public function getExistingReceiptUrlProperty(): ?string
+    {
+        return $this->existingReceipt ? Storage::disk('public')->url($this->existingReceipt) : null;
     }
 
     public function render()

@@ -202,6 +202,19 @@ Route::middleware(['auth', SetLocale::class])->group(function () {
         Route::get('/',           TransactionTable::class)->name('index');
         Route::get('/create',     TransactionForm::class)->name('create');
         Route::get('/{id}/edit',  TransactionForm::class)->name('edit');
+        Route::get('/{id}/receipt', function (int $id) {
+            abort_unless(auth()->check() && auth()->user()->canManageFinance(), 403);
+            $tx = \App\Models\FinanceTransaction::findOrFail($id);
+            abort_if(!$tx->receipt_path, 404);
+            $disk = 'public';
+            abort_unless(\Illuminate\Support\Facades\Storage::disk($disk)->exists($tx->receipt_path), 404);
+
+            $ext = pathinfo($tx->receipt_path, PATHINFO_EXTENSION);
+            $cleanRef = $tx->reference_number ? preg_replace('/[^a-zA-Z0-9_-]/', '_', $tx->reference_number) . '-' : '';
+            $downloadName = 'receipt-' . $cleanRef . $tx->id . ($ext ? '.' . $ext : '');
+
+            return \Illuminate\Support\Facades\Storage::disk($disk)->download($tx->receipt_path, $downloadName);
+        })->name('receipt.download');
     });
     Route::get('/finance/categories', CategoryManager::class)->name('finance.categories.index');
 

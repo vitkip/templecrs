@@ -99,7 +99,30 @@ class FinanceTransaction extends Model
 
     public function getReceiptUrlAttribute(): ?string
     {
-        return $this->receipt_path ? Storage::url($this->receipt_path) : null;
+        return $this->receipt_path ? Storage::disk('public')->url($this->receipt_path) : null;
+    }
+
+    public function getReceiptFileNameAttribute(): ?string
+    {
+        return $this->receipt_path ? basename($this->receipt_path) : null;
+    }
+
+    public function getReceiptExtensionAttribute(): ?string
+    {
+        return $this->receipt_path ? strtolower(pathinfo($this->receipt_path, PATHINFO_EXTENSION)) : null;
+    }
+
+    public function getIsReceiptImageAttribute(): bool
+    {
+        if (!$this->receipt_path) {
+            return false;
+        }
+        return in_array($this->receipt_extension, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+    }
+
+    public function getIsReceiptPdfAttribute(): bool
+    {
+        return $this->receipt_extension === 'pdf';
     }
 
     public function getIsIncomeAttribute(): bool

@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ openReceiptModal: false, activeReceiptUrl: '', activeReceiptTitle: '', activeReceiptRef: '', activeDownloadUrl: '' }">
     {{-- Page Header --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -170,6 +170,7 @@
                             </button>
                         </th>
                         <th class="px-4 py-3 text-left text-label-sm font-bold text-on-surface-variant">{{ __('messages.ref_number') }}</th>
+                        <th class="px-4 py-3 text-center text-label-sm font-bold text-on-surface-variant">{{ __('messages.receipt') }}</th>
                         <th class="px-4 py-3 text-center text-label-sm font-bold text-on-surface-variant">{{ __('messages.actions') }}</th>
                     </tr>
                 </thead>
@@ -203,6 +204,37 @@
                                 {{ $tx->is_income ? '+' : '-' }}{{ $tx->amount_formatted }}
                             </td>
                             <td class="px-4 py-3 text-body-sm text-on-surface-variant">{{ $tx->reference_number ?? '—' }}</td>
+                            <td class="px-4 py-3 text-center">
+                                @if ($tx->receipt_path)
+                                    <div class="inline-flex items-center gap-1.5 justify-center">
+                                        @if ($tx->is_receipt_image)
+                                            <button type="button"
+                                                    @click="activeReceiptUrl = '{{ $tx->receipt_url }}'; activeReceiptTitle = '{{ addslashes($tx->description) }}'; activeReceiptRef = '{{ $tx->reference_number ?? '' }}'; activeDownloadUrl = '{{ route('finance.transactions.receipt.download', $tx->id) }}'; openReceiptModal = true"
+                                                    class="relative group w-8 h-8 rounded-lg overflow-hidden border border-outline-variant hover:border-primary shrink-0 transition-transform hover:scale-110 shadow-xs cursor-pointer"
+                                                    title="{{ __('messages.view_receipt') }}">
+                                                <img src="{{ $tx->receipt_url }}" alt="Receipt" class="w-full h-full object-cover" loading="lazy" />
+                                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white">
+                                                    <span class="material-symbols-outlined text-xs">zoom_in</span>
+                                                </div>
+                                            </button>
+                                        @else
+                                            <a href="{{ route('finance.transactions.receipt.download', $tx->id) }}"
+                                               class="p-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors inline-flex items-center justify-center"
+                                               title="PDF {{ __('messages.receipt') }}">
+                                                <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                                            </a>
+                                        @endif
+
+                                        <a href="{{ route('finance.transactions.receipt.download', $tx->id) }}"
+                                           class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-colors inline-flex items-center justify-center"
+                                           title="{{ __('messages.download') }}">
+                                            <span class="material-symbols-outlined text-base">download</span>
+                                        </a>
+                                    </div>
+                                @else
+                                    <span class="text-on-surface-variant/30 text-xs">—</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center justify-center gap-1">
                                     <a href="{{ route('finance.transactions.edit', $tx->id) }}"
@@ -218,7 +250,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-16 text-center">
+                            <td colspan="8" class="px-4 py-16 text-center">
                                 <div class="flex flex-col items-center gap-3">
                                     <span class="material-symbols-outlined text-4xl text-on-surface-variant/40">receipt_long</span>
                                     <p class="text-body-md text-on-surface-variant">{{ __('messages.no_transactions') }}</p>
@@ -258,4 +290,63 @@
             </div>
         </div>
     @endif
+
+    {{-- Receipt Lightbox Modal --}}
+    <template x-teleport="body">
+        <div x-show="openReceiptModal"
+             x-cloak
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @keydown.escape.window="openReceiptModal = false"
+             class="fixed inset-0 z-[99999] flex flex-col bg-black/90 backdrop-blur-md select-none"
+             role="dialog"
+             aria-modal="true">
+
+            {{-- Modal Top Bar --}}
+            <div class="flex items-center justify-between px-4 sm:px-6 py-3 bg-black/60 shrink-0 border-b border-white/10">
+                <div class="flex items-center gap-3 text-white min-w-0">
+                    <span class="material-symbols-outlined text-amber-400">receipt_long</span>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold truncate" x-text="activeReceiptTitle || '{{ __('messages.receipt') }}'"></p>
+                        <p class="text-xs text-white/60 truncate" x-show="activeReceiptRef" x-text="'{{ __('messages.ref_number') }}: ' + activeReceiptRef"></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <a :href="activeDownloadUrl"
+                       class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-bold transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-base">download</span>
+                        <span>{{ __('messages.download') }}</span>
+                    </a>
+
+                    <a :href="activeReceiptUrl"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                       title="{{ __('messages.open_in_new_tab') }}">
+                        <span class="material-symbols-outlined text-lg">open_in_new</span>
+                    </a>
+
+                    <button type="button"
+                            @click="openReceiptModal = false"
+                            class="w-9 h-9 rounded-lg bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors"
+                            title="Esc">
+                        <span class="material-symbols-outlined text-xl">close</span>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Modal Content --}}
+            <div class="flex-1 flex items-center justify-center p-4 sm:p-6 overflow-auto"
+                 @click.self="openReceiptModal = false">
+                <img :src="activeReceiptUrl"
+                     alt="Receipt Preview"
+                     class="max-w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/10 transition-all" />
+            </div>
+        </div>
+    </template>
 </div>
