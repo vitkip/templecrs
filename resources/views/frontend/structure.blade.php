@@ -238,7 +238,11 @@
                         <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden shrink-0 border-2 border-amber-400 p-0.5 shadow-md bg-amber-50">
                             @if($commissionHead && $commissionHead->photo_url)
                                 <img src="{{ Storage::url($commissionHead->photo_url) }}" alt="{{ $commissionHead->name_lo }}"
-                                     class="w-full h-full object-cover rounded-xl" />
+                                     class="w-full h-full object-cover rounded-xl"
+                                     onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');" />
+                                <div class="w-full h-full rounded-xl bg-amber-100 hidden items-center justify-center text-amber-700">
+                                    <span class="material-symbols-outlined text-4xl">person</span>
+                                </div>
                             @else
                                 <div class="w-full h-full rounded-xl bg-amber-100 flex items-center justify-center text-amber-700">
                                     <span class="material-symbols-outlined text-4xl">person</span>
@@ -272,17 +276,31 @@
 
                     {{-- Co-leader if present --}}
                     @if($coLeader)
-                    <div class="mt-5 pt-4 border-t border-outline-variant/60 flex items-center justify-between text-xs text-left bg-surface-container-low/50 px-4 py-2.5 rounded-xl">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined text-amber-600 text-sm">handshake</span>
-                            <div>
-                                <span class="font-bold text-on-surface">{{ $coLeader->name_lo }}</span>
-                                <span class="text-on-surface-variant text-[11px] block">{{ $coLeader->position_lo }}</span>
+                    <div class="mt-5 pt-4 border-t border-outline-variant/60 flex items-center justify-between text-xs text-left bg-surface-container-low/50 px-4 py-2.5 rounded-xl gap-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl overflow-hidden shrink-0 border border-amber-300/80 p-0.5 bg-amber-50 shadow-sm">
+                                @if($coLeader->photo_url)
+                                    <img src="{{ Storage::url($coLeader->photo_url) }}" alt="{{ $coLeader->name_lo }}"
+                                         class="w-full h-full object-cover rounded-lg"
+                                         onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');" />
+                                    <div class="w-full h-full rounded-lg bg-amber-100 hidden items-center justify-center text-amber-700">
+                                        <span class="material-symbols-outlined text-lg">person</span>
+                                    </div>
+                                @else
+                                    <div class="w-full h-full rounded-lg bg-amber-100 flex items-center justify-center text-amber-700">
+                                        <span class="material-symbols-outlined text-lg">person</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="min-w-0">
+                                <span class="font-bold text-on-surface block truncate">{{ $coLeader->name_lo }}</span>
+                                <span class="text-on-surface-variant text-[11px] block truncate mt-0.5">{{ $coLeader->position_lo }}</span>
                             </div>
                         </div>
                         <a href="{{ route('frontend.personnel.show', $coLeader->id) }}"
-                           class="text-primary hover:underline font-semibold text-[11px] shrink-0">
-                            {{ __('messages.structure_view_personnel') }}
+                           class="text-primary hover:underline font-semibold text-[11px] shrink-0 inline-flex items-center gap-0.5">
+                            <span>{{ __('messages.structure_view_personnel') }}</span>
+                            <span class="material-symbols-outlined text-xs">arrow_forward</span>
                         </a>
                     </div>
                     @endif
