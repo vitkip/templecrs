@@ -111,7 +111,12 @@ class NewsForm extends Component
 
     public function updatedGalleryUploads(): void
     {
-        $this->validateOnly('gallery_uploads.*');
+        try {
+            $this->validateOnly('gallery_uploads.*');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->gallery_uploads = [];
+            throw $e;
+        }
 
         $currentTotal = count($this->existing_gallery_images) + count($this->new_gallery_images);
         $slotsAvailable = max(0, 5 - $currentTotal);
@@ -156,6 +161,8 @@ class NewsForm extends Component
 
     public function save(): void
     {
+        abort_unless(auth()->check() && auth()->user()->canManageNews(), 403);
+
         $this->validate();
 
         $totalImages = count($this->existing_gallery_images) + count($this->new_gallery_images);
@@ -167,17 +174,17 @@ class NewsForm extends Component
         $service = app(NewsService::class);
 
         $data = [
-            'news_category_id' => $this->news_category_id ?: null,
-            'title_lo'     => $this->title_lo,
-            'title_en'     => $this->title_en,
-            'excerpt_lo'   => $this->excerpt_lo,
-            'excerpt_en'   => $this->excerpt_en,
+            'news_category_id' => $this->news_category_id ? (int) $this->news_category_id : null,
+            'title_lo'     => trim($this->title_lo),
+            'title_en'     => $this->title_en ? trim($this->title_en) : null,
+            'excerpt_lo'   => $this->excerpt_lo ? trim($this->excerpt_lo) : null,
+            'excerpt_en'   => $this->excerpt_en ? trim($this->excerpt_en) : null,
             'content_lo'   => $this->content_lo,
             'content_en'   => $this->content_en,
-            'published_at' => $this->published_at ?: null,
-            'is_featured'  => $this->is_featured,
-            'sort_order'   => $this->sort_order,
-            'is_active'    => $this->is_active,
+            'published_at' => $this->published_at ?: ($this->is_active ? now()->format('Y-m-d H:i:s') : null),
+            'is_featured'  => (bool) $this->is_featured,
+            'sort_order'   => (int) ($this->sort_order ?: 0),
+            'is_active'    => (bool) $this->is_active,
         ];
 
         if ($this->editMode) {

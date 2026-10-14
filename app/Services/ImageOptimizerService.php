@@ -26,26 +26,44 @@ class ImageOptimizerService
         ?int $maxHeight = null,
         int $quality = 82
     ): string {
+        // Method 1: Intervention Image v4 / v3
         try {
-            // Method 1: If Intervention Image v4 is installed and available
             if (class_exists(\Intervention\Image\ImageManager::class) && class_exists(\Intervention\Image\Drivers\Gd\Driver::class)) {
                 $manager = new \Intervention\Image\ImageManager(new \Intervention\Image\Drivers\Gd\Driver());
-                $image = $manager->read($file->getRealPath());
-                $image->scaleDown(width: $maxWidth, height: $maxHeight);
-                $encoded = $image->toWebp($quality);
+                $realPath = $file->getRealPath();
 
-                $filename = rtrim($directory, '/') . '/' . uniqid('img_', true) . '.webp';
-                Storage::disk('public')->put($filename, (string) $encoded);
+                if ($realPath && file_exists($realPath)) {
+                    $image = method_exists($manager, 'decodePath')
+                        ? $manager->decodePath($realPath)
+                        : (method_exists($manager, 'read')
+                            ? $manager->read($realPath)
+                            : $manager->decode($realPath));
 
-                return $filename;
+                    $image->scaleDown(width: $maxWidth, height: $maxHeight);
+
+                    $encoded = method_exists($image, 'toWebp')
+                        ? $image->toWebp($quality)
+                        : (class_exists(\Intervention\Image\Encoders\WebpEncoder::class)
+                            ? $image->encode(new \Intervention\Image\Encoders\WebpEncoder($quality))
+                            : $image->encodeUsingMediaType('image/webp', quality: $quality));
+
+                    $filename = rtrim($directory, '/') . '/' . uniqid('img_', true) . '.webp';
+                    if (Storage::disk('public')->put($filename, (string) $encoded)) {
+                        return $filename;
+                    }
+                }
             }
+        } catch (\Throwable $e) {
+            Log::info('Intervention Image skipped: ' . $e->getMessage());
+        }
 
-            // Method 2: Native PHP GD (Zero composer dependency, works on all cPanel/PHP servers)
+        // Method 2: Native PHP GD (Zero composer dependency, works on all cPanel/PHP servers)
+        try {
             if (function_exists('imagecreatefromstring') && function_exists('imagewebp') && function_exists('imagecreatetruecolor')) {
                 return $this->optimizeWithNativeGd($file, $directory, $maxWidth, $maxHeight, $quality);
             }
         } catch (\Throwable $e) {
-            Log::warning('Image optimization notice, storing original file: ' . $e->getMessage());
+            Log::warning('Native GD optimization skipped: ' . $e->getMessage());
         }
 
         // Method 3: Safe fallback if image conversion cannot be performed

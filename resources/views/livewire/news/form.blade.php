@@ -131,14 +131,19 @@
                 </div>
             @endif
 
-            @if ($cover_image)
-                <div class="mb-4 flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
-                    <img src="{{ $cover_image->temporaryUrl() }}" alt="" class="w-20 h-14 rounded-lg object-cover" />
-                    <div>
-                        <p class="text-body-md font-bold text-green-800">{{ $cover_image->getClientOriginalName() }}</p>
-                        <p class="text-xs text-green-700">{{ number_format($cover_image->getSize() / 1024, 1) }} KB — ພ້ອມອັບໂຫລດ</p>
+            @if ($cover_image && method_exists($cover_image, 'temporaryUrl'))
+                @php
+                    $coverPreview = rescue(fn() => $cover_image->temporaryUrl(), null, false);
+                @endphp
+                @if ($coverPreview)
+                    <div class="mb-4 flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <img src="{{ $coverPreview }}" alt="" class="w-20 h-14 rounded-lg object-cover" />
+                        <div>
+                            <p class="text-body-md font-bold text-green-800">{{ method_exists($cover_image, 'getClientOriginalName') ? $cover_image->getClientOriginalName() : 'ຮູບປົກ' }}</p>
+                            <p class="text-xs text-green-700">{{ method_exists($cover_image, 'getSize') ? number_format($cover_image->getSize() / 1024, 1) . ' KB — ພ້ອມອັບໂຫລດ' : 'ພ້ອມອັບໂຫລດ' }}</p>
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
 
             <div x-data="{ dragging: false }"
@@ -207,21 +212,28 @@
 
                     {{-- Newly uploaded temporary images --}}
                     @foreach ($new_gallery_images as $index => $file)
-                        <div class="relative group rounded-xl overflow-hidden border-2 border-primary/40 bg-surface-container aspect-square shadow-2xs">
-                            <img src="{{ $file->temporaryUrl() }}" alt="" class="w-full h-full object-cover" />
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <button type="button"
-                                        wire:click="removeNewGalleryImage({{ $index }})"
-                                        wire:loading.attr="disabled"
-                                        title="ລຶບຮູບນີ້"
-                                        class="p-1.5 rounded-full bg-error text-white hover:bg-error/90 shadow transition-transform hover:scale-110">
-                                    <span class="material-symbols-outlined text-base">delete</span>
-                                </button>
+                        @php
+                            $galleryPreview = (is_object($file) && method_exists($file, 'temporaryUrl'))
+                                ? rescue(fn() => $file->temporaryUrl(), null, false)
+                                : null;
+                        @endphp
+                        @if ($galleryPreview)
+                            <div class="relative group rounded-xl overflow-hidden border-2 border-primary/40 bg-surface-container aspect-square shadow-2xs">
+                                <img src="{{ $galleryPreview }}" alt="" class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <button type="button"
+                                            wire:click="removeNewGalleryImage({{ $index }})"
+                                            wire:loading.attr="disabled"
+                                            title="ລຶບຮູບນີ້"
+                                            class="p-1.5 rounded-full bg-error text-white hover:bg-error/90 shadow transition-transform hover:scale-110">
+                                        <span class="material-symbols-outlined text-base">delete</span>
+                                    </button>
+                                </div>
+                                <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-700 text-white backdrop-blur-xs">
+                                    ຮູບໃໝ່
+                                </span>
                             </div>
-                            <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-green-700 text-white backdrop-blur-xs">
-                                ຮູບໃໝ່
-                            </span>
-                        </div>
+                        @endif
                     @endforeach
                 </div>
             @endif
@@ -304,12 +316,12 @@
             </a>
             <button type="submit"
                     class="px-8 py-3 bg-primary text-white rounded-lg font-bold flex items-center gap-2 hover:bg-primary-container transition-all shadow-md btn-press"
-                    wire:loading.attr="disabled" wire:loading.class="opacity-50">
-                <span wire:loading.remove>
+                    wire:loading.attr="disabled" wire:target="save" wire:loading.class="opacity-50">
+                <span wire:loading.remove wire:target="save">
                     <span class="material-symbols-outlined text-sm">{{ $editMode ? 'save' : 'add' }}</span>
                     {{ $editMode ? 'ອັບເດດ' : 'ບັນທຶກ' }}
                 </span>
-                <span wire:loading class="flex items-center gap-2">
+                <span wire:loading wire:target="save" class="flex items-center gap-2">
                     <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
                     ກຳລັງບັນທຶກ...
                 </span>

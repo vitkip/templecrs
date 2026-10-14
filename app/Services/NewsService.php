@@ -30,7 +30,9 @@ class NewsService
             }
         }
         if (!empty($galleryPaths)) {
-            $data['gallery_images'] = $galleryPaths;
+            if (\Illuminate\Support\Facades\Schema::hasColumn('news', 'gallery_images')) {
+                $data['gallery_images'] = $galleryPaths;
+            }
         }
 
         $data['author_id'] = auth()->id();
@@ -71,7 +73,9 @@ class NewsService
         }
 
         // Combine kept existing images with newly stored images (max 5)
-        $data['gallery_images'] = array_values(array_slice(array_merge($keptGalleryImages, $newPaths), 0, 5));
+        if (\Illuminate\Support\Facades\Schema::hasColumn('news', 'gallery_images')) {
+            $data['gallery_images'] = array_values(array_slice(array_merge($keptGalleryImages, $newPaths), 0, 5));
+        }
 
         $news->update($data);
         $this->clearFrontendCache($id);
@@ -112,8 +116,12 @@ class NewsService
 
     private function clearFrontendCache(int $newsId): void
     {
-        FrontendCacheService::clearNews();
-        Cache::forget("frontend_news_related_{$newsId}");
+        try {
+            FrontendCacheService::clearNews();
+            Cache::forget("frontend_news_related_{$newsId}");
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Failed to clear news frontend cache: ' . $e->getMessage());
+        }
     }
 
     public function getStatistics(): array
