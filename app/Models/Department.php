@@ -68,6 +68,22 @@ class Department extends Model
     }
 
     /**
+     * Committee members excluding the department head.
+     */
+    public function getCommitteeMembersAttribute()
+    {
+        if ($this->relationLoaded('personnel')) {
+            return $this->head_id
+                ? $this->personnel->reject(fn($p) => $p->id === (int) $this->head_id)->values()
+                : $this->personnel;
+        }
+
+        return $this->head_id
+            ? $this->personnel()->active()->where('id', '!=', $this->head_id)->orderBy('sort_order')->orderBy('name_lo')->get()
+            : $this->personnel()->active()->orderBy('sort_order')->orderBy('name_lo')->get();
+    }
+
+    /**
      * All documents in this department.
      */
     public function documents(): HasMany

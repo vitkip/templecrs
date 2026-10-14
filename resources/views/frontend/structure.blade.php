@@ -592,7 +592,7 @@
                 @foreach($departments as $dept)
                     @php
                         $head = $dept->head;
-                        $members = $dept->personnel;
+                        $members = $dept->committee_members;
                     @endphp
 
                     <div class="rounded-3xl p-6 lg:p-8 bg-white border border-outline-variant/60 shadow-sm"
@@ -613,7 +613,7 @@
 
                             <div class="flex items-center gap-3">
                                 <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
-                                    {{ $members->count() }} {{ __('messages.structure_member_count') }}
+                                    {{ $dept->personnel->count() }} {{ __('messages.structure_member_count') }}
                                 </span>
                             </div>
                         </div>
